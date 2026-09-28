@@ -1,0 +1,30 @@
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1787071749.463047   38260 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1787071753.812890   38260 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+C:\Users\Lokesh Chaudhary\AppData\Local\Programs\Python\Python311\Lib\site-packages\huggingface_hub\file_download.py:942: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+GPU: NVIDIA GeForce RTX 4050 Laptop GPU | free 5.32 / 6.44 GB
+Loading tokenizer...
+Building datasets (completion-only masking)...
+  qwen_train_clean.jsonl: 2000 usable examples (0 dropped: prompt exceeded max_len)
+  qwen_val_clean.jsonl: 64 usable examples (0 dropped: prompt exceeded max_len)
+Loading 7B in 4-bit NF4 (double-quant)...
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]C:\Users\Lokesh Chaudhary\AppData\Local\Programs\Python\Python311\Lib\site-packages\accelerate\utils\modeling.py:384: UserWarning: expandable_segments not supported on this platform (Triggered internally at ..\c10/cuda/CUDAAllocatorConfig.h:30.)
+  new_value = value.to(device)
+Loading checkpoint shards:  25%|##5       | 1/4 [00:09<00:29,  9.71s/it]Loading checkpoint shards:  50%|#####     | 2/4 [00:18<00:18,  9.38s/it]Loading checkpoint shards:  75%|#######5  | 3/4 [00:30<00:10, 10.30s/it]Loading checkpoint shards: 100%|##########| 4/4 [00:33<00:00,  7.41s/it]Loading checkpoint shards: 100%|##########| 4/4 [00:33<00:00,  8.31s/it]
+trainable params: 40,370,176 || all params: 7,655,986,688 || trainable%: 0.5273020662807087
+
+Starting training. ~3 optimizer steps (2000 samples, grad_accum 1, seq<= 512).
+Watch the first few 's/step' lines to estimate total time.
+
+  0%|          | 0/3 [00:00<?, ?it/s]C:\Users\Lokesh Chaudhary\AppData\Local\Programs\Python\Python311\Lib\site-packages\transformers\models\qwen2\modeling_qwen2.py:698: UserWarning: 1Torch was not compiled with flash attention. (Triggered internally at ..\aten\src\ATen\native\transformers\cuda\sdp_utils.cpp:263.)
+  attn_output = torch.nn.functional.scaled_dot_product_attention(
+ 33%|###3      | 1/3 [00:10<00:20, 10.12s/it] 67%|######6   | 2/3 [00:25<00:13, 13.06s/it]                                              67%|######6   | 2/3 [00:25<00:13, 13.06s/it]100%|##########| 3/3 [00:37<00:00, 12.65s/it]                                             100%|##########| 3/3 [00:37<00:00, 12.65s/it]100%|##########| 3/3 [00:37<00:00, 12.47s/it]
+    step 2: 15.1s/step | VRAM free 0.00 GB | peak 10.60 GB
+{'loss': 0.5177, 'grad_norm': 0.7601038217544556, 'learning_rate': 0.0001, 'epoch': 0.0}
+    step 3: 12.2s/step | VRAM free 0.00 GB | peak 10.60 GB
+{'train_runtime': 37.4132, 'train_samples_per_second': 0.08, 'train_steps_per_second': 0.08, 'train_loss': 0.8567574818929037, 'epoch': 0.0}
+Saving LoRA adapter + tokenizer...
+Done. Adapter at ./qwen7b_qlora_morphix/final_adapter

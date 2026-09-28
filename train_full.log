@@ -1,0 +1,36 @@
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1787072252.307856   35020 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1787072256.170359   35020 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+GPU: NVIDIA GeForce RTX 4050 Laptop GPU | free 5.32 / 6.44 GB
+Loading tokenizer...
+C:\Users\Lokesh Chaudhary\AppData\Local\Programs\Python\Python311\Lib\site-packages\huggingface_hub\file_download.py:942: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Building datasets (completion-only masking)...
+  qwen_train_clean.jsonl: 2000 usable examples (0 dropped: prompt exceeded max_len)
+  qwen_val_clean.jsonl: 64 usable examples (0 dropped: prompt exceeded max_len)
+Loading 7B in 4-bit NF4 (double-quant)...
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]C:\Users\Lokesh Chaudhary\AppData\Local\Programs\Python\Python311\Lib\site-packages\accelerate\utils\modeling.py:384: UserWarning: expandable_segments not supported on this platform (Triggered internally at ..\c10/cuda/CUDAAllocatorConfig.h:30.)
+  new_value = value.to(device)
+Loading checkpoint shards:  25%|##5       | 1/4 [00:10<00:31, 10.38s/it]Loading checkpoint shards:  50%|#####     | 2/4 [00:18<00:18,  9.31s/it]Loading checkpoint shards:  75%|#######5  | 3/4 [00:27<00:08,  9.00s/it]Loading checkpoint shards: 100%|##########| 4/4 [00:30<00:00,  6.52s/it]Loading checkpoint shards: 100%|##########| 4/4 [00:30<00:00,  7.57s/it]
+trainable params: 40,370,176 || all params: 7,655,986,688 || trainable%: 0.5273020662807087
+
+Starting training. ~125 optimizer steps (2000 samples, grad_accum 16, seq<= 1024).
+Watch the first few 's/step' lines to estimate total time.
+
+  0%|          | 0/125 [00:00<?, ?it/s]C:\Users\Lokesh Chaudhary\AppData\Local\Programs\Python\Python311\Lib\site-packages\transformers\models\qwen2\modeling_qwen2.py:698: UserWarning: 1Torch was not compiled with flash attention. (Triggered internally at ..\aten\src\ATen\native\transformers\cuda\sdp_utils.cpp:263.)
+  attn_output = torch.nn.functional.scaled_dot_product_attention(
+  1%|          | 1/125 [02:43<5:38:16, 163.68s/it]    step 2: 492.5s/step | VRAM free 0.00 GB | peak 11.15 GB
+  2%|1         | 2/125 [10:56<12:12:00, 357.08s/it]                                                   {'loss': 0.6007, 'grad_norm': 0.5037257075309753, 'learning_rate': 0.0001, 'epoch': 0.02}
+  2%|1         | 2/125 [10:56<12:12:00, 357.08s/it]    step 3: 712.0s/step | VRAM free 0.00 GB | peak 11.15 GB
+  2%|2         | 3/125 [22:48<17:35:38, 519.16s/it]    step 4: 661.0s/step | VRAM free 0.00 GB | peak 11.15 GB
+  3%|3         | 4/125 [33:49<19:19:54, 575.16s/it]                                                   {'loss': 0.5411, 'grad_norm': 0.43966132402420044, 'learning_rate': 0.0002, 'epoch': 0.03}
+  3%|3         | 4/125 [33:49<19:19:54, 575.16s/it]    step 5: 711.4s/step | VRAM free 0.00 GB | peak 11.15 GB
+  4%|4         | 5/125 [45:40<20:48:35, 624.29s/it]    step 6: 741.7s/step | VRAM free 0.00 GB | peak 11.17 GB
+  5%|4         | 6/125 [58:02<21:57:22, 664.23s/it]                                                   {'loss': 0.3812, 'grad_norm': 0.2451593577861786, 'learning_rate': 0.00019986520883988232, 'epoch': 0.05}
+  5%|4         | 6/125 [58:02<21:57:22, 664.23s/it]  6%|5         | 7/125 [1:10:17<22:31:48, 687.36s/it]  6%|6         | 8/125 [1:21:31<22:11:53, 683.02s/it]                                                     {'loss': 0.4309, 'grad_norm': 0.3619658946990967, 'learning_rate': 0.00019946119873266613, 'epoch': 0.06}
+  6%|6         | 8/125 [1:21:31<22:11:53, 683.02s/it]  7%|7         | 9/125 [1:32:39<21:51:24, 678.32s/it]    step 10: 692.1s/step | VRAM free 0.00 GB | peak 11.17 GB
+  8%|8         | 10/125 [1:44:11<21:48:14, 682.56s/it]                                                      {'loss': 0.3057, 'grad_norm': 0.32414060831069946, 'learning_rate': 0.00019878905881817252, 'epoch': 0.08}
+  8%|8         | 10/125 [1:44:11<21:48:14, 682.56s/it]  9%|8         | 11/125 [1:56:44<22:17:55, 704.17s/it] 10%|9         | 12/125 [2:07:57<21:48:42, 694.89s/it]                                                      {'loss': 0.2187, 'grad_norm': 0.2846073508262634, 'learning_rate': 0.00019785060106677818, 'epoch': 0.1}
+ 10%|9         | 12/125 [2:07:57<21:48:42, 694.89s/it]
