@@ -15,6 +15,9 @@ out*/
 uploads/
 .snapshot/
 
+# Local Docker overrides (machine-specific)
+docker-compose.override.yml
+
 # Model / training artifacts (huge)
 qwen7b_qlora_morphix/
 *.gguf
