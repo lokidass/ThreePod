@@ -1,0 +1,10 @@
+# Optional/development dependencies (not part of the deployed image).
+# Fine-tuning and the LoRA builder run on a GPU machine, not in Docker.
+#   pip install -r requirements-dev.txt
+torch
+transformers>=4.40
+peft
+datasets
+accelerate
+bitsandbytes
+trl

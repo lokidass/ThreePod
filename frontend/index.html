@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Morphix 3D Builder</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+  <h1>Morphix 3D Builder</h1>
+  <div id="health" class="health" title="backend + model status">checking…</div>
+</header>
+<main>
+  <section id="controls">
+    <label>Scene prompt
+      <textarea id="prompt" rows="3">a blue box with a sphere on top</textarea>
+    </label>
+    <div class="row">
+      <label>Builder (real model)
+        <select id="builder">
+          <option value="ollama" selected>qwen2.5-coder:7b (ollama)</option>
+          <option value="lora">lora gpu (fine-tuned qwen)</option>
+        </select>
+      </label>
+      <label>Thinker (real model)
+        <select id="thinker">
+          <option value="deepseek-r1:1.5b" selected>deepseek-r1:1.5b</option>
+          <option value="morphix-thinker">morphix-thinker</option>
+        </select>
+      </label>
+    </div>
+    <div class="row">
+      <label class="check"><input type="checkbox" id="incremental" checked> incremental</label>
+      <label>Steps <span class="auto">auto · decided by thinker (cap 24)</span></label>
+    </div>
+    <button id="generate">Generate scene</button>
+    <div id="status" class="status">every step is streamed live and validated</div>
+    <label>History <select id="history"><option value="">— runs —</option></select></label>
+    <hr>
+    <label>Image → 3D print
+      <input type="file" id="imgfile" accept="image/*">
+    </label>
+    <img id="imgprev" alt="">
+    <div class="row">
+      <label>Grid
+        <select id="imggrid">
+          <option value="8">8×8</option>
+          <option value="12" selected>12×12</option>
+          <option value="16">16×16</option>
+        </select>
+      </label>
+      <label>Mode
+        <select id="imgmode">
+          <option value="relief">relief</option>
+          <option value="mosaic">mosaic</option>
+        </select>
+      </label>
+    </div>
+    <button id="printimg">Print image to 3D</button>
+    <label class="check"><input type="checkbox" id="imgdesc"> describe with vision model</label>
+    <div id="imgcap" class="status"></div>
+  </section>
+  <section id="viewer">
+    <div id="verdict" class="verdict">no run yet — validator idle</div>
+    <iframe id="scene" title="3D scene" sandbox="allow-scripts"></iframe>
+  </section>
+  <aside id="side">
+    <nav>
+      <button data-tab="steps" class="active">Steps</button>
+      <button data-tab="report">Report</button>
+      <button data-tab="code">Code</button>
+    </nav>
+    <div id="tab-steps" class="tab active"><p class="dim">Start a run — every step appears here as it happens.</p></div>
+    <div id="tab-report" class="tab"></div>
+    <div id="tab-code" class="tab">
+      <div class="row">
+        <button id="copy">Copy JS</button>
+        <a id="open" href="#" target="_blank" rel="noopener">Open scene ↗</a>
+      </div>
+      <pre id="code"></pre>
+    </div>
+  </aside>
+</main>
+<script src="app.js"></script>
+</body>
+</html>

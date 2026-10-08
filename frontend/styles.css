@@ -1,0 +1,49 @@
+:root { --bg: #0f1420; --panel: #17202f; --line: #26334a; --txt: #dbe4f3; --dim: #8fa1bd; --acc: #38e1c6; --warn: #ffb454; --bad: #ff6b6b; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--txt); font: 14px/1.45 system-ui, sans-serif; }
+header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border-bottom: 1px solid var(--line); }
+h1 { font-size: 18px; margin: 0; }
+.health { font-size: 12px; color: var(--dim); }
+.health b.ok { color: var(--acc); } .health b.no { color: var(--warn); }
+.health .strict { color: var(--acc); }
+main { display: grid; grid-template-columns: 300px 1fr 340px; gap: 10px; padding: 10px; height: calc(100vh - 53px); }
+section, aside { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px; overflow: auto; }
+label { display: block; margin-bottom: 10px; font-size: 12px; color: var(--dim); }
+textarea, select, input[type=number] { width: 100%; margin-top: 4px; background: #0c1220; color: var(--txt); border: 1px solid var(--line); border-radius: 6px; padding: 8px; font: inherit; }
+.row { display: flex; gap: 8px; align-items: end; } .row > * { flex: 1; }
+.check { display: flex; gap: 6px; align-items: center; }
+.auto { color: var(--acc); font-size: 12px; }
+button, a#open { background: var(--acc); color: #06231d; border: 0; border-radius: 6px; padding: 9px 12px; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-block; }
+button:disabled { opacity: .5; cursor: wait; }
+#generate { width: 100%; }
+.status { min-height: 20px; font-size: 12px; color: var(--dim); margin: 8px 0; }
+#viewer { padding: 0; overflow: hidden; display: flex; flex-direction: column; }
+.verdict { font-size: 12px; padding: 6px 10px; border-bottom: 1px solid var(--line); color: var(--dim); }
+.verdict.ok { color: var(--acc); } .verdict.bad { color: var(--bad); } .verdict.live { color: var(--warn); }
+#scene { width: 100%; flex: 1; min-height: 0; border: 0; background: #111622; }
+#imgprev { max-width: 100%; max-height: 120px; border-radius: 6px; display: none; margin-bottom: 8px; }
+hr { border: 0; border-top: 1px solid var(--line); margin: 12px 0; }
+nav { display: flex; gap: 6px; margin-bottom: 10px; }
+nav button { background: transparent; color: var(--dim); border: 1px solid var(--line); flex: 1; }
+nav button.active { color: var(--acc); border-color: var(--acc); }
+.tab { display: none; } .tab.active { display: block; }
+#tab-steps { font-size: 12px; }
+.chip { border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; margin-bottom: 6px; }
+.chip.ok { border-color: #0b3d33; color: var(--acc); }
+.chip.bad { border-color: #5a1f2b; color: var(--bad); }
+.chip.warn { border-color: #5a4314; color: var(--warn); }
+.chip.wait { border-color: var(--line); color: var(--dim); animation: pulse 1.2s ease-in-out infinite; }
+.chip.info { border-color: var(--line); color: var(--dim); }
+.chip pre, .step pre { margin: 6px 0 0; white-space: pre-wrap; color: var(--dim); font-size: 11px; max-height: 120px; overflow: auto; }
+@keyframes pulse { 50% { opacity: .45; } }
+.step { border: 1px solid var(--line); border-radius: 6px; padding: 8px; margin-bottom: 6px; font-size: 12px; }
+.step.done { border-color: #0b3d33; background: #0c1a1c; }
+.step .head { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-weight: 700; }
+.badge { font-size: 11px; padding: 1px 7px; border-radius: 10px; background: #234; white-space: nowrap; }
+.badge.ok { background: #0b3d33; color: var(--acc); }
+.badge.fb { background: #3d2f0b; color: var(--warn); }
+.dim { color: var(--dim); }
+#tab-report { font-size: 12px; } #tab-report .bad { color: var(--bad); } #tab-report .ok { color: var(--acc); }
+#tab-report > div { margin-bottom: 6px; }
+#code { background: #0c1220; border: 1px solid var(--line); border-radius: 6px; padding: 8px; max-height: 60vh; overflow: auto; font-size: 11px; }
+@media (max-width: 1100px) { main { grid-template-columns: 1fr; height: auto; } #scene { height: 60vh; } }

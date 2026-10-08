@@ -1,0 +1,31 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*.log
+.smoke_test.log
+
+# Virtual envs
+.venv/
+venv/
+env/
+
+# Runtime outputs
+runs/
+out*/
+uploads/
+.snapshot/
+
+# Model / training artifacts (huge)
+qwen7b_qlora_morphix/
+*.gguf
+*.safetensors
+*.bin
+
+# Environment
+.env
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

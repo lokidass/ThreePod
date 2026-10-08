@@ -1,0 +1,57 @@
+# Morphix — compose file. Brings up:
+#   ollama : the model server (DeepSeek thinker + Qwen builder pulled on boot)
+#   app    : the Flask app behind a production WSGI server, streaming steps
+#            to the browser via SSE
+#
+#   docker compose up --build
+#   open http://localhost:5000
+#
+# With a GPU (Linux):
+#   deploy:
+#     resources:
+#       reservations:
+#         devices:
+#           - driver: nvidia
+#             count: all
+#             capabilities: [gpu]
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: morphix-ollama
+    volumes:
+      - ollama_models:/root/.ollama
+    # keep the server alive long enough for model pulls on first boot
+    environment:
+      - OLLAMA_KEEP_ALIVE=24h
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 10s
+      retries: 12
+      start_period: 30s
+
+  app:
+    build: .
+    container_name: morphix-app
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+      - MORPHIX_THINKER_MODEL=${MORPHIX_THINKER_MODEL:-deepseek-r1:1.5b}
+      - MORPHIX_BUILDER_MODEL=${MORPHIX_BUILDER_MODEL:-qwen2.5-coder:7b}
+      - MORPHIX_STRICT_MODELS=${MORPHIX_STRICT_MODELS:-true}
+      - PORT=5000
+    ports:
+      - "${PORT:-5000}:5000"
+    volumes:
+      - morphix_runs:/app/runs
+      - morphix_uploads:/app/uploads
+    restart: unless-stopped
+
+volumes:
+  ollama_models:
+  morphix_runs:
+  morphix_uploads:
