@@ -73,7 +73,7 @@ you watch the scene grow step by validated step.
 
 ## API
 
-`GET /api/health`, `POST /api/think`, `POST /api/jobs` (+ stream/events),
+`GET /api/health`, `POST /api/think`, `POST /api/jobs` (+ stream/events/cancel),
 `POST /api/generate` (sync, for scripts), `POST /api/image` (multipart:
 image + grid + mode), `GET /api/runs`, `GET /api/runs/<id>`,
 `GET /runs/<id>/scene.html|scene.js|actions.json|report.json`.
@@ -112,6 +112,9 @@ non-zero if anything fails validation.
 | `morphix_state.py` | Live geometry state (stacking, collisions, print head) |
 | `morphix_pipeline.py` | Full run with per-step validation + `emit(event)` hook |
 | `morphix_jobs.py` | Background jobs + SSE event stream |
+| `morphix_path.py` | Point-by-point printer core: toolhead state, segment validation, deterministic path generators, engine rendering |
+| `morphix_vision.py` | Vision inspector: close-up screenshots + GOOD/DRIFTING/BROKEN verdicts (advisory only) |
+| `demo_print.py` | Deterministic offline print demo (no models) → scene + `train.jsonl` |
 | `server.py` | Flask backend (WSGI-ready) |
 | `test_qwen7b.py` | LoRA builder single-action runner |
 | `train_qwen7b_qlora.py` | QLoRA retrain (GPU machine, see requirements-dev) |
@@ -123,3 +126,148 @@ non-zero if anything fails validation.
 - LoRA builder needs the HF cache for `Qwen/Qwen2.5-Coder-7B` +
   `./qwen7b_qlora_morphix/final_adapter` plus GPU tooling
   (`pip install -r requirements-dev.txt`).
+
+## Cancelling a run
+
+- The UI has a **Stop** button next to Generate; it calls
+  `POST /api/jobs/<id>/cancel`.
+- The worker checks for cancellation at the top of every step (incremental)
+  or block (whole-scene). The in-flight model call finishes, then the run
+  aborts with `cancelled by user` — no further commits happen.
+- Already committed layers are preserved and the partial `scene.js` /
+  `scene.html` in `runs/<id>/` stays viewable; the run is loadable from
+  History like any other.
+- Cancelling a finished or unknown job returns `409` / `404`.
+
+## Automated tests
+
+Offline, deterministic, no models or credentials needed:
+
+```bash
+python -m pytest tests/ -q
+```
+
+`tests/test_core.py` covers action-schema validation, `node --check`
+syntax gating, the anti-hallucination guard, geometry-state rules, cancel,
+and the HTTP surface. `tests/test_path.py` covers the printer protocol
+(§11.1–8, 11–13); `tests/test_print.py` covers the print controller
+(budgets §11.9–10, component gate, toolhead handoff §11.14);
+`tests/test_vision.py` covers verdict parsing, streak warnings, and the
+advisory-only wiring (BROKEN can never fail a run).
+
+## Point-by-point printing (printer protocol)
+
+`morphix_path.py` implements true segment-level construction alongside the
+primitive pipeline (the two modes are separate: primitive mode still uses
+`add_box`/`add_sphere`/…; printer mode forbids them — see below).
+
+Printer mode permits exactly six construction actions (lowercase only):
+
+- `move_to` {position, layer, label} — travel, no deposition
+- `deposit_segment` {from, to, bead_width, bead_height, material, layer, label}
+- `deposit_point` {position, size, material, layer, label}
+- `complete_path` / `complete_layer` {layer, label}
+- `complete_object` {label}
+
+Rules:
+
+- One authoritative toolhead position; deposits must start exactly there
+  (`POS_TOL`); a failed step never advances it. The builder proposes
+  endpoints — it never moves the toolhead by returning JSON.
+- Deposition is y-locked to the active layer plane (`LAYER_HEIGHT = 0.2`);
+  `layer` must equal the active layer — no skipping ahead. Beads are drawn
+  centered on the layer plane (toolpath-centerline convention, as in slicer
+  previews); no hidden offsets are ever applied.
+- Validated materials only: `body` / `accent` / `support` (engine palette).
+- `complete_layer` needs ≥ 1 segment; `complete_object` needs every layer
+  AND every planned component completed (tracked by slicer-stamped tags:
+  missing / partial / completed — never label guessing).
+- Hard budgets, all reported: 2 planner attempts, builder attempts, repair
+  retries, attempt ceiling, `segment_cap` (default 400), `layer_cap`
+  (default 32), `deadline_s` (default 1800). Rejects consume budget but
+  never commit; hitting a limit stops loudly with the reason.
+- Checkpoints: `PathState.checkpoint()` / `PathState.restore()` resume
+  from the last committed action.
+- Deterministic generators (`trace_rect`, `zigzag_infill`, `trace_ngon`)
+  produce ground-truth state → action sequences; the engine renders validated
+  deposits itself (`render_deposit`) — the model proposes, the engine draws.
+
+Deterministic demo (no models, ~1s):
+
+```bash
+python demo_print.py --out ./out_print   # scene + train.jsonl
+```
+
+Live path print (thinks once, then prints every segment with validation):
+
+```bash
+python morphix_pipeline.py "red box 2 wide 1 deep 0.4 tall on the ground" --path --out ./out_path
+python morphix_pipeline.py "..." --path --guided --segment-cap 12  # per-step builder proposals
+```
+
+or press **Print path** in the UI (`POST /api/jobs` with `mode: "path"`,
+`guided: true` for per-step inference). Commits stream over SSE exactly
+like primitive mode, so the viewport grows segment by segment; **Stop**
+cancels between segments and `path.json` checkpoints every commit
+(`--resume` replays one).
+
+## Vision inspections (watching the print)
+
+Every N deposits (`--vision-every`, default 5, `0` disables; 👁 input in
+the UI) the pipeline screenshots a close-up `inspect.html` of the working
+scene with headless Chromium and asks the vision model (moondream,
+auto-detected) whether the print is going well:
+
+- Verdicts stream live as 👁 chips and land in the report (`vision` list
+  with `shot_*.png` files kept per run): GOOD / DRIFTING / BROKEN.
+- Two consecutive BROKENs raise a visible warning suggesting Stop.
+- Vision is advisory only: it can never fail or redirect a run — the
+  geometric validator stays the sole hard gate, and any vision outage
+  disables inspections with a warning instead of touching the print.
+- Cost note: the vision model swaps VRAM with the builder on small GPUs,
+  so frequent inspections slow the run; raise the interval if needed.
+
+`out_print/train.jsonl` rows (`state` + `plan` + `layer` → `action`) are
+the training-data format for the segment-level builder: current state,
+plan, and active layer in, exactly one next action out.
+
+## Toolpath optimization + success gate
+
+The slicer emits fine bead steps; `optimize_toolpath` (in `morphix_path.py`)
+folds them before printing — collinear runs merge (capped at 5 m),
+zero-length segments and redundant travel drop, contours visit
+nearest-first per layer, oversize segments split. Geometry is re-validated;
+any defect falls back to the raw script loudly. Counts land in
+`report.budgets.path_optimization` (typical car: ~55-60% fewer actions,
+identical deposited length).
+
+`report.success` is the only headline verdict: execution valid AND geometry
+verified AND goal complete AND no fidelity warnings. The CLI exits non-zero
+unless `success` is true. Timeouts and reject-budget aborts write an explicit
+partial report (`status: incomplete`, committed/total/remaining) plus a
+checkpoint — resume with `--resume` without duplicating segments.
+
+## Visual geometry regression (`tests/visual_geometry/`)
+
+Deterministic mesh + rendering checks that reject visibly wrong models even
+when every action validates. No new dependencies (numpy/PIL/playwright/
+chromium already in the stack; three.js r152 is vendored, no CDN).
+
+```bash
+pytest tests/visual_geometry -m "not visual and not live"  # fast geometry
+pytest tests/visual_geometry -m visual                      # renders + SSIM
+pytest tests/ -m "not live"                                 # full suite
+pytest tests/visual_geometry -m live                        # real adapters
+python tests/visual_geometry/regen_baselines.py             # report-only diff
+python tests/visual_geometry/regen_baselines.py --approve   # bless new shots
+```
+
+How it works: fixtures build through the production compiler, committed
+deposits become triangle meshes (`morphix_mesh.py`, also wired into
+`run_path_print` finalize as fidelity warnings), and each fixture renders
+from 5 fixed viewpoints (front/side/three-quarter/rear/top) with fixed
+lights and materials. Full-frame SSIM (≥0.985) plus per-component crop
+SSIM (≥0.95, localizes the failing part) gate acceptance; mismatches save
+the actual render and an amplified diff under `.actual/` (git-ignored —
+baselines are only ever written by `--approve`).#   T h r e e P o d  
+ 
