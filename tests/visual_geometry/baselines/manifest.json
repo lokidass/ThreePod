@@ -1,0 +1,82 @@
+{
+  "box_sphere": {
+    "threshold": 0.985,
+    "views": {
+      "front": "box_sphere_front.png",
+      "rear": "box_sphere_rear.png",
+      "side": "box_sphere_side.png",
+      "threequarter": "box_sphere_threequarter.png",
+      "top": "box_sphere_top.png"
+    }
+  },
+  "car": {
+    "threshold": 0.985,
+    "views": {
+      "front": "car_front.png",
+      "rear": "car_rear.png",
+      "side": "car_side.png",
+      "threequarter": "car_threequarter.png",
+      "top": "car_top.png"
+    }
+  },
+  "cat": {
+    "threshold": 0.985,
+    "views": {
+      "front": "cat_front.png",
+      "rear": "cat_rear.png",
+      "side": "cat_side.png",
+      "threequarter": "cat_threequarter.png",
+      "top": "cat_top.png"
+    }
+  },
+  "chair": {
+    "threshold": 0.985,
+    "views": {
+      "front": "chair_front.png",
+      "rear": "chair_rear.png",
+      "side": "chair_side.png",
+      "threequarter": "chair_threequarter.png",
+      "top": "chair_top.png"
+    }
+  },
+  "cube": {
+    "threshold": 0.985,
+    "views": {
+      "front": "cube_front.png",
+      "rear": "cube_rear.png",
+      "side": "cube_side.png",
+      "threequarter": "cube_threequarter.png",
+      "top": "cube_top.png"
+    }
+  },
+  "sphere": {
+    "threshold": 0.985,
+    "views": {
+      "front": "sphere_front.png",
+      "rear": "sphere_rear.png",
+      "side": "sphere_side.png",
+      "threequarter": "sphere_threequarter.png",
+      "top": "sphere_top.png"
+    }
+  },
+  "stool": {
+    "threshold": 0.985,
+    "views": {
+      "front": "stool_front.png",
+      "rear": "stool_rear.png",
+      "side": "stool_side.png",
+      "threequarter": "stool_threequarter.png",
+      "top": "stool_top.png"
+    }
+  },
+  "table": {
+    "threshold": 0.985,
+    "views": {
+      "front": "table_front.png",
+      "rear": "table_rear.png",
+      "side": "table_side.png",
+      "threequarter": "table_threequarter.png",
+      "top": "table_top.png"
+    }
+  }
+}

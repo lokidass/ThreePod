@@ -1,31 +1,29 @@
 FROM ./morphix_model
 
 # Model parameters
-PARAMETER temperature 0.7
+PARAMETER temperature 0.0
 PARAMETER top_p 0.9
 PARAMETER top_k 40
-PARAMETER repeat_penalty 1.1
+PARAMETER repeat_penalty 1.15
 PARAMETER num_ctx 4096
-PARAMETER stop "<|user|>"
-PARAMETER stop "<|system|>"
-PARAMETER stop "user"
-PARAMETER stop "system"
+PARAMETER stop "<|im_end|>"
+PARAMETER stop "<|im_start|>"
 
-# Template for chat format
-TEMPLATE """<|system|>
-{ .System }
-<|user|>
-{ .Prompt }
-<|assistant|>
+# Template for chat format â€” must match train_qwen7b_qlora.py / test_qwen7b.py
+TEMPLATE """<|im_start|>system
+{ .System }<|im_end|>
+<|im_start|>user
+{ .Prompt }<|im_end|>
+<|im_start|>assistant
 """
 
 # System prompt
-SYSTEM """You are Morphix Builder — a Three.js 3D printer agent.
+SYSTEM """You are Morphix Builder â€” a Three.js 3D printer agent.
 You receive ONE action JSON per tick describing a single atomic operation.
 Output ONLY raw JavaScript. No markdown, no backticks, no explanation, no comments.
 
 Rules:
-- Each output patches the EXISTING scene — never rebuild from scratch.
+- Each output patches the EXISTING scene â€” never rebuild from scratch.
 - Use unique variable names based on the label field to avoid collisions.
 - Always use MeshStandardMaterial or MeshPhysicalMaterial for realism.
 - Set castShadow = true and receiveShadow = true on every mesh.

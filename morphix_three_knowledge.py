@@ -1,0 +1,798 @@
+# morphix_three_knowledge.py
+# Version-aware Three.js knowledge index. The vendored build
+# (tests/visual_geometry/vendor/three.module.js, r152 core) is the
+# compatibility authority: VENDOR_EXPORTS is its frozen export surface, and
+# test_knowledge.py asserts the frozen list still matches the vendor file.
+#
+# Curated entries below add what a bare export list cannot: description,
+# compatible version, required imports, dependencies, a minimal working
+# example, performance notes, scene/printer-mode support, and the official
+# doc/source path. WebGPU-era APIs (WebGPURenderer, TSL nodes,
+# RenderPipeline, addons like OrbitControls/EffectComposer/GLTFLoader) are
+# recorded as explicitly UNSUPPORTED on the vendored build — the engine
+# reports that loudly instead of fabricating or silently substituting them.
+#
+# Retrieval rule: look entries up per generation step; never place the
+# whole library in the model context.
+
+import re
+
+THREE_REVISION = "152"
+VENDOR_PATH = "tests/visual_geometry/vendor/three.module.js"
+
+# Frozen export surface of the vendored Three.js build
+# (tests/visual_geometry/vendor/three.module.js).
+# Regenerate with _tmp_genexp.py if the vendor file changes;
+# test_knowledge.py asserts this list matches the vendor file.
+VENDOR_EXPORTS = (
+    "ACESFilmicToneMapping",
+    "AddEquation",
+    "AddOperation",
+    "AdditiveAnimationBlendMode",
+    "AdditiveBlending",
+    "AlphaFormat",
+    "AlwaysDepth",
+    "AlwaysStencilFunc",
+    "AmbientLight",
+    "AmbientLightProbe",
+    "AnimationAction",
+    "AnimationClip",
+    "AnimationLoader",
+    "AnimationMixer",
+    "AnimationObjectGroup",
+    "AnimationUtils",
+    "ArcCurve",
+    "ArrayCamera",
+    "ArrowHelper",
+    "Audio",
+    "AudioAnalyser",
+    "AudioContext",
+    "AudioListener",
+    "AudioLoader",
+    "AxesHelper",
+    "BackSide",
+    "BasicDepthPacking",
+    "BasicShadowMap",
+    "Bone",
+    "BooleanKeyframeTrack",
+    "Box2",
+    "Box3",
+    "Box3Helper",
+    "BoxBufferGeometry",
+    "BoxGeometry",
+    "BoxHelper",
+    "BufferAttribute",
+    "BufferGeometry",
+    "BufferGeometryLoader",
+    "ByteType",
+    "Cache",
+    "Camera",
+    "CameraHelper",
+    "CanvasTexture",
+    "CapsuleBufferGeometry",
+    "CapsuleGeometry",
+    "CatmullRomCurve3",
+    "CineonToneMapping",
+    "CircleBufferGeometry",
+    "CircleGeometry",
+    "ClampToEdgeWrapping",
+    "Clock",
+    "Color",
+    "ColorKeyframeTrack",
+    "ColorManagement",
+    "CompressedArrayTexture",
+    "CompressedTexture",
+    "CompressedTextureLoader",
+    "ConeBufferGeometry",
+    "ConeGeometry",
+    "CubeCamera",
+    "CubeReflectionMapping",
+    "CubeRefractionMapping",
+    "CubeTexture",
+    "CubeTextureLoader",
+    "CubeUVReflectionMapping",
+    "CubicBezierCurve",
+    "CubicBezierCurve3",
+    "CubicInterpolant",
+    "CullFaceBack",
+    "CullFaceFront",
+    "CullFaceFrontBack",
+    "CullFaceNone",
+    "Curve",
+    "CurvePath",
+    "CustomBlending",
+    "CustomToneMapping",
+    "CylinderBufferGeometry",
+    "CylinderGeometry",
+    "Cylindrical",
+    "Data3DTexture",
+    "DataArrayTexture",
+    "DataTexture",
+    "DataTextureLoader",
+    "DataUtils",
+    "DecrementStencilOp",
+    "DecrementWrapStencilOp",
+    "DefaultLoadingManager",
+    "DepthFormat",
+    "DepthStencilFormat",
+    "DepthTexture",
+    "DirectionalLight",
+    "DirectionalLightHelper",
+    "DiscreteInterpolant",
+    "DisplayP3ColorSpace",
+    "DodecahedronBufferGeometry",
+    "DodecahedronGeometry",
+    "DoubleSide",
+    "DstAlphaFactor",
+    "DstColorFactor",
+    "DynamicCopyUsage",
+    "DynamicDrawUsage",
+    "DynamicReadUsage",
+    "EdgesGeometry",
+    "EllipseCurve",
+    "EqualDepth",
+    "EqualStencilFunc",
+    "EquirectangularReflectionMapping",
+    "EquirectangularRefractionMapping",
+    "Euler",
+    "EventDispatcher",
+    "ExtrudeBufferGeometry",
+    "ExtrudeGeometry",
+    "FileLoader",
+    "Float16BufferAttribute",
+    "Float32BufferAttribute",
+    "Float64BufferAttribute",
+    "FloatType",
+    "Fog",
+    "FogExp2",
+    "FramebufferTexture",
+    "FrontSide",
+    "Frustum",
+    "GLBufferAttribute",
+    "GLSL1",
+    "GLSL3",
+    "GreaterDepth",
+    "GreaterEqualDepth",
+    "GreaterEqualStencilFunc",
+    "GreaterStencilFunc",
+    "GridHelper",
+    "Group",
+    "HalfFloatType",
+    "HemisphereLight",
+    "HemisphereLightHelper",
+    "HemisphereLightProbe",
+    "IcosahedronBufferGeometry",
+    "IcosahedronGeometry",
+    "ImageBitmapLoader",
+    "ImageLoader",
+    "ImageUtils",
+    "IncrementStencilOp",
+    "IncrementWrapStencilOp",
+    "InstancedBufferAttribute",
+    "InstancedBufferGeometry",
+    "InstancedInterleavedBuffer",
+    "InstancedMesh",
+    "Int16BufferAttribute",
+    "Int32BufferAttribute",
+    "Int8BufferAttribute",
+    "IntType",
+    "InterleavedBuffer",
+    "InterleavedBufferAttribute",
+    "Interpolant",
+    "InterpolateDiscrete",
+    "InterpolateLinear",
+    "InterpolateSmooth",
+    "InvertStencilOp",
+    "KeepStencilOp",
+    "KeyframeTrack",
+    "LOD",
+    "LatheBufferGeometry",
+    "LatheGeometry",
+    "Layers",
+    "LessDepth",
+    "LessEqualDepth",
+    "LessEqualStencilFunc",
+    "LessStencilFunc",
+    "Light",
+    "LightProbe",
+    "Line",
+    "Line3",
+    "LineBasicMaterial",
+    "LineCurve",
+    "LineCurve3",
+    "LineDashedMaterial",
+    "LineLoop",
+    "LineSegments",
+    "LinearEncoding",
+    "LinearFilter",
+    "LinearInterpolant",
+    "LinearMipMapLinearFilter",
+    "LinearMipMapNearestFilter",
+    "LinearMipmapLinearFilter",
+    "LinearMipmapNearestFilter",
+    "LinearSRGBColorSpace",
+    "LinearToneMapping",
+    "Loader",
+    "LoaderUtils",
+    "LoadingManager",
+    "LoopOnce",
+    "LoopPingPong",
+    "LoopRepeat",
+    "LuminanceAlphaFormat",
+    "LuminanceFormat",
+    "MOUSE",
+    "Material",
+    "MaterialLoader",
+    "MathUtils",
+    "Matrix3",
+    "Matrix4",
+    "MaxEquation",
+    "Mesh",
+    "MeshBasicMaterial",
+    "MeshDepthMaterial",
+    "MeshDistanceMaterial",
+    "MeshLambertMaterial",
+    "MeshMatcapMaterial",
+    "MeshNormalMaterial",
+    "MeshPhongMaterial",
+    "MeshPhysicalMaterial",
+    "MeshStandardMaterial",
+    "MeshToonMaterial",
+    "MinEquation",
+    "MirroredRepeatWrapping",
+    "MixOperation",
+    "MultiplyBlending",
+    "MultiplyOperation",
+    "NearestFilter",
+    "NearestMipMapLinearFilter",
+    "NearestMipMapNearestFilter",
+    "NearestMipmapLinearFilter",
+    "NearestMipmapNearestFilter",
+    "NeverDepth",
+    "NeverStencilFunc",
+    "NoBlending",
+    "NoColorSpace",
+    "NoToneMapping",
+    "NormalAnimationBlendMode",
+    "NormalBlending",
+    "NotEqualDepth",
+    "NotEqualStencilFunc",
+    "NumberKeyframeTrack",
+    "Object3D",
+    "ObjectLoader",
+    "ObjectSpaceNormalMap",
+    "OctahedronBufferGeometry",
+    "OctahedronGeometry",
+    "OneFactor",
+    "OneMinusDstAlphaFactor",
+    "OneMinusDstColorFactor",
+    "OneMinusSrcAlphaFactor",
+    "OneMinusSrcColorFactor",
+    "OrthographicCamera",
+    "PCFShadowMap",
+    "PCFSoftShadowMap",
+    "PMREMGenerator",
+    "Path",
+    "PerspectiveCamera",
+    "Plane",
+    "PlaneBufferGeometry",
+    "PlaneGeometry",
+    "PlaneHelper",
+    "PointLight",
+    "PointLightHelper",
+    "Points",
+    "PointsMaterial",
+    "PolarGridHelper",
+    "PolyhedronBufferGeometry",
+    "PolyhedronGeometry",
+    "PositionalAudio",
+    "PropertyBinding",
+    "PropertyMixer",
+    "QuadraticBezierCurve",
+    "QuadraticBezierCurve3",
+    "Quaternion",
+    "QuaternionKeyframeTrack",
+    "QuaternionLinearInterpolant",
+    "RED_GREEN_RGTC2_Format",
+    "RED_RGTC1_Format",
+    "REVISION",
+    "RGBADepthPacking",
+    "RGBAFormat",
+    "RGBAIntegerFormat",
+    "RGBA_ASTC_10x10_Format",
+    "RGBA_ASTC_10x5_Format",
+    "RGBA_ASTC_10x6_Format",
+    "RGBA_ASTC_10x8_Format",
+    "RGBA_ASTC_12x10_Format",
+    "RGBA_ASTC_12x12_Format",
+    "RGBA_ASTC_4x4_Format",
+    "RGBA_ASTC_5x4_Format",
+    "RGBA_ASTC_5x5_Format",
+    "RGBA_ASTC_6x5_Format",
+    "RGBA_ASTC_6x6_Format",
+    "RGBA_ASTC_8x5_Format",
+    "RGBA_ASTC_8x6_Format",
+    "RGBA_ASTC_8x8_Format",
+    "RGBA_BPTC_Format",
+    "RGBA_ETC2_EAC_Format",
+    "RGBA_PVRTC_2BPPV1_Format",
+    "RGBA_PVRTC_4BPPV1_Format",
+    "RGBA_S3TC_DXT1_Format",
+    "RGBA_S3TC_DXT3_Format",
+    "RGBA_S3TC_DXT5_Format",
+    "RGB_ETC1_Format",
+    "RGB_ETC2_Format",
+    "RGB_PVRTC_2BPPV1_Format",
+    "RGB_PVRTC_4BPPV1_Format",
+    "RGB_S3TC_DXT1_Format",
+    "RGFormat",
+    "RGIntegerFormat",
+    "RawShaderMaterial",
+    "Ray",
+    "Raycaster",
+    "RectAreaLight",
+    "RedFormat",
+    "RedIntegerFormat",
+    "ReinhardToneMapping",
+    "RepeatWrapping",
+    "ReplaceStencilOp",
+    "ReverseSubtractEquation",
+    "RingBufferGeometry",
+    "RingGeometry",
+    "SIGNED_RED_GREEN_RGTC2_Format",
+    "SIGNED_RED_RGTC1_Format",
+    "SRGBColorSpace",
+    "Scene",
+    "ShaderChunk",
+    "ShaderLib",
+    "ShaderMaterial",
+    "ShadowMaterial",
+    "Shape",
+    "ShapeBufferGeometry",
+    "ShapeGeometry",
+    "ShapePath",
+    "ShapeUtils",
+    "ShortType",
+    "Skeleton",
+    "SkeletonHelper",
+    "SkinnedMesh",
+    "Source",
+    "Sphere",
+    "SphereBufferGeometry",
+    "SphereGeometry",
+    "Spherical",
+    "SphericalHarmonics3",
+    "SplineCurve",
+    "SpotLight",
+    "SpotLightHelper",
+    "Sprite",
+    "SpriteMaterial",
+    "SrcAlphaFactor",
+    "SrcAlphaSaturateFactor",
+    "SrcColorFactor",
+    "StaticCopyUsage",
+    "StaticDrawUsage",
+    "StaticReadUsage",
+    "StereoCamera",
+    "StreamCopyUsage",
+    "StreamDrawUsage",
+    "StreamReadUsage",
+    "StringKeyframeTrack",
+    "SubtractEquation",
+    "SubtractiveBlending",
+    "TOUCH",
+    "TangentSpaceNormalMap",
+    "TetrahedronBufferGeometry",
+    "TetrahedronGeometry",
+    "Texture",
+    "TextureLoader",
+    "TorusBufferGeometry",
+    "TorusGeometry",
+    "TorusKnotBufferGeometry",
+    "TorusKnotGeometry",
+    "Triangle",
+    "TriangleFanDrawMode",
+    "TriangleStripDrawMode",
+    "TrianglesDrawMode",
+    "TubeBufferGeometry",
+    "TubeGeometry",
+    "TwoPassDoubleSide",
+    "UVMapping",
+    "Uint16BufferAttribute",
+    "Uint32BufferAttribute",
+    "Uint8BufferAttribute",
+    "Uint8ClampedBufferAttribute",
+    "Uniform",
+    "UniformsGroup",
+    "UniformsLib",
+    "UniformsUtils",
+    "UnsignedByteType",
+    "UnsignedInt248Type",
+    "UnsignedIntType",
+    "UnsignedShort4444Type",
+    "UnsignedShort5551Type",
+    "UnsignedShortType",
+    "VSMShadowMap",
+    "Vector2",
+    "Vector3",
+    "Vector4",
+    "VectorKeyframeTrack",
+    "VideoTexture",
+    "WebGL1Renderer",
+    "WebGL3DRenderTarget",
+    "WebGLArrayRenderTarget",
+    "WebGLCubeRenderTarget",
+    "WebGLMultipleRenderTargets",
+    "WebGLRenderTarget",
+    "WebGLRenderer",
+    "WebGLUtils",
+    "WireframeGeometry",
+    "WrapAroundEnding",
+    "ZeroCurvatureEnding",
+    "ZeroFactor",
+    "ZeroSlopeEnding",
+    "ZeroStencilOp",
+    "_SRGBAFormat",
+    "sRGBEncoding",
+)
+
+
+# ------------------------------------------------------------------ curated
+# name -> metadata. "since" is the Three.js revision that introduced the
+# API ("r152" = verified present in the vendored build). "modes" lists
+# where Morphix may use it: scene (rich environments), printer (deposition
+# geometry only), never bare WebGPU/TSL on the vendored build.
+def _e(desc, since="r152", imports=("three",), deps=(), example="",
+       perf="", modes=("scene",), docs=""):
+    return {"description": desc, "since": since, "imports": list(imports),
+            "dependencies": list(deps), "example": example,
+            "performance": perf, "modes": list(modes), "docs": docs}
+
+
+CURATED = {
+    "Scene": _e(
+        "Root of the scene graph; holds objects, fog, background, env map.",
+        imports=("three",),
+        example="const scene = new THREE.Scene();\n"
+                "scene.background = new THREE.Color(0x111622);",
+        perf="One per render; background color is free, textures cost VRAM.",
+        modes=("scene",),
+        docs="docs/api/en/scenes/Scene.html"),
+    "PerspectiveCamera": _e(
+        "Perspective projection camera (fov, aspect, near, far).",
+        example="const camera = new THREE.PerspectiveCamera(55, w / h, 0.1, 500);\n"
+                "camera.position.set(6, 5, 9);\ncamera.lookAt(0, 0, 0);",
+        perf="Negligible; keep near/far tight for depth precision.",
+        modes=("scene",),
+        docs="docs/api/en/cameras/PerspectiveCamera.html"),
+    "OrthographicCamera": _e(
+        "Orthographic projection camera (left/right/top/bottom).",
+        example="const camera = new THREE.OrthographicCamera(-8, 8, 6, -6, 0.1, 500);",
+        perf="Negligible.",
+        modes=("scene",),
+        docs="docs/api/en/cameras/OrthographicCamera.html"),
+    "WebGLRenderer": _e(
+        "WebGL forward renderer (the vendored r152 backend).",
+        example="const renderer = new THREE.WebGLRenderer({ antialias: true });\n"
+                "renderer.setSize(640, 480);\n"
+                "renderer.shadowMap.enabled = true;\n"
+                "renderer.toneMapping = THREE.ACESFilmicToneMapping;",
+        perf="Draw calls dominate: batch/instance; shadow maps multiply cost.",
+        modes=("scene",),
+        docs="docs/api/en/renderers/WebGLRenderer.html"),
+    "Group": _e(
+        "Logical parent node; transform applies to all children.",
+        example="const g = new THREE.Group();\ng.add(mesh);\nscene.add(g);",
+        perf="Free (no draw call of its own).",
+        modes=("scene",),
+        docs="docs/api/en/objects/Group.html"),
+    "Mesh": _e(
+        "Renderable geometry + material pair.",
+        example="const mesh = new THREE.Mesh(geo, mat);\n"
+                "mesh.castShadow = true;\nscene.add(mesh);",
+        perf="One draw call each: prefer InstancedMesh past ~100 repeats.",
+        modes=("scene", "printer"),
+        docs="docs/api/en/objects/Mesh.html"),
+    "InstancedMesh": _e(
+        "One geometry+material drawn N times via instance matrices.",
+        example="const m = new THREE.InstancedMesh(geo, mat, count);\n"
+                "m.setMatrixAt(i, matrix);\nm.instanceMatrix.needsUpdate = true;",
+        perf="Single draw call for thousands of instances; use for forests/cities.",
+        modes=("scene",),
+        docs="docs/api/en/objects/InstancedMesh.html"),
+    "BoxGeometry": _e(
+        "Axis-aligned box (width, height, depth).",
+        example="new THREE.BoxGeometry(1.4, 1.0, 1.4)",
+        perf="Trivial.",
+        modes=("scene", "printer"),
+        docs="docs/api/en/geometries/BoxGeometry.html"),
+    "SphereGeometry": _e(
+        "UV sphere (radius, widthSeg, heightSeg).",
+        example="new THREE.SphereGeometry(0.6, 32, 32)",
+        perf="Segment count scales triangles quadratically.",
+        modes=("scene", "printer"),
+        docs="docs/api/en/geometries/SphereGeometry.html"),
+    "CylinderGeometry": _e(
+        "Cylinder/cone (radiusTop, radiusBottom, height, radialSeg).",
+        example="new THREE.CylinderGeometry(0.2, 0.26, 0.3, 32)",
+        perf="Trivial at 12-32 segments.",
+        modes=("scene", "printer"),
+        docs="docs/api/en/geometries/CylinderGeometry.html"),
+    "ConeGeometry": _e(
+        "Cone (radius, height, radialSeg).",
+        example="new THREE.ConeGeometry(0.5, 1.0, 32)",
+        perf="Trivial.",
+        modes=("scene", "printer"),
+        docs="docs/api/en/geometries/ConeGeometry.html"),
+    "TorusGeometry": _e(
+        "Torus (radius, tube, radialSeg, tubularSeg).",
+        example="new THREE.TorusGeometry(0.5, 0.2, 16, 100)",
+        perf="Tubular segments dominate triangle count.",
+        modes=("scene", "printer"),
+        docs="docs/api/en/geometries/TorusGeometry.html"),
+    "TorusKnotGeometry": _e(
+        "Pretzel knot (radius, tube, tubularSeg, radialSeg, p, q).",
+        example="new THREE.TorusKnotGeometry(0.62, 0.2, 128, 16, 2, 3)",
+        perf="128x16 = ~4k tris; one hero object is fine.",
+        modes=("scene",),
+        docs="docs/api/en/geometries/TorusKnotGeometry.html"),
+    "PlaneGeometry": _e(
+        "Subdivided plane (w, h, wSeg, hSeg); base for terrain displacement.",
+        example="new THREE.PlaneGeometry(40, 40, 96, 96)",
+        perf="96x96 = ~18k tris; fine as a single static mesh.",
+        modes=("scene", "printer"),
+        docs="docs/api/en/geometries/PlaneGeometry.html"),
+    "CircleGeometry": _e(
+        "Flat disc (radius, segments).",
+        example="new THREE.CircleGeometry(5, 48)",
+        perf="Trivial.",
+        modes=("scene",),
+        docs="docs/api/en/geometries/CircleGeometry.html"),
+    "RingGeometry": _e(
+        "Flat ring (inner, outer, thetaSeg).",
+        example="new THREE.RingGeometry(0.8, 1.0, 48)",
+        perf="Trivial.",
+        modes=("scene",),
+        docs="docs/api/en/geometries/RingGeometry.html"),
+    "BufferGeometry": _e(
+        "Raw geometry from BufferAttributes (positions, normals, uvs).",
+        example="const g = new THREE.BufferGeometry();\n"
+                "g.setAttribute('position', new THREE.Float32BufferAttribute(v, 3));",
+        perf="Most flexible; you own normals/index correctness.",
+        modes=("scene",),
+        docs="docs/api/en/core/BufferGeometry.html"),
+    "ExtrudeGeometry": _e(
+        "2D Shape extruded with depth/bevel options.",
+        example="const s = new THREE.Shape();\ns.moveTo(0,0);\ns.lineTo(1,0);\n"
+                "new THREE.ExtrudeGeometry(s, { depth: 0.2, bevelEnabled: false })",
+        perf="Curve sampling drives triangle count.",
+        modes=("scene",),
+        docs="docs/api/en/geometries/ExtrudeGeometry.html"),
+    "Shape": _e(
+        "2D path container for ExtrudeGeometry/ShapeGeometry.",
+        example="const s = new THREE.Shape();\ns.absarc(0, 0, 1, 0, Math.PI * 2);",
+        perf="Trivial.",
+        modes=("scene",),
+        docs="docs/api/en/extras/core/Shape.html"),
+    "MeshStandardMaterial": _e(
+        "PBR material (color, roughness, metalness, envMapIntensity).",
+        example="new THREE.MeshStandardMaterial({ color: 0x9c6b3f, roughness: 0.8, metalness: 0.0 })",
+        perf="Per-fragment cost; share instances across meshes.",
+        modes=("scene", "printer"),
+        docs="docs/api/en/materials/MeshStandardMaterial.html"),
+    "MeshBasicMaterial": _e(
+        "Unlit material (color, map, fog flag). Cheap sky/backdrops.",
+        example="new THREE.MeshBasicMaterial({ color: 0x87ceeb, fog: false })",
+        perf="Cheapest material; ignores lights.",
+        modes=("scene",),
+        docs="docs/api/en/materials/MeshBasicMaterial.html"),
+    "MeshPhysicalMaterial": _e(
+        "Extended PBR (clearcoat, transmission). r152 core.",
+        example="new THREE.MeshPhysicalMaterial({ color: 0x88ccff, roughness: 0.1, transmission: 0.5 })",
+        perf="Transmission needs a transmission pass; use sparingly.",
+        modes=("scene",),
+        docs="docs/api/en/materials/MeshPhysicalMaterial.html"),
+    "PointsMaterial": _e(
+        "Point-sprite material for Points clouds (size, sizeAttenuation).",
+        example="new THREE.PointsMaterial({ color: 0xffffff, size: 0.08 })",
+        perf="One draw call per cloud; bound counts via budgets.",
+        modes=("scene",),
+        docs="docs/api/en/materials/PointsMaterial.html"),
+    "ShaderMaterial": _e(
+        "Custom GLSL (vertexShader/fragmentShader/uniforms). Guard-reviewed only.",
+        example="new THREE.ShaderMaterial({ uniforms: { time: { value: 0 } },\n"
+                "  vertexShader: 'void main(){ gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',\n"
+                "  fragmentShader: 'void main(){ gl_FragColor = vec4(1.0); }' })",
+        perf="Custom cost; keep fragment math bounded.",
+        modes=("scene",),
+        docs="docs/api/en/materials/ShaderMaterial.html"),
+    "CanvasTexture": _e(
+        "Texture baked from a 2D canvas (gradients, noise, labels).",
+        example="const c = document.createElement('canvas');\n"
+                "const t = new THREE.CanvasTexture(c);",
+        perf="Upload once; reuse across materials.",
+        modes=("scene",),
+        docs="docs/api/en/textures/CanvasTexture.html"),
+    "AmbientLight": _e(
+        "Directionless base illumination.",
+        example="scene.add(new THREE.AmbientLight(0xffffff, 0.7));",
+        perf="Free.",
+        modes=("scene",),
+        docs="docs/api/en/lights/AmbientLight.html"),
+    "HemisphereLight": _e(
+        "Sky/ground gradient light.",
+        example="scene.add(new THREE.HemisphereLight(0xffffff, 0x223344, 0.9));",
+        perf="Free.",
+        modes=("scene",),
+        docs="docs/api/en/lights/HemisphereLight.html"),
+    "DirectionalLight": _e(
+        "Sun-like light with optional shadow camera.",
+        example="const d = new THREE.DirectionalLight(0xffffff, 1.4);\n"
+                "d.position.set(6, 10, 7);\nd.castShadow = true;\nscene.add(d);",
+        perf="Shadow-casting directionals cost a shadow pass each; use 1.",
+        modes=("scene",),
+        docs="docs/api/en/lights/DirectionalLight.html"),
+    "PointLight": _e(
+        "Omnidirectional point light (distance/decay falloff).",
+        example="scene.add(new THREE.PointLight(0xffaa55, 2.0, 20));",
+        perf="Each adds forward-pass cost; bound counts.",
+        modes=("scene",),
+        docs="docs/api/en/lights/PointLight.html"),
+    "SpotLight": _e(
+        "Cone light with penumbra/angle.",
+        example="const s = new THREE.SpotLight(0xffffff, 3.0, 30, 0.5, 0.4);",
+        perf="Like point lights; shadows cost extra.",
+        modes=("scene",),
+        docs="docs/api/en/lights/SpotLight.html"),
+    "Fog": _e(
+        "Linear distance fog (color, near, far). WebGL analogue of the TSL range fog.",
+        example="scene.fog = new THREE.Fog(0x4080cc, 2.7, 4);",
+        perf="Negligible (per-fragment mix).",
+        modes=("scene",),
+        docs="docs/api/en/scenes/Fog.html"),
+    "FogExp2": _e(
+        "Exponential height-style fog (color, density).",
+        example="scene.fog = new THREE.FogExp2(0x9db8d6, 0.028);",
+        perf="Negligible.",
+        modes=("scene",),
+        docs="docs/api/en/scenes/FogExp2.html"),
+    "Color": _e(
+        "Color value with color-space management.",
+        example="new THREE.Color(0x4080cc)",
+        perf="Trivial.",
+        modes=("scene",),
+        docs="docs/api/en/math/Color.html"),
+    "Clock": _e(
+        "Frame delta/elapsed timer for animation loops.",
+        example="const clock = new THREE.Clock();\n"
+                "const dt = clock.getDelta();",
+        perf="Trivial.",
+        modes=("scene",),
+        docs="docs/api/en/core/Clock.html"),
+    "AnimationMixer": _e(
+        "Skeletal/morph animation mixer (needs animated assets).",
+        example="const mixer = new THREE.AnimationMixer(model);",
+        perf="Per-active-mixer cost.",
+        modes=("scene",),
+        docs="docs/api/en/animation/AnimationMixer.html"),
+    "Raycaster": _e(
+        "Pointer picking (click/drag interaction).",
+        example="const r = new THREE.Raycaster();",
+        perf="Per-query cost; throttle pointermove.",
+        modes=("scene",),
+        docs="docs/api/en/core/Raycaster.html"),
+    "Points": _e(
+        "Point-cloud object (geometry + PointsMaterial).",
+        example="scene.add(new THREE.Points(geo, mat));",
+        perf="One draw call; bound counts.",
+        modes=("scene",),
+        docs="docs/api/en/objects/Points.html"),
+    "Float32BufferAttribute": _e(
+        "Typed float attribute for BufferGeometry.",
+        example="geo.setAttribute('position', new THREE.Float32BufferAttribute(arr, 3));",
+        perf="Upload once; DynamicDrawUsage for per-frame updates.",
+        modes=("scene",),
+        docs="docs/api/en/core/BufferAttribute.html"),
+    "PMREMGenerator": _e(
+        "Bakes equirect textures into scene.environment lighting.",
+        example="const pm = new THREE.PMREMGenerator(renderer);\n"
+                "scene.environment = pm.fromEquirectangular(tex).texture;",
+        perf="One-time bake; reuse the result.",
+        modes=("scene",),
+        docs="docs/api/en/extras/PMREMGenerator.html"),
+    "GridHelper": _e(
+        "Construction grid overlay (printer/viewer scenes).",
+        example="scene.add(new THREE.GridHelper(20, 20));",
+        perf="Trivial.",
+        modes=("scene",),
+        docs="docs/api/en/helpers/GridHelper.html"),
+    "MathUtils": _e(
+        "Seeded-random helpers live beside this (morphix uses its own mulberry32).",
+        example="THREE.MathUtils.clamp(v, 0, 1)",
+        perf="Trivial.",
+        modes=("scene",),
+        docs="docs/api/en/math/MathUtils.html"),
+}
+
+# APIs that exist ONLY outside the vendored r152 core (WebGPU-era core,
+# TSL, or examples/jsm addons). Referencing them with backend=webgl is an
+# explicit incompatibility error — never silently substituted.
+UNSUPPORTED = {
+    "WebGPURenderer": "WebGPU renderer (r163+); vendored r152 has no WebGPU support — use WebGLRenderer",
+    "TSL": "Three Shading Language nodes (r16x+); not in r152 — use ShaderMaterial/onBeforeCompile on WebGL",
+    "RenderPipeline": "WebGPU post-processing graph; not in r152 — use renderer tone mapping + fog on WebGL",
+    "pass": "TSL post-processing node; not in r152",
+    "rangeFogFactor": "TSL fog node; WebGL analogue is THREE.Fog(linear range)",
+    "OrbitControls": "examples/jsm addon, not in the core build; import from addons path with network access (allowed in UI scene.html via importmap, unavailable in the offline vendor harness)",
+    "EffectComposer": "examples/jsm addon, not in the core build",
+    "RenderPass": "examples/jsm addon, not in the core build",
+    "UnrealBloomPass": "examples/jsm addon, not in the core build",
+    "GLTFLoader": "examples/jsm addon + external asset fetch; generated scenes must be self-contained (procedural) unless the user supplies an asset URL",
+    "UltraHDRLoader": "examples/jsm addon + external HDRI fetch; WebGL analogue is a procedural equirect canvas + PMREMGenerator",
+    "three/tsl": "TSL module path; not in r152",
+    "three/webgpu": "WebGPU module path; not in r152",
+}
+
+
+# ------------------------------------------------------------------ queries
+def vendor_exports():
+    """Frozen export surface of the vendored build."""
+    return VENDOR_EXPORTS
+
+
+def entry(name):
+    """Curated metadata for a known API, or None."""
+    if name in CURATED:
+        return CURATED[name]
+    if name in VENDOR_EXPORTS:
+        return {"description": f"r152 core export (no curated notes yet).",
+                "since": "r152", "imports": ["three"], "dependencies": [],
+                "example": "", "performance": "", "modes": ["scene"],
+                "docs": ""}
+    return None
+
+
+def api_supported(name, backend="webgl"):
+    """(ok, reason). Unknown APIs and WebGPU-only APIs on a webgl backend
+    are rejected with an explicit reason — never fabricated or substituted."""
+    if name in UNSUPPORTED:
+        return False, f"{name}: {UNSUPPORTED[name]}"
+    if name in VENDOR_EXPORTS:
+        return True, "vendored r152 core"
+    return False, f"{name}: unknown Three.js API (not in vendored r152)"
+
+
+_TOKEN_THREE = re.compile(r"THREE\.([A-Za-z_][A-Za-z0-9_]*)")
+_TOKEN_NEW = re.compile(r"new\s+(?!THREE\b)([A-Z][A-Za-z0-9_]*)")
+# WebGPU-ism markers that must never pass as WebGL.
+_WEBGPU_MARKERS = ("three/tsl", "three/webgpu", "three.webgpu",
+                   "WebGPURenderer", "RenderPipeline", "rangeFogFactor")
+
+
+def check_js_apis(code, backend="webgl"):
+    """Scan generated JS for Three.js API references and validate each
+    against the knowledge index. Returns [error strings]."""
+    errs = []
+    if not isinstance(code, str) or not code.strip():
+        return ["empty scene code"]
+    for marker in _WEBGPU_MARKERS:
+        if marker in code and backend == "webgl":
+            errs.append(f"WebGPU-only API {marker!r} cannot run on the "
+                        f"WebGL r152 backend — use the documented WebGL "
+                        f"analogue")
+    seen = set(_TOKEN_THREE.findall(code)) | set(_TOKEN_NEW.findall(code))
+    skip = {"Math", "Object", "Array", "Float32Array", "Uint16Array",
+            "Uint32Array", "Promise", "Error", "JSON", "Date"}
+    for tok in sorted(seen):
+        if tok in skip:
+            continue
+        ok, reason = api_supported(tok, backend)
+        if not ok:
+            errs.append(f"API {tok}: {reason}")
+    return errs
+
+
+def printer_compatible_geometry():
+    """Geometry constructors that may appear in printer deposition paths."""
+    return ("BoxGeometry", "SphereGeometry", "CylinderGeometry",
+            "ConeGeometry", "TorusGeometry", "PlaneGeometry")

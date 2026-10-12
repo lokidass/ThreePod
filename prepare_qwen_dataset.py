@@ -11,12 +11,12 @@ def prepare_qwen_dataset(input_file="morphix_train.jsonl", output_file="qwen_tra
     """
     
     if not os.path.exists(input_file):
-        print(f"❌ {input_file} not found. Please run generate_dataset.py first.")
+        print(f"[ERROR] {input_file} not found. Please run generate_dataset.py first.")
         return
     
     converted_data = []
     
-    with open(input_file, 'r') as f:
+    with open(input_file, 'r', encoding='utf-8') as f:
         for i, line in enumerate(f):
             if max_samples and i >= max_samples:
                 break
@@ -47,15 +47,15 @@ def prepare_qwen_dataset(input_file="morphix_train.jsonl", output_file="qwen_tra
                 continue
     
     # Save in Qwen format
-    with open(output_file, 'w') as f:
+    with open(output_file, 'w', encoding='utf-8') as f:
         for item in converted_data:
             f.write(json.dumps(item, ensure_ascii=False) + '\n')
     
-    print(f"✅ Converted {len(converted_data)} samples to {output_file}")
+    print(f"[OK] Converted {len(converted_data)} samples to {output_file}")
     return converted_data
 
 if __name__ == "__main__":
-    # Convert training data
-    prepare_qwen_dataset("morphix_train.jsonl", "qwen_train.jsonl", max_samples=2000)
-    prepare_qwen_dataset("morphix_val.jsonl", "qwen_val.jsonl", max_samples=200)
-    prepare_qwen_dataset("morphix_test.jsonl", "qwen_test.jsonl", max_samples=200)
+    # Convert full dataset
+    prepare_qwen_dataset("morphix_train.jsonl", "qwen_train.jsonl", max_samples=None)
+    prepare_qwen_dataset("morphix_val.jsonl", "qwen_val.jsonl", max_samples=None)
+    prepare_qwen_dataset("morphix_test.jsonl", "qwen_test.jsonl", max_samples=None)

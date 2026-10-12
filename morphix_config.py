@@ -41,6 +41,11 @@ TIMEOUT = _env_int("MORPHIX_OLLAMA_TIMEOUT", 180)
 
 THINKER_MODEL = os.environ.get("MORPHIX_THINKER_MODEL", "deepseek-r1:1.5b")
 BUILDER_MODEL = os.environ.get("MORPHIX_BUILDER_MODEL", "qwen2.5-coder:7b")
+# Vision model used by semantic image->3D reconstruction (moondream/llava/...).
+# Empty means "auto-detect an installed vision model"; if none is installed the
+# reconstruction clearly reports that and falls back to a documented
+# demonstration template instead of pretending to measure the photo.
+VISION_MODEL = os.environ.get("MORPHIX_VISION_MODEL", "")
 BUILDER_MAX_RETRIES = _env_int("MORPHIX_BUILDER_RETRIES", 2)
 
 # Strict mode: the pipeline always uses the real DeepSeek + Qwen models and
@@ -58,6 +63,11 @@ class ModelUnavailableError(RuntimeError):
 
 class PipelineError(RuntimeError):
     """A run could not be completed under the strict real-models policy."""
+
+
+class Cancelled(RuntimeError):
+    """The user cancelled the run. Committed layers are preserved; no
+    further commits happen after cancellation is acknowledged."""
 
 
 def ollama_generate(model: str, system: str, prompt: str, timeout: int = None,

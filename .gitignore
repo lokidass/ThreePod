@@ -18,6 +18,9 @@ uploads/
 # Local Docker overrides (machine-specific)
 docker-compose.override.yml
 
+# Visual regression working renders (actuals + diffs, never baselines)
+tests/visual_geometry/.actual/
+
 # Model / training artifacts (huge)
 qwen7b_qlora_morphix/
 *.gguf

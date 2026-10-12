@@ -15,6 +15,8 @@
 #   GET  /api/jobs/<id>/events                   -> pollable JSON of events
 #   POST /api/generate ...                       -> sync run (kept for scripts)
 #   POST /api/image   (multipart)                -> image-to-3D run
+#   POST /api/scenes  {template|plan|prompt}     -> scene-mode 3D environment
+#   GET  /api/scene-templates                    -> tested template catalogue
 #   GET  /api/runs /api/runs/<id>                -> history / single run
 #   GET  /runs/<id>/scene.html|scene.js|actions.json|report.json
 
@@ -42,15 +44,19 @@ os.makedirs(RUNS_DIR, exist_ok=True)
 @app.get("/api/health")
 def health():
     models = ollama_models()
-    from morphix_config import model_ready
+    from morphix_config import model_ready, VISION_MODEL
+    from morphix_image import available_vision_model
     thinker_ready = model_ready(THINKER_MODEL)
     builder_ready = model_ready(BUILDER_MODEL)
+    vision = VISION_MODEL or available_vision_model()
     ready = thinker_ready and builder_ready
     return jsonify({
         "ollama": OLLAMA_HOST if models else "unreachable",
         "models": sorted(models),
         "thinker_model": THINKER_MODEL,
         "builder_model": BUILDER_MODEL,
+        "vision_model": vision,
+        "vision_ready": bool(vision),
         "thinker_ready": thinker_ready,
         "builder_ready": builder_ready,
         "ready": ready,
@@ -78,7 +84,7 @@ def api_jobs_create():
     prompt = body.get("prompt", "")
     if not prompt.strip():
         return jsonify({"error": "empty prompt"}), 400
-    builder = body.get("builder", "ollama")
+    builder = body.get("builder", "lora")
     if builder not in ("ollama", "lora"):
         return jsonify({"error": f"bad builder {builder!r}; "
                                  "deployment policy requires a real model "
@@ -88,9 +94,19 @@ def api_jobs_create():
     cap = int(body.get("cap", 24))
     builder_model = body.get("builder_model") or BUILDER_MODEL
     thinker_model = body.get("thinker_model") or THINKER_MODEL
+    mode = body.get("mode", "primitive")
+    if mode not in ("primitive", "path"):
+        return jsonify({"error": f"bad mode {mode!r}; "
+                                  "expected 'primitive' | 'path'"}), 400
+    guided = bool(body.get("guided", False))
+    try:
+        vision_every = int(body.get("vision_every", 5))
+    except (TypeError, ValueError):
+        vision_every = 5
     job_id, out_dir = create_job(
         prompt, builder, builder_model, thinker_model,
-        incremental, max_steps, cap)
+        incremental, max_steps, cap, mode=mode, guided=guided,
+        vision_every=vision_every)
     return jsonify({"job_id": job_id, "run_id": job_id,
                     "stream": f"/api/jobs/{job_id}/stream"})
 
@@ -103,6 +119,7 @@ def api_jobs_get(job_id):
     info = job.snapshot()
     return jsonify({"job_id": job_id, "done": info["done"],
                     "error": info["error"], "result": info["result"],
+                    "cancelled": info["cancelled"],
                     "event_count": len(info["events"])})
 
 
@@ -136,8 +153,22 @@ def api_jobs_events(job_id):
     info = job.snapshot()
     return jsonify({"job_id": job_id, "done": info["done"],
                     "error": info["error"],
+                    "cancelled": info["cancelled"],
                     "events": info["events"],
                     "result": info["result"]})
+
+
+@app.post("/api/jobs/<job_id>/cancel")
+def api_jobs_cancel(job_id):
+    """Ask a running job to stop. The worker checks between steps; already
+    committed layers are preserved and the partial scene stays viewable."""
+    job = get_job(job_id)
+    if job is None:
+        return jsonify({"error": "unknown job"}), 404
+    if job.done:
+        return jsonify({"error": "job already finished"}), 409
+    job.request_cancel()
+    return jsonify({"job_id": job_id, "cancelled": True})
 
 
 # ------------------------------------------------ sync run (for tooling)
@@ -147,7 +178,7 @@ def api_generate():
     prompt = body.get("prompt", "")
     if not prompt.strip():
         return jsonify({"error": "empty prompt"}), 400
-    builder = body.get("builder", "ollama")
+    builder = body.get("builder", "lora")
     if builder not in ("ollama", "lora"):
         return jsonify({"error": f"bad builder {builder!r}"}), 400
     run_id = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -204,7 +235,8 @@ def api_run(run_id):
 
 @app.get("/runs/<run_id>/<fname>")
 def run_file(run_id, fname):
-    if fname not in ("scene.html", "scene.js", "actions.json", "report.json"):
+    if fname not in ("scene.html", "scene.js", "actions.json", "report.json",
+                     "scene_ir.json"):
         return jsonify({"error": "not found"}), 404
     return send_from_directory(os.path.join(RUNS_DIR, run_id), fname)
 
@@ -217,30 +249,151 @@ os.makedirs(UPLOADS_DIR, exist_ok=True)
 @app.post("/api/image")
 def api_image():
     from werkzeug.utils import secure_filename
-    from morphix_image import run_image
     f = request.files.get("image")
     if f is None or not f.filename:
         return jsonify({"error": "no image uploaded"}), 400
-    grid = max(4, min(24, int(request.form.get("grid", 12))))
     mode = request.form.get("mode", "relief")
-    if mode not in ("relief", "mosaic"):
-        return jsonify({"error": "bad mode"}), 400
+    if mode not in ("relief", "mosaic", "reconstruct"):
+        return jsonify({"error": "bad mode (relief | mosaic | reconstruct)"}), 400
     stamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     src = os.path.join(UPLOADS_DIR, f"{stamp}_{secure_filename(f.filename)}")
     f.save(src)
     out_dir = os.path.join(RUNS_DIR, stamp)
+
+    if mode == "reconstruct":
+        # Semantic image -> 3D object (canonical IR -> printer paths).
+        from morphix_reconstruct import VisionError, run_reconstruction
+        category = (request.form.get("category") or "").strip() or None
+        vision_model = (request.form.get("vision_model") or "").strip()
+        try:
+            report = run_reconstruction(src, out_dir, category=category,
+                                        vision_model=vision_model)
+        except VisionError as e:
+            # The vision answer was not trustworthy enough to build geometry.
+            # Ask the client to have the user pick the category explicitly
+            # instead of silently substituting a different one.
+            return jsonify({"error": str(e), **e.info}), 422
+        except Exception as e:
+            return jsonify({"error": f"semantic reconstruction failed: {e}"}), 500
+        actions = json.load(open(os.path.join(out_dir, "actions.json"),
+                                 encoding="utf-8"))
+        scene_js = open(os.path.join(out_dir, "scene.js"),
+                        encoding="utf-8").read()
+        return jsonify({"run_id": stamp, "mode": "reconstruct",
+                        "actions": actions, "scene_js": scene_js,
+                        "report": report,
+                        "ir": report.get("ir"),
+                        "warnings": report.get("warnings", [])})
+
+    from morphix_image import run_image
+    grid = max(4, min(24, int(request.form.get("grid", 12))))
     try:
         report = run_image(src, out_dir, grid, mode)
     except Exception as e:
         return jsonify({"error": f"image pipeline failed: {e}"}), 500
     actions = json.load(open(os.path.join(out_dir, "actions.json"), encoding="utf-8"))
     scene_js = open(os.path.join(out_dir, "scene.js"), encoding="utf-8").read()
-    resp = {"run_id": stamp, "actions": actions,
+    resp = {"run_id": stamp, "mode": f"image-{mode}", "actions": actions,
             "scene_js": scene_js, "report": report}
     if request.form.get("describe") == "1":
         from morphix_image import describe_image
         resp["description"] = describe_image(src) or "(no vision model)"
     return jsonify(resp)
+
+
+# ------------------------------------------------- scene mode (Phase 3)
+# Rich interactive Three.js environments. Explicitly NOT the printer
+# pipeline: no slicing, no deposition, no component accounting — scene
+# graphs, materials, fog, instancing, animation and renderer selection.
+@app.get("/api/scene-templates")
+def api_scene_templates():
+    from morphix_scene_ir import summarize
+    from morphix_scene_templates import TEMPLATE_NAMES, build
+    catalogue = []
+    for name in TEMPLATE_NAMES:
+        try:
+            catalogue.append({"name": name, **summarize(build(name))})
+        except ValueError as e:
+            catalogue.append({"name": name, "error": str(e)})
+    return jsonify({"templates": catalogue,
+                    "backend": "webgl", "three_revision": "152"})
+
+
+@app.post("/api/scenes")
+def api_scenes():
+    from morphix_config import PipelineError
+    from morphix_scene_compile import (compile_scene_ir, scene_html,
+                                       validate_scene_js)
+    from morphix_scene_ir import ir_from_json, summarize, validate_scene_ir
+    body = request.get_json(force=True) or {}
+    seed = body.get("seed", 11)
+    try:
+        seed = int(seed)
+    except (TypeError, ValueError):
+        return jsonify({"error": "seed must be an integer"}), 400
+    try:
+        if body.get("template"):
+            from morphix_scene_templates import build
+            try:
+                ir = build(body["template"], seed=seed)
+            except KeyError as e:
+                return jsonify({"error": str(e)}), 400
+            plan = {"templates": [body["template"]], "seed": seed,
+                    "backend": "webgl", "source": "template-direct"}
+        elif body.get("plan"):
+            from morphix_scene_plan import plan_to_scene_ir
+            plan = body["plan"]
+            ir = plan_to_scene_ir(plan)
+            plan = {**plan, "source": "client-plan"}
+        elif (body.get("prompt") or "").strip():
+            from morphix_scene_plan import plan_scene, plan_to_scene_ir
+            plan = plan_scene(body["prompt"],
+                              body.get("thinker_model") or THINKER_MODEL)
+            ir = plan_to_scene_ir(plan)
+            plan = {**plan, "source": "thinker"}
+        else:
+            return jsonify({"error": "give one of: template | plan | "
+                                     "prompt"}), 400
+        errs = validate_scene_ir(ir)
+        if errs:
+            return jsonify({"error": "scene IR invalid: " + "; ".join(errs),
+                            "plan": plan}), 422
+        scene_js = compile_scene_ir(ir)
+        js_errs = validate_scene_js(scene_js)
+        if js_errs:
+            return jsonify({"error": "scene JS invalid: " + "; ".join(js_errs),
+                            "plan": plan}), 422
+    except PipelineError as e:
+        return jsonify({"error": str(e)}), 422
+    except (ValueError, KeyError) as e:
+        return jsonify({"error": str(e)}), 422
+    except Exception as e:
+        return jsonify({"error": f"scene generation failed: {e}"}), 500
+    stamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    out_dir = os.path.join(RUNS_DIR, stamp)
+    os.makedirs(out_dir, exist_ok=True)
+    with open(os.path.join(out_dir, "scene.js"), "w",
+              encoding="utf-8") as f:
+        f.write(scene_js)
+    with open(os.path.join(out_dir, "scene.html"), "w",
+              encoding="utf-8") as f:
+        f.write(scene_html(scene_js, title=f"Morphix scene — {stamp}"))
+    with open(os.path.join(out_dir, "scene_ir.json"), "w",
+              encoding="utf-8") as f:
+        f.write(json.dumps(ir, indent=2, sort_keys=True))
+    summary = summarize(ir)
+    report = {"ok": True, "mode": "scene", "plan": plan,
+              "summary": summary, "backend": "webgl",
+              "three_revision": "152",
+              "validation": {"ir_errors": [], "js_errors": []}}
+    with open(os.path.join(out_dir, "report.json"), "w",
+              encoding="utf-8") as f:
+        json.dump(report, f, indent=2)
+    with open(os.path.join(out_dir, "actions.json"), "w",
+              encoding="utf-8") as f:
+        json.dump([], f)
+    return jsonify({"run_id": stamp, "mode": "scene", "scene_js": scene_js,
+                    "ir": summary, "report": report})
 
 
 @app.get("/")

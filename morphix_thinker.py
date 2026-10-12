@@ -47,7 +47,10 @@ Rules:
 - Numbers are JSON numbers, never strings. intensity is a number like 2.5.
 - Word mapping: ring/donut -> add_torus, ball/head -> add_sphere, sun/lamp -> add_light, glow -> add_shader fresnel.
 - Labels must be unique snake_case with a short uid suffix (e.g. sphere_a1b2c3).
-- Positions sit on/above the ground (y >= 0). Keep 1-8 actions for simple
+- position is the object's CENTER: rest objects on the ground with
+  y = half their height (a 0.4-tall box sits at y=0.2, a radius-0.5 sphere
+  at y=0.5). Nothing may sink below y=0 or float in mid-air.
+- Keep 1-8 actions for simple
   scenes, up to 16 for complex ones (house, figure, landscape).
 - Complex scenes are BUILT UP in dependency order: foundation -> walls ->
   roof -> door/windows -> lights. Use on_top_of stacking where heights depend
@@ -183,13 +186,61 @@ def rule_based_plan(prompt: str) -> list:
     return actions
 
 
-def think(prompt: str, model: str = THINKER_MODEL) -> tuple:
+# ------------------------------------------------------- goal coverage
+# Maps prompt keywords to the component tokens a finished scene must contain.
+# Used to steer every incremental step toward the final goal (and to refuse a
+# premature "done"). Matching is substring-based over action names + labels,
+# so it guides rather than hard-gates: synonyms never fail a run by themselves.
+_GOAL_PARTS = [
+    (("house", "building", "cabin", "hut"), ["foundation", "wall", "roof", "door", "window"]),
+    (("tower",), ["base", "shaft", "top"]),
+    (("chair",), ["seat", "leg", "back"]),
+    (("table",), ["top", "leg"]),
+    (("robot",), ["body", "arm", "head", "leg"]),
+    (("tree",), ["trunk", "leaves"]),
+    (("fence",), ["fence"]),
+    (("bridge",), ["deck", "pillar", "arch"]),
+    (("ring", "donut"), ["torus", "ring"]),
+    (("car", "vehicle"), ["body", "wheel"]),
+    (("sun", "lamp", "light"), ["light"]),
+    (("glow", "shader", "fresnel", "neon", "sign"), ["glow", "shader"]),
+    (("snow", "rain", "spark", "particle", "star"), ["particle"]),
+]
+
+
+def goal_parts(prompt: str) -> list:
+    """Ordered, de-duplicated component tokens the goal implies. [] when the
+    prompt matches nothing known (no constraint)."""
+    p = prompt.lower()
+    parts = []
+    for keywords, tokens in _GOAL_PARTS:
+        if any(k in p for k in keywords):
+            for t in tokens:
+                if t not in parts:
+                    parts.append(t)
+    return parts
+
+
+def goal_coverage(parts: list, actions: list) -> tuple:
+    """Split `parts` into (covered, missing) given committed actions. A part
+    counts as covered when it appears in an action name or label."""
+    covered, missing = [], []
+    for part in parts:
+        hit = any(part in str(a.get("action", "")).lower()
+                  or part in str(a.get("label", "")).lower()
+                  for a in actions if isinstance(a, dict))
+        (covered if hit else missing).append(part)
+    return covered, missing
+
+
+def think(prompt: str, model: str = THINKER_MODEL, options: dict = None) -> tuple:
     """Return (actions, status). In strict mode a model failure raises
     ModelUnavailableError instead of silently using the rule planner."""
     try:
         raw = ollama_generate(model, THINKER_SYSTEM, prompt,
-                              options={"temperature": 0.0, "num_ctx": 4096,
-                                       "num_predict": 3000})
+                              options=options or {"temperature": 0.0,
+                                                  "num_ctx": 4096,
+                                                  "num_predict": 3000})
         actions = _extract_json_array(raw)
         if not isinstance(actions, list) or not actions:
             raise ValueError("empty action list")
@@ -197,7 +248,9 @@ def think(prompt: str, model: str = THINKER_MODEL) -> tuple:
         actions = [a for a in actions if isinstance(a, dict)
                    and a.get("action") in ALLOWED_ACTIONS][:16]
         if not actions:
-            raise ValueError("no allowed actions")
+            raise ValueError(
+                "no allowed actions in thinker output "
+                f"(first 300 chars: {raw[:300]!r})")
         return actions, f"MODEL {model}"
     except Exception as e:
         if STRICT_MODELS:
@@ -246,7 +299,8 @@ def _extract_json_object(text: str) -> dict:
     raise ValueError("no valid JSON object in thinker output")
 
 
-def think_plan(goal: str, model: str = THINKER_MODEL, _retried=False) -> tuple:
+def think_plan(goal: str, model: str = THINKER_MODEL, options: dict = None,
+               _retried=False) -> tuple:
     """Decide the incremental step budget with the real model.
 
     A bare "how many steps?" question makes DeepSeek-R1 loop in its reasoning
@@ -255,14 +309,14 @@ def think_plan(goal: str, model: str = THINKER_MODEL, _retried=False) -> tuple:
     actions it produced as the budget. Real model, no rule fallback; a failed
     or empty plan raises in strict mode."""
     try:
-        actions, _status = think(goal, model)
+        actions, _status = think(goal, model, options=options)
         n = len(actions)
         if not (1 <= n <= 24):
             raise ValueError(f"planner returned {n} actions")
         return max(2, min(16, n)), f"MODEL {model}"
     except Exception as e:
         if not _retried:
-            return think_plan(goal, model, _retried=True)
+            return think_plan(goal, model, options=options, _retried=True)
         if STRICT_MODELS:
             raise ModelUnavailableError(
                 f"thinker model {model!r} could not budget the plan: {e}") from e
@@ -272,7 +326,7 @@ def think_plan(goal: str, model: str = THINKER_MODEL, _retried=False) -> tuple:
 
 def think_next(goal: str, state_summary: str, step: int,
                feedback: str = "", model: str = THINKER_MODEL,
-               _retried=False) -> tuple:
+               options: dict = None, _retried=False) -> tuple:
     """Propose ONE next action conditioned on live scene state.
     Returns (action, status) where action may be {"action":"done"}.
     A network outage of the real model is fatal in strict mode; an unparseable
@@ -288,17 +342,22 @@ def think_next(goal: str, state_summary: str, step: int,
                 "- use a brand-new snake_case label that is NOT already in the "
                 "current scene above;\n"
                 "- place new geometry beside or on top of existing parts, never "
-                "overlapping them (or add a light/shader which has no footprint).\n"
+                "overlapping them (or add a light/shader which has no footprint);\n"
+                "- build like a 3D printer from the origin: the FIRST piece must "
+                "cover [0,0,0] and rest on the ground (y=0); every later piece "
+                "must rest on the ground or directly on existing geometry — "
+                "nothing floats in mid-air (use \"on_top_of\" to stack).\n"
                 "Next single action as ONE JSON object:")
     try:
         raw = ollama_generate(model, THINK_NEXT_SYSTEM, prompt,
-                              options={"temperature": 0.0, "num_ctx": 4096,
-                                       "num_predict": 1500})
+                              options=options or {"temperature": 0.0,
+                                                  "num_ctx": 4096,
+                                                  "num_predict": 1500})
     except Exception as e:
         # unreachable / timed-out model is a real outage, not a bad answer
         if not _retried:
             return think_next(goal, state_summary, step, feedback, model,
-                              _retried=True)
+                              options=options, _retried=True)
         if STRICT_MODELS:
             raise ModelUnavailableError(
                 f"thinker model {model!r} unreachable at step {step}: {e}") from e
@@ -311,7 +370,7 @@ def think_next(goal: str, state_summary: str, step: int,
         # reachable model, unusable reply: hand it to the loop as a rejection
         if not _retried:
             return think_next(goal, state_summary, step, feedback, model,
-                              _retried=True)
+                              options=options, _retried=True)
         return ({"action": None,
                  "_error": f"unparseable model output ({e})",
                  "_raw": (raw or "")[:200]},

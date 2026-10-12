@@ -30,6 +30,19 @@ def available_vision_model():
     return ""
 
 
+def vision_model_supports_images(name: str) -> bool:
+    """True only for models known to accept image inputs.
+
+    A text-only model (e.g. a coder LLM) must never be handed an image and
+    assumed to have looked at it; the caller reports that clearly instead.
+    """
+    n = (name or "").strip().lower()
+    if not n:
+        return False
+    return any(n.split(":")[0] == vm or n.startswith(vm)
+               for vm in VISION_MODELS)
+
+
 def describe_image(path: str, model: str = "") -> str:
     """Ask a vision model to describe the image as a 3D scene prompt."""
     model = model or available_vision_model()

@@ -18,6 +18,11 @@ GROUND_Y = 0.0
 BOUND_XZ = 25.0
 MAX_Y = 30.0
 ATTACH_DIST = 6.0  # printer-style: new physical parts must grow near existing geometry
+ORIGIN_TOL = 2.0   # first piece must start at the origin (horizontal dist)
+SUPPORT_TOL = 0.6  # new piece's base must rest on ground/support within this gap
+SINK_TOL = 0.1     # ... and may not sink below the ground by more than this
+# Terrain IS landscape ground: exempt from origin/support/sink placement rules.
+_GROUND_LIKE = {"add_terrain"}
 _NO_FOOTPRINT = {"add_light", "add_shader", "add_particles", "add_animation",
                  "add_post", "add_environment", "set_material"}
 
@@ -107,6 +112,12 @@ class SceneState:
     def labels(self) -> set:
         return {o["label"] for o in self.objects}
 
+    def has_physical(self) -> bool:
+        """True once real geometry exists. Non-physical commits (lights,
+        shaders) must not waive the start-at-origin rule for the first
+        physical piece."""
+        return any(o["aabb"] is not None for o in self.objects)
+
     def get(self, label: str):
         for o in self.objects:
             if o["label"] == label:
@@ -159,6 +170,21 @@ class SceneState:
             return None
         cands.sort(key=lambda t: t[0])
         return cands[0][1]
+
+    def support_y(self, aabb: dict) -> float:
+        """Highest support surface beneath a footprint: the max top of objects
+        whose XZ footprint overlaps it, else the ground. A new piece must rest
+        on this height (within SUPPORT_TOL) — nothing floats in mid-air."""
+        top = GROUND_Y
+        mn, mx = aabb["min"], aabb["max"]
+        for o in self.objects:
+            if o["aabb"] is None:
+                continue
+            omn, omx = o["aabb"]["min"], o["aabb"]["max"]
+            if mn[0] < omx[0] and omn[0] < mx[0] \
+                    and mn[2] < omx[2] and omn[2] < mx[2]:
+                top = max(top, omx[1])
+        return top
 
     def nearest_dist(self, pos: list) -> float:
         """Distance from pos to the closest existing physical object (inf if empty)."""
@@ -216,7 +242,9 @@ class SceneState:
     def summary(self) -> str:
         head = f"Print head at {self.head} — grow the next piece from here."
         if not self.objects:
-            return f"Scene is empty. Ground is y=0. {head}"
+            return (f"Scene is empty. Ground is y=0. {head} "
+                    f"Start printing at the origin: the first piece must "
+                    f"cover [0,0,0] and rest on the ground.")
         lines = []
         for o in self.objects:
             if o["aabb"] is None:

@@ -13,53 +13,106 @@
 </header>
 <main>
   <section id="controls">
-    <label>Scene prompt
-      <textarea id="prompt" rows="3">a blue box with a sphere on top</textarea>
+    <label>Generation mode
+      <select id="genmode">
+        <option value="text" selected>Text → 3D (printer builds from a prompt)</option>
+        <option value="scene">Scene → 3D environment (rich interactive world)</option>
+        <option value="image_semantic">Image → 3D object (semantic reconstruction)</option>
+        <option value="image_relief">Image relief (heightmap / mosaic)</option>
+      </select>
     </label>
-    <div class="row">
-      <label>Builder (real model)
-        <select id="builder">
-          <option value="ollama" selected>qwen2.5-coder:7b (ollama)</option>
-          <option value="lora">lora gpu (fine-tuned qwen)</option>
-        </select>
+
+    <div id="text-controls">
+      <label>Scene prompt
+        <textarea id="prompt" rows="3">a blue box with a sphere on top</textarea>
       </label>
-      <label>Thinker (real model)
-        <select id="thinker">
-          <option value="deepseek-r1:1.5b" selected>deepseek-r1:1.5b</option>
-          <option value="morphix-thinker">morphix-thinker</option>
-        </select>
+      <div class="row">
+        <label>Builder (real model)
+          <select id="builder">
+            <option value="lora">lora (fine-tuned qwen — needs free VRAM)</option>
+            <option value="ollama" selected>qwen2.5-coder:7b (ollama)</option>
+          </select>
+        </label>
+        <label>Thinker (real model)
+          <select id="thinker">
+            <option value="deepseek-r1:1.5b" selected>deepseek-r1:1.5b</option>
+            <option value="morphix-thinker">morphix-thinker</option>
+          </select>
+        </label>
+      </div>
+      <div class="row">
+        <label class="check"><input type="checkbox" id="incremental" checked> incremental (layer-by-layer print)</label>
+        <label>Steps <span class="auto">auto · decided by thinker (cap 24)</span></label>
+      </div>
+      <button id="generate">Generate scene</button>
+      <button id="printpath">Print path</button>
+      <label class="check"><input type="checkbox" id="guided"> guided (per-step AI, slow)</label>
+      <label>👁 every <input type="number" id="visionevery" min="0" max="50" value="5" style="width:3em"> deposits</label>
+    </div>
+
+    <div id="scene-controls" hidden>
+      <label>Scene template
+        <select id="scenetemplate"><option value="">— loading catalogue —</option></select>
       </label>
+      <div class="row">
+        <label>Seed <input id="sceneseed" type="number" value="11" style="width:5em"></label>
+        <label>Describe instead (optional, uses thinker)
+          <input id="sceneprompt" placeholder="misty forest at dusk" size="24">
+        </label>
+      </div>
+      <button id="genscene">Generate environment</button>
+      <p class="dim">Scene mode builds rich interactive worlds (fog, instancing,
+      water, animation) on WebGL — it never touches the printer deposition
+      pipeline. Backend: <b>webgl · three r152</b>.</p>
+      <div id="scenecap" class="status"></div>
     </div>
-    <div class="row">
-      <label class="check"><input type="checkbox" id="incremental" checked> incremental</label>
-      <label>Steps <span class="auto">auto · decided by thinker (cap 24)</span></label>
+
+    <div id="image-controls" hidden>
+      <label>Reference photo
+        <input type="file" id="imgfile" accept="image/*">
+      </label>
+      <img id="imgprev" alt="">
+
+      <div id="img-options-semantic">
+        <div class="row">
+          <label>Category (optional override)
+            <input id="imgcategory" placeholder="auto-detect" size="10">
+          </label>
+          <label>Vision model
+            <input id="visionmodel" placeholder="auto" style="width:9em">
+          </label>
+        </div>
+        <button id="reconstruct">Reconstruct object → 3D</button>
+        <p class="dim">Semantic: identifies the object and prints named parts
+        (body, wheels…). It is not a heightmap, and it will say so if no vision
+        model is configured.</p>
+      </div>
+
+      <div id="img-options-relief" hidden>
+        <div class="row">
+          <label>Grid
+            <select id="imggrid">
+              <option value="8">8×8</option>
+              <option value="12" selected>12×12</option>
+              <option value="16">16×16</option>
+            </select>
+          </label>
+          <label>Mode
+            <select id="imgmode">
+              <option value="relief">relief</option>
+              <option value="mosaic">mosaic</option>
+            </select>
+          </label>
+        </div>
+        <button id="printimg">Print image relief</button>
+        <label class="check"><input type="checkbox" id="imgdesc"> describe with vision model</label>
+      </div>
+      <div id="imgcap" class="status"></div>
     </div>
-    <button id="generate">Generate scene</button>
+
+    <button id="stop" disabled>Stop</button>
     <div id="status" class="status">every step is streamed live and validated</div>
     <label>History <select id="history"><option value="">— runs —</option></select></label>
-    <hr>
-    <label>Image → 3D print
-      <input type="file" id="imgfile" accept="image/*">
-    </label>
-    <img id="imgprev" alt="">
-    <div class="row">
-      <label>Grid
-        <select id="imggrid">
-          <option value="8">8×8</option>
-          <option value="12" selected>12×12</option>
-          <option value="16">16×16</option>
-        </select>
-      </label>
-      <label>Mode
-        <select id="imgmode">
-          <option value="relief">relief</option>
-          <option value="mosaic">mosaic</option>
-        </select>
-      </label>
-    </div>
-    <button id="printimg">Print image to 3D</button>
-    <label class="check"><input type="checkbox" id="imgdesc"> describe with vision model</label>
-    <div id="imgcap" class="status"></div>
   </section>
   <section id="viewer">
     <div id="verdict" class="verdict">no run yet — validator idle</div>

@@ -13,7 +13,11 @@
 #   python train_qwen7b_qlora.py --max_seq_len 512   # cheaper/faster steps, more truncation
 
 import os
-os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
+os.environ["USE_TF"] = "0"
+os.environ["USE_FLAX"] = "0"
+os.environ["USE_TORCH"] = "1"
+os.environ["HF_HUB_DISABLE_SYMLINKS_WARNING"] = "1"
+os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "max_split_size_mb:128"
 os.environ["BITSANDBYTES_NOWELCOME"] = "1"
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
@@ -36,12 +40,12 @@ from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
 
 # ---------------------------------------------------------------- config
 CONFIG = {
-    "model_name": "Qwen/Qwen2.5-Coder-7B",   # already cached locally; keep as-is
+    "model_name": "Qwen/Qwen2.5-Coder-7B-Instruct",   # Instruct base already knows <|im_end|> stop; far less run-on
     "train_file": "qwen_train_clean.jsonl",
     "val_file": "qwen_val_clean.jsonl",
     "output_dir": "./qwen7b_qlora_morphix",
     "max_seq_len": 1024,     # covers ~90% of examples fully; dynamic padding keeps short ones cheap
-    "epochs": 1,
+    "epochs": 3,             # 1 epoch underfits stop token (125 steps); 3 teaches EOS reliably
     "batch_size": 1,
     "grad_accum": 16,        # effective batch = 16
     "lr": 2e-4,
@@ -50,6 +54,8 @@ CONFIG = {
     "lora_dropout": 0.05,
     "save_steps": 25,        # frequent -> safe stop/resume on a long run
     "logging_steps": 2,
+    "eval_steps": 25,
+    "seed": 42,
 }
 
 
@@ -66,8 +72,16 @@ def parse_args():
 
 # ---------------------------------------------------------------- data
 def load_examples(path, tok, max_len, max_samples=-1):
-    """Build input_ids/labels with completion-only loss masking (prompt tokens = -100)."""
-    kept, dropped_no_completion = [], 0
+    """Build input_ids/labels with completion-only loss masking (prompt tokens = -100).
+
+    Anti-hallucination rule: NEVER train on truncated completions. The old code
+    kept (p+c)[:max_len] even when the cut removed the trailing <|im_end|>,
+    teaching the model that code can end without a stop token -> run-on
+    loops (NdrFc / {lng...) at inference. Now any example whose full
+    prompt+completion exceeds max_len is dropped, so every label sequence the
+    model sees ends with a real stop token.
+    """
+    kept, dropped_no_completion, dropped_truncated = [], 0, 0
     with open(path, "r", encoding="utf-8") as f:
         for i, line in enumerate(f):
             if max_samples > 0 and i >= max_samples:
@@ -96,8 +110,16 @@ def load_examples(path, tok, max_len, max_samples=-1):
             p_ids = tok(prompt, add_special_tokens=False)["input_ids"]
             c_ids = tok(completion, add_special_tokens=False)["input_ids"]
 
-            input_ids = (p_ids + c_ids)[:max_len]
-            labels = ([-100] * len(p_ids) + c_ids)[:max_len]
+            # strict: drop anything that would not fit intact (prompt or stop lost)
+            if len(p_ids) + len(c_ids) > max_len:
+                if len(p_ids) >= max_len:
+                    dropped_no_completion += 1
+                else:
+                    dropped_truncated += 1
+                continue
+
+            input_ids = p_ids + c_ids
+            labels = ([-100] * len(p_ids) + c_ids)
 
             # if truncation ate the whole completion, the example teaches nothing -> drop
             if all(t == -100 for t in labels):
@@ -109,7 +131,9 @@ def load_examples(path, tok, max_len, max_samples=-1):
                 "labels": labels,
                 "attention_mask": [1] * len(input_ids),
             })
-    print(f"  {path}: {len(kept)} usable examples ({dropped_no_completion} dropped: prompt exceeded max_len)")
+    print(f"  {path}: {len(kept)} usable examples "
+          f"({dropped_no_completion} dropped: prompt exceeded max_len; "
+          f"{dropped_truncated} dropped: completion would lose <|im_end|>)")
     return Dataset.from_list(kept)
 
 
@@ -164,6 +188,7 @@ def main():
         quantization_config=bnb,
         device_map={"": 0},
         torch_dtype=torch.bfloat16,
+        low_cpu_mem_usage=True,
         trust_remote_code=True,
     )
     model.config.use_cache = False
@@ -191,10 +216,12 @@ def main():
         num_train_epochs=args.epochs,
         max_steps=args.max_steps,
         per_device_train_batch_size=CONFIG["batch_size"],
+        per_device_eval_batch_size=CONFIG["batch_size"],
         gradient_accumulation_steps=args.grad_accum,
         learning_rate=CONFIG["lr"],
         lr_scheduler_type="cosine",
         warmup_ratio=0.03,
+        weight_decay=0.01,
         bf16=True,
         fp16=False,
         gradient_checkpointing=True,
@@ -204,6 +231,12 @@ def main():
         logging_steps=CONFIG["logging_steps"],
         save_steps=CONFIG["save_steps"],
         save_total_limit=3,
+        eval_strategy="steps",
+        eval_steps=CONFIG["eval_steps"],
+        load_best_model_at_end=True,       # keep lowest-eval-loss adapter, not last
+        metric_for_best_model="eval_loss",
+        greater_is_better=False,
+        seed=CONFIG["seed"],
         report_to="none",
         remove_unused_columns=False,
         dataloader_num_workers=0,          # safest on Windows
@@ -214,6 +247,7 @@ def main():
         model=model,
         args=targs,
         train_dataset=train_ds,
+        eval_dataset=eval_ds,
         data_collator=collator,
         callbacks=[StepTimer()],
     )

@@ -15,9 +15,29 @@ import json
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 from peft import PeftModel
+from morphix_guard import enforce
 
-BASE = "Qwen/Qwen2.5-Coder-7B"
+BASE = "Qwen/Qwen2.5-Coder-7B-Instruct"  # default for newly trained adapters (see train_qwen7b_qlora.py)
 ADAPTER = "./qwen7b_qlora_morphix/final_adapter"
+
+
+def resolve_base():
+    """Use the base recorded in the trained adapter when present.
+
+    The old final_adapter was trained on Qwen2.5-Coder-7B (non-Instruct);
+    forcing Instruct underneath it would mismatch. New retrains use Instruct.
+    """
+    import os as _os
+    cfg = _os.path.join(ADAPTER, "adapter_config.json")
+    try:
+        if _os.path.isfile(cfg):
+            with open(cfg, encoding="utf-8") as f:
+                base = json.load(f).get("base_model_name_or_path")
+            if base:
+                return base
+    except Exception:
+        pass
+    return BASE
 
 SYSTEM = (
     "You are Morphix Builder — a Three.js 3D printer agent.\n"
@@ -40,17 +60,48 @@ SAMPLES = [
 ]
 
 
+def clean_js(text: str) -> str:
+    """Truncate run-on generation to the last valid JS terminator.
+
+    The adapter (125 steps on the non-Instruct base) learned the code pattern
+    but not a strong <|im_end|> stop, so greedy decoding runs past the end
+    into degenerate loops (NdrFc / {lng...). Every training example ends with
+    scene.add(...); or morphix_*.push(...); — cut there.
+    """
+    import re
+    # cut embedded chat turn markers if they leak through
+    for marker in ("<|im_end|>", "<|im_start|>", "<|endoftext|>"):
+        if marker in text:
+            text = text.split(marker)[0]
+    # find last valid statement end
+    ends = [m.end() for m in re.finditer(
+        r"(?:scene\.add\([^;]*\);|morphix_\w+\.push\([^;]*\);)", text)]
+    if ends:
+        text = text[:ends[-1]]
+    # drop a trailing partial line (e.g. "const geo_b2 =") left by the cut
+    lines = text.rstrip().split("\n")
+    if lines and not lines[-1].rstrip().endswith((";", "});", "}", "`);")):
+        # keep partial only if it is a complete single-statement line
+        if len(lines[-1].strip()) < 30 or "=" in lines[-1][-20:]:
+            lines = lines[:-1]
+    return "\n".join(lines).strip()
+
+
 def main():
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    base = resolve_base()
+    print(f"Base: {base}")
     bnb = BitsAndBytesConfig(
         load_in_4bit=True,
         bnb_4bit_quant_type="nf4",
         bnb_4bit_use_double_quant=True,
         bnb_4bit_compute_dtype=torch.bfloat16,
     )
-    tok = AutoTokenizer.from_pretrained(BASE, trust_remote_code=True)
+    tok = AutoTokenizer.from_pretrained(base, trust_remote_code=True)
     print("Loading base 7B (4-bit)...")
     model = AutoModelForCausalLM.from_pretrained(
-        BASE, quantization_config=bnb, device_map={"": 0},
+        base, quantization_config=bnb, device_map={"": 0},
         torch_dtype=torch.bfloat16, trust_remote_code=True,
     )
     if os.path.isdir(ADAPTER):
@@ -69,21 +120,29 @@ def main():
             f"<|im_start|>assistant\n"
         )
         inputs = tok(prompt, return_tensors="pt").to(0)
+        im_end_id = tok.convert_tokens_to_ids("<|im_end|>")
+        # shaders/post/animation are long blocks (~350 tokens); geometry is short
+        budget = 384 if act.get("action") in (
+            "add_shader", "add_post", "add_animation", "add_particles") else 256
         with torch.no_grad():
             out = model.generate(
                 **inputs,
-                max_new_tokens=384,
+                max_new_tokens=budget,
                 do_sample=False,               # deterministic for a code task
-                repetition_penalty=1.05,
+                repetition_penalty=1.15,
+                no_repeat_ngram_size=8,        # kills the NdrFc / {lng... loops
                 pad_token_id=tok.eos_token_id,
                 # stop on <|im_end|> (chat turn end) OR the real EOS <|endoftext|>
-                eos_token_id=[tok.convert_tokens_to_ids("<|im_end|>"), tok.eos_token_id],
+                eos_token_id=[im_end_id, tok.eos_token_id],
             )
         gen = tok.decode(out[0][inputs["input_ids"].shape[1]:], skip_special_tokens=True)
+        gen = clean_js(gen)
+        final, status, errors = enforce(act, gen)
         print("\n" + "=" * 70)
         print("ACTION:", json.dumps(act))
+        print(f"STATUS: {status}" + (f" ({'; '.join(errors)})" if errors else ""))
         print("-" * 70)
-        print(gen.strip())
+        print(final.strip())
 
 
 if __name__ == "__main__":

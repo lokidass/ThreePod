@@ -30,7 +30,7 @@ else:
 
 CONFIG = {
     "model_name": "Qwen/Qwen2.5-Coder-1.5B",  # 1.5B fits in 6GB VRAM
-    "dataset_path": "qwen_train.jsonl",
+    "dataset_path": "qwen_train_clean.jsonl",
     "output_dir": "./qwen_25_nobnb_model",
     "epochs": 1,
     "batch_size": 2,

@@ -79,10 +79,11 @@ if __name__ == "__main__":
     print("Cleaning Qwen dataset (booleans + system prompt)...")
     clean_file("qwen_train.jsonl", "qwen_train_clean.jsonl")
     clean_file("qwen_val.jsonl", "qwen_val_clean.jsonl")
+    clean_file("qwen_test.jsonl", "qwen_test_clean.jsonl")
 
     # Verify no standalone Python literals remain in the cleaned assistant code.
     print("\nVerification (should all be 0):")
-    for path in ("qwen_train_clean.jsonl", "qwen_val_clean.jsonl"):
+    for path in ("qwen_train_clean.jsonl", "qwen_val_clean.jsonl", "qwen_test_clean.jsonl"):
         if not os.path.exists(path):
             continue
         bad = 0
