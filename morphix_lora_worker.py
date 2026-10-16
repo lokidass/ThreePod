@@ -28,16 +28,29 @@ def _load():
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     import test_qwen7b as T
     base = T.resolve_base()
+    # A 6 GB card cannot hold 7B-nf4 + staging buffers next to the desktop's
+    # own VRAM use: bitsandbytes then segfaults instead of raising OOM. Cap
+    # GPU memory (MORPHIX_LORA_GPU_GB, default: free VRAM minus a margin) and
+    # let accelerate place the overflow layers in system RAM.
+    free_gb = torch.cuda.mem_get_info(0)[0] / 2 ** 30
+    gpu_gb = float(os.environ.get("MORPHIX_LORA_GPU_GB",
+                                  max(1.5, round(free_gb - 1.2, 1))))
     bnb = BitsAndBytesConfig(
         load_in_4bit=True, bnb_4bit_quant_type="nf4",
         bnb_4bit_use_double_quant=True,
-        bnb_4bit_compute_dtype=torch.bfloat16)
-    print(f"[lora-worker] loading {base} + adapter ...",
-          file=sys.stderr, flush=True)
+        bnb_4bit_compute_dtype=torch.bfloat16,
+        llm_int8_enable_fp32_cpu_offload=True)
+    print(f"[lora-worker] loading {base} + adapter (GPU cap {gpu_gb} GiB of "
+          f"{free_gb:.1f} free) ...", file=sys.stderr, flush=True)
     tok = AutoTokenizer.from_pretrained(base, trust_remote_code=True)
     model = AutoModelForCausalLM.from_pretrained(
-        base, quantization_config=bnb, device_map={"": 0},
+        base, quantization_config=bnb, device_map="auto",
+        max_memory={0: f"{gpu_gb}GiB", "cpu": "14GiB"},
+        low_cpu_mem_usage=True,
         torch_dtype=torch.bfloat16, trust_remote_code=True)
+    print(f"[lora-worker] placement: "
+          f"{sorted(set(str(v) for v in model.hf_device_map.values()))}",
+          file=sys.stderr, flush=True)
     if os.path.isdir(T.ADAPTER):
         model = PeftModel.from_pretrained(model, T.ADAPTER)
     model.eval()

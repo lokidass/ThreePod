@@ -213,6 +213,9 @@ def build_car(p, paint):
     clear = max(0.22, p["clear"] * L)
     belt = p["belt"] * H
     nose = max(clear + 0.25, p["nose"] * belt)
+    # wheel arches (top at ~2.12 r) must stay below the beltline
+    rw = min(rw, 0.448 * belt)
+    ra = rw * 1.12
     xf, xr = p["wb"] * L / 2, -p["wb"] * L / 2
     ra = rw * 1.12
     pts = [(-L / 2 + 0.12, clear)]

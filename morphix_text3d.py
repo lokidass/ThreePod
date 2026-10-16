@@ -132,11 +132,15 @@ def build(prompt):
         wheel = [o for o in _modifiers(prompt, probe)
                  if o["op"] == "scale" and o["target"] == "wheel"]
         if wheel:
-            params["wr"] = min(0.11, max(0.045, params["wr"]
-                                         * wheel[0]["factor"]))
+            f = wheel[0]["factor"]
+            params["wr"] = min(0.11, max(0.045, params["wr"] * f))
+            # bigger wheels ride higher: the body grows with them
+            params["hr"] = min(0.5, params["hr"] * max(1.0, f))
             comps = builder(params, paint)
             del E
-    cam = SH.camera_for(comps, 40.0, 18.0)
+    # animals read best side-on (a nose-first view hides the body)
+    yaw = 72.0 if fam == "quadruped" else 40.0
+    cam = SH.camera_for(comps, yaw, 16.0)
     import morphix_image3d as I3
     from morphix_ir import _object_bbox
     ir = {
@@ -150,7 +154,7 @@ def build(prompt):
         "method": {"builder": "family", "kind": fam, "preset": preset,
                    "params": params, "build_order": list(SH.STAGES),
                    "log": [f"text prompt -> {fam} builder, preset {preset!r}"]},
-        "viewpoint": {"yaw_deg": 40.0, "elevation_deg": 18.0,
+        "viewpoint": {"yaw_deg": yaw, "elevation_deg": 16.0,
                       "basis": "default presentation view (no photo)"},
         "camera": cam,
         "appearance": {"body_color": paint["body"], "palette": {}},
