@@ -1,0 +1,217 @@
+{
+  "animations": [
+    {
+      "kind": "rotate",
+      "speed": 0.4,
+      "target": "hero"
+    }
+  ],
+  "budgets": {
+    "max_instances": 200000,
+    "max_lights": 8,
+    "max_nodes": 512,
+    "max_particles": 60000
+  },
+  "camera": {
+    "far": 500,
+    "fov": 45,
+    "kind": "perspective",
+    "near": 0.1,
+    "position": [
+      5,
+      3.2,
+      7
+    ],
+    "target": [
+      0,
+      0.8,
+      0
+    ]
+  },
+  "effects": [],
+  "environment": {
+    "background": {
+      "bottom": "0x111622",
+      "kind": "gradient",
+      "mid": "0x232C40",
+      "top": "0x3A4A63"
+    },
+    "environment_map": null,
+    "fog": {
+      "kind": "none"
+    }
+  },
+  "interactions": [],
+  "ir_version": 1,
+  "kind": "scene",
+  "lights": [
+    {
+      "color": "0xFFF2E0",
+      "id": "sun",
+      "intensity": 1.6,
+      "kind": "directional",
+      "position": [
+        6,
+        10,
+        7
+      ],
+      "shadow": {
+        "bottom": -15,
+        "left": -15,
+        "map": 1024,
+        "right": 15,
+        "top": 15
+      }
+    },
+    {
+      "color": "0xBDD7F2",
+      "ground": "0x334455",
+      "id": "sky",
+      "intensity": 0.7,
+      "kind": "hemisphere"
+    },
+    {
+      "color": "0x88AAFF",
+      "id": "rim",
+      "intensity": 0.8,
+      "kind": "directional",
+      "position": [
+        -6,
+        4,
+        -6
+      ]
+    }
+  ],
+  "meta": {
+    "backend": "webgl",
+    "mode": "scene",
+    "name": "A detailed sci-fi environment with planets, stars, space stations, and interacti",
+    "seed": 42,
+    "three_revision": "152"
+  },
+  "nodes": [
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "CircleGeometry",
+        "params": {
+          "r": 14,
+          "seg": 64
+        }
+      },
+      "id": "floor",
+      "kind": "mesh",
+      "material": {
+        "color": "0x39414F",
+        "kind": "standard",
+        "metalness": 0.0,
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          -1.5707963,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "CylinderGeometry",
+        "params": {
+          "h": 1.0,
+          "rb": 1.3,
+          "rt": 1.1,
+          "seg": 48
+        }
+      },
+      "id": "pedestal",
+      "kind": "mesh",
+      "material": {
+        "color": "0x2A3242",
+        "kind": "standard",
+        "metalness": 0.1,
+        "roughness": 0.35
+      },
+      "printable": true,
+      "receive_shadow": true,
+      "transform": {
+        "position": [
+          0,
+          0.5,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 1.0,
+          "h": 1.0,
+          "w": 1.0
+        }
+      },
+      "id": "hero",
+      "kind": "mesh",
+      "material": {
+        "color": "0xE8A33D",
+        "kind": "standard",
+        "metalness": 0.2,
+        "roughness": 0.4
+      },
+      "printable": true,
+      "receive_shadow": false,
+      "transform": {
+        "position": [
+          0,
+          1.7,
+          0
+        ],
+        "rotation": [
+          0,
+          0.6,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    }
+  ]
+}

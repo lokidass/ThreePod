@@ -1,0 +1,561 @@
+{
+  "animations": [],
+  "budgets": {
+    "max_instances": 200000,
+    "max_lights": 8,
+    "max_nodes": 512,
+    "max_particles": 60000
+  },
+  "camera": {
+    "far": 600,
+    "fov": 55,
+    "kind": "perspective",
+    "near": 0.1,
+    "position": [
+      16,
+      9,
+      22
+    ],
+    "target": [
+      0,
+      3,
+      0
+    ]
+  },
+  "effects": [],
+  "environment": {
+    "background": {
+      "bottom": "0x1C2634",
+      "kind": "gradient",
+      "mid": "0xD89A5A",
+      "top": "0x2C4258"
+    },
+    "environment_map": null,
+    "fog": {
+      "color": "0x9DB8D6",
+      "density": 0.012,
+      "kind": "exp2"
+    }
+  },
+  "interactions": [],
+  "ir_version": 1,
+  "kind": "scene",
+  "lights": [
+    {
+      "color": "0xFFF2E0",
+      "id": "sun",
+      "intensity": 1.6,
+      "kind": "directional",
+      "position": [
+        6,
+        10,
+        7
+      ],
+      "shadow": {
+        "bottom": -45,
+        "left": -45,
+        "map": 1024,
+        "right": 45,
+        "top": 45
+      }
+    },
+    {
+      "color": "0xBDD7F2",
+      "ground": "0x334455",
+      "id": "sky",
+      "intensity": 0.7,
+      "kind": "hemisphere"
+    }
+  ],
+  "meta": {
+    "backend": "webgl",
+    "mode": "scene",
+    "name": "mountains",
+    "seed": 11,
+    "three_revision": "152"
+  },
+  "nodes": [
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "generator": "terrain",
+        "params": {
+          "height": 9,
+          "segments": 96,
+          "size": 90
+        }
+      },
+      "id": "terrain",
+      "kind": "mesh",
+      "material": {
+        "color": "0x5A6B4A",
+        "kind": "standard",
+        "metalness": 0.0,
+        "roughness": 0.95
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": false,
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "generator": "gradient_sky",
+        "params": {
+          "bot": "0x1A2433",
+          "mid": "0x9DB8D6",
+          "top": "0x27435F"
+        }
+      },
+      "id": "sky",
+      "kind": "mesh",
+      "material": {
+        "color": "0xFFFFFF",
+        "fog": false,
+        "kind": "basic"
+      },
+      "printable": false,
+      "receive_shadow": false,
+      "required": false,
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "CylinderGeometry",
+        "params": {
+          "h": 0.888,
+          "rb": 1.1,
+          "rt": 1.0384,
+          "seg": 20
+        }
+      },
+      "id": "lighthouse_tower_band_0",
+      "kind": "mesh",
+      "material": {
+        "color": "0xC23B2E",
+        "kind": "standard",
+        "roughness": 0.7
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          0,
+          0.434,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "CylinderGeometry",
+        "params": {
+          "h": 0.888,
+          "rb": 1.0384,
+          "rt": 0.9768000000000001,
+          "seg": 20
+        }
+      },
+      "id": "lighthouse_tower_band_1",
+      "kind": "mesh",
+      "material": {
+        "color": "0xEDE6DA",
+        "kind": "standard",
+        "roughness": 0.7
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          0,
+          1.302,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "CylinderGeometry",
+        "params": {
+          "h": 0.888,
+          "rb": 0.9768000000000001,
+          "rt": 0.9152,
+          "seg": 20
+        }
+      },
+      "id": "lighthouse_tower_band_2",
+      "kind": "mesh",
+      "material": {
+        "color": "0xC23B2E",
+        "kind": "standard",
+        "roughness": 0.7
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          0,
+          2.17,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "CylinderGeometry",
+        "params": {
+          "h": 0.888,
+          "rb": 0.9152,
+          "rt": 0.8536000000000001,
+          "seg": 20
+        }
+      },
+      "id": "lighthouse_tower_band_3",
+      "kind": "mesh",
+      "material": {
+        "color": "0xEDE6DA",
+        "kind": "standard",
+        "roughness": 0.7
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          0,
+          3.0380000000000003,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "CylinderGeometry",
+        "params": {
+          "h": 0.888,
+          "rb": 0.8536000000000001,
+          "rt": 0.792,
+          "seg": 20
+        }
+      },
+      "id": "lighthouse_tower_band_4",
+      "kind": "mesh",
+      "material": {
+        "color": "0xC23B2E",
+        "kind": "standard",
+        "roughness": 0.7
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          0,
+          3.906,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "CylinderGeometry",
+        "params": {
+          "h": 0.18,
+          "rb": 0.8580000000000001,
+          "rt": 0.8580000000000001,
+          "seg": 20
+        }
+      },
+      "id": "lighthouse_tower_gallery",
+      "kind": "mesh",
+      "material": {
+        "color": "0x3A4048",
+        "kind": "standard"
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          0,
+          4.43,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "CylinderGeometry",
+        "params": {
+          "h": 0.8,
+          "rb": 0.42,
+          "rt": 0.42,
+          "seg": 20
+        }
+      },
+      "id": "lighthouse_tower_lamp_glass",
+      "kind": "mesh",
+      "material": {
+        "color": "0xFFE9A8",
+        "kind": "basic"
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          0,
+          4.92,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.3,
+          "h": 0.3,
+          "w": 0.3
+        }
+      },
+      "id": "lighthouse_tower_lamp",
+      "kind": "mesh",
+      "material": {
+        "color": "0xFFF3C4",
+        "kind": "basic"
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          0,
+          4.92,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "ConeGeometry",
+        "params": {
+          "h": 0.7,
+          "r": 0.62,
+          "seg": 16
+        }
+      },
+      "id": "lighthouse_tower_cap",
+      "kind": "mesh",
+      "material": {
+        "color": "0x3A4048",
+        "kind": "standard",
+        "roughness": 0.6
+      },
+      "printable": false,
+      "receive_shadow": false,
+      "required": true,
+      "transform": {
+        "position": [
+          0,
+          5.64,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    }
+  ],
+  "relations": [
+    {
+      "a": "lighthouse_tower_band_1",
+      "b": "lighthouse_tower_band_0",
+      "rel": "on",
+      "tol": 0.05
+    },
+    {
+      "a": "lighthouse_tower_band_2",
+      "b": "lighthouse_tower_band_1",
+      "rel": "on",
+      "tol": 0.05
+    },
+    {
+      "a": "lighthouse_tower_band_3",
+      "b": "lighthouse_tower_band_2",
+      "rel": "on",
+      "tol": 0.05
+    },
+    {
+      "a": "lighthouse_tower_band_4",
+      "b": "lighthouse_tower_band_3",
+      "rel": "on",
+      "tol": 0.05
+    }
+  ]
+}

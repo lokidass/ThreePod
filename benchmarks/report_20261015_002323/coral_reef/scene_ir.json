@@ -1,0 +1,362 @@
+{
+  "animations": [
+    {
+      "kind": "rotate",
+      "speed": 0.02,
+      "target": "particles_embers"
+    },
+    {
+      "kind": "rotate",
+      "speed": -0.008,
+      "target": "particles_stars"
+    }
+  ],
+  "budgets": {
+    "max_instances": 200000,
+    "max_lights": 8,
+    "max_nodes": 512,
+    "max_particles": 60000
+  },
+  "camera": {
+    "far": 600,
+    "fov": 55,
+    "kind": "perspective",
+    "near": 0.1,
+    "position": [
+      16,
+      6,
+      22
+    ],
+    "target": [
+      0,
+      0,
+      0
+    ]
+  },
+  "effects": [],
+  "environment": {
+    "background": {
+      "bottom": "0x1A2030",
+      "kind": "gradient",
+      "mid": "0xCF9A5A",
+      "top": "0x2C4A6E"
+    },
+    "environment_map": {
+      "ground": "0x1A2030",
+      "horizon": "0xCF9A5A",
+      "kind": "procedural_equirect",
+      "sky": "0x2C4A6E"
+    },
+    "fog": {
+      "color": "0xCF9A5A",
+      "density": 0.008,
+      "kind": "exp2"
+    }
+  },
+  "interactions": [],
+  "ir_version": 1,
+  "kind": "scene",
+  "lights": [
+    {
+      "color": "0xFFD9A0",
+      "id": "sun",
+      "intensity": 1.8,
+      "kind": "directional",
+      "position": [
+        -14,
+        7,
+        -18
+      ]
+    },
+    {
+      "color": "0xCF9A5A",
+      "ground": "0x1A2030",
+      "id": "sky",
+      "intensity": 0.5,
+      "kind": "hemisphere"
+    },
+    {
+      "color": "0x334455",
+      "id": "particles_fill",
+      "intensity": 0.8,
+      "kind": "ambient"
+    }
+  ],
+  "meta": {
+    "backend": "webgl",
+    "mode": "scene",
+    "name": "water",
+    "seed": 11,
+    "three_revision": "152"
+  },
+  "nodes": [
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "PlaneGeometry",
+        "params": {
+          "h": 60,
+          "hs": 1,
+          "w": 60,
+          "ws": 1
+        }
+      },
+      "id": "lake",
+      "kind": "mesh",
+      "material": {
+        "color": "0x1E3A55",
+        "envMapIntensity": 1.2,
+        "kind": "standard",
+        "metalness": 0.9,
+        "roughness": 0.08
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          -1.5707963,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 800,
+      "distribution": {
+        "hx": 28,
+        "hz": 28,
+        "shape": "box"
+      },
+      "geometry": {
+        "generator": "particles",
+        "params": {
+          "count": 800
+        }
+      },
+      "id": "mist",
+      "kind": "points",
+      "material": {
+        "color": "0xE8D9C0",
+        "kind": "points",
+        "size": 0.5
+      },
+      "printable": false,
+      "receive_shadow": false,
+      "required": false,
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 4000,
+      "distribution": {
+        "hx": 24,
+        "hz": 24,
+        "shape": "box"
+      },
+      "geometry": {
+        "generator": "particles",
+        "params": {
+          "count": 4000
+        }
+      },
+      "id": "particles_embers",
+      "kind": "points",
+      "material": {
+        "color": "0xFFB066",
+        "kind": "points",
+        "size": 0.14
+      },
+      "printable": false,
+      "receive_shadow": false,
+      "required": false,
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 2000,
+      "distribution": {
+        "hx": 60,
+        "hz": 60,
+        "shape": "box"
+      },
+      "geometry": {
+        "generator": "particles",
+        "params": {
+          "count": 2000
+        }
+      },
+      "id": "particles_stars",
+      "kind": "points",
+      "material": {
+        "color": "0x9FC0FF",
+        "kind": "points",
+        "size": 0.1
+      },
+      "printable": false,
+      "receive_shadow": false,
+      "required": false,
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 60,
+      "distribution": {
+        "radius": 14,
+        "scale_jitter": 0.45,
+        "shape": "disc",
+        "y": 0.9
+      },
+      "geometry": {
+        "ctor": "ConeGeometry",
+        "params": {
+          "h": 1.8,
+          "r": 0.5,
+          "seg": 7
+        }
+      },
+      "id": "coral_bed_cones",
+      "kind": "instanced",
+      "material": {
+        "color": "0xE86A8A",
+        "kind": "standard",
+        "metalness": 0.0,
+        "roughness": 0.7
+      },
+      "printable": false,
+      "receive_shadow": false,
+      "required": true,
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 30,
+      "distribution": {
+        "radius": 14,
+        "scale_jitter": 0.45,
+        "shape": "disc",
+        "y": 0.5
+      },
+      "geometry": {
+        "ctor": "SphereGeometry",
+        "params": {
+          "hs": 8,
+          "r": 0.35,
+          "ws": 10
+        }
+      },
+      "id": "coral_bed_bulbs",
+      "kind": "instanced",
+      "material": {
+        "color": "0xF2A541",
+        "kind": "standard",
+        "metalness": 0.0,
+        "roughness": 0.6
+      },
+      "printable": false,
+      "receive_shadow": false,
+      "required": true,
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    }
+  ],
+  "relations": []
+}

@@ -34,6 +34,32 @@ def test_parse_rejects_garbage():
     assert any("dragon" in e for e in errors)
 
 
+def test_near_miss_template_names_map_loudly():
+    import morphix_scene_plan as P
+    plan, errors = P.parse_plan_response(
+        '{"objective": "o", "style": "s", "backend": "webgl", '
+        '"templates": ["mountain", "forrest"], "seed": 2}')
+    assert errors == []
+    assert plan["templates"] == ["mountains", "forest"]
+    assert plan["substitutions"] == {"mountain": "mountains",
+                                     "forrest": "forest"}
+    # genuinely unknown names still refuse (no silent invention)
+    plan2, errors2 = P.parse_plan_response(
+        '{"objective": "o", "style": "s", "backend": "webgl", '
+        '"templates": ["dragon_castle_xyz"], "seed": 2}')
+    assert plan2 is None and errors2
+
+
+def test_malformed_seed_coerced_with_note():
+    import morphix_scene_plan as P
+    plan, errors = P.parse_plan_response(
+        '{"objective": "o", "style": "s", "backend": "webgl", '
+        '"templates": ["city"], "seed": "eleven"}')
+    assert errors == []
+    assert plan["seed"] == 11
+    assert any("eleven" in n for n in plan["notes"])
+
+
 def test_plan_to_ir_composes_systems():
     import morphix_scene_ir as S
     import morphix_scene_plan as P

@@ -1,6 +1,0 @@
-ok True complete True quality True
-spec box_sphere deposits 668 layers 12
- comp box verified True status completed [('has_deposits', True), ('deposit_count', True), ('layer_coverage', True), ('bbox', True), ('position', True), ('material', True), ('box_extent', True), ('box_centre', True)]
- comp sphere verified True status completed [('has_deposits', True), ('deposit_count', True), ('layer_coverage', True), ('bbox', True), ('position', True), ('material', True), ('sphere_centre', True), ('sphere_diameter', True), ('sphere_round', True), ('sphere_layers', True), ('contact_box', True)]
-geometry checks [('box', 'material', True), ('box', 'box_extent', True), ('box', 'box_centre', True), ('sphere', 'material', True), ('sphere', 'sphere_centre', True), ('sphere', 'sphere_diameter', True), ('sphere', 'sphere_round', True), ('sphere', 'sphere_layers', True), ('sphere', 'contact_box', True)]
-fidelity []

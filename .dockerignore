@@ -22,4 +22,7 @@ qwen_test_clean.jsonl
 Modelfile
 Modelfile.thinker
 .claude
-.freebuff
+.freebuffweb/node_modules
+web/dist
+repro
+tests/image3d/.artifacts

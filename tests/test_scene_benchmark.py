@@ -91,6 +91,34 @@ def test_benchmarks_are_deterministic():
     assert ssim(_png("fog"), _png("fog_b")) >= 0.999
 
 
+def test_frozen_benchmark_gate_resolves_all_prompts():
+    """Deterministic gate (no model): every benchmark prompt composes to
+    valid IR with required elements resolved. Thinker enrichment is
+    optional; the router + parts must always suffice."""
+    import morphix_scene_compile as C
+    import morphix_scene_ir as S
+    import morphix_scene_plan as P
+    prompts = [
+        "a wooden table in a room",
+        "a forested mountain landscape",
+        "a modern city street at night",
+        "a detailed sci-fi environment",
+        "a lighthouse on a cliff at dusk",
+        "a desert caravan at noon",
+        "a snowy cabin in the woods",
+        "a harbor with boats at sunrise",
+        "a castle on a hill",
+        "a coral reef underwater",
+    ]
+    for prompt in prompts:
+        routed = P.route_systems(prompt)
+        ir, rep = P.compose_routed_scene(routed, {"objective": prompt},
+                                         seed=11)
+        assert S.validate_scene_ir(ir) == [], prompt
+        assert rep["required_ids"], prompt
+        assert C.validate_scene_js(C.compile_scene_ir(ir)) == [], prompt
+
+
 def test_performance_budgets_are_measured(benched):
     # Measured on SwiftShader software GL (floor, not ceiling): real GPUs
     # are orders of magnitude faster. Budgets guard regressions, and the

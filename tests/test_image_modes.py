@@ -48,10 +48,10 @@ def test_relief_reports_relief_not_semantics(tmp_path):
 
 
 def test_semantic_reconstruction_reports_template_and_quality(tmp_path):
-    from morphix_reconstruct import run_reconstruction
+    from morphix_reconstruct import run_reconstruction_legacy
     img = os.path.join(str(tmp_path), "car.png")
     _car_photo(img)
-    rep = run_reconstruction(img, os.path.join(str(tmp_path), "out"),
+    rep = run_reconstruction_legacy(img, os.path.join(str(tmp_path), "out"),
                              category="car")
     assert rep["mode"] == "image-reconstruct"
     assert rep["ir"]["category"] == "car"
@@ -63,11 +63,11 @@ def test_semantic_reconstruction_reports_template_and_quality(tmp_path):
 def test_manual_category_with_conflicting_silhouette_refuses_to_compile(
         tmp_path):
     from morphix_config import PipelineError
-    from morphix_reconstruct import run_reconstruction
+    from morphix_reconstruct import run_reconstruction_legacy
     img = os.path.join(str(tmp_path), "pano.png")
     _pano(img)  # aspect ~10 vs car template ~2.2: irreconcilable
     with pytest.raises(PipelineError, match="silhouette|aspect"):
-        run_reconstruction(img, os.path.join(str(tmp_path), "out"),
+        run_reconstruction_legacy(img, os.path.join(str(tmp_path), "out"),
                            category="car")
     # refused BEFORE compiling: no paths were ever generated
     assert not os.path.isfile(os.path.join(str(tmp_path), "out", "scene.js"))

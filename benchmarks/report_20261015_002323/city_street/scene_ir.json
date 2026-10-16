@@ -1,0 +1,288 @@
+{
+  "animations": [],
+  "budgets": {
+    "max_instances": 200000,
+    "max_lights": 8,
+    "max_nodes": 512,
+    "max_particles": 60000
+  },
+  "camera": {
+    "far": 600,
+    "fov": 55,
+    "kind": "perspective",
+    "near": 0.1,
+    "position": [
+      34,
+      22,
+      40
+    ],
+    "target": [
+      0,
+      6,
+      0
+    ]
+  },
+  "effects": [],
+  "environment": {
+    "background": {
+      "bottom": "0x05080E",
+      "kind": "gradient",
+      "mid": "0x2C3E58",
+      "top": "0x0E1626"
+    },
+    "environment_map": null,
+    "fog": {
+      "color": "0x2C3E58",
+      "density": 0.016,
+      "kind": "exp2"
+    }
+  },
+  "interactions": [],
+  "ir_version": 1,
+  "kind": "scene",
+  "lights": [
+    {
+      "color": "0x9FB8DD",
+      "id": "moon",
+      "intensity": 0.7,
+      "kind": "directional",
+      "position": [
+        -20,
+        30,
+        10
+      ]
+    },
+    {
+      "color": "0x2C3E58",
+      "ground": "0x05080E",
+      "id": "sky",
+      "intensity": 0.5,
+      "kind": "hemisphere"
+    }
+  ],
+  "meta": {
+    "backend": "webgl",
+    "mode": "scene",
+    "name": "city",
+    "seed": 11,
+    "three_revision": "152"
+  },
+  "nodes": [
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "PlaneGeometry",
+        "params": {
+          "h": 120,
+          "hs": 1,
+          "w": 120,
+          "ws": 1
+        }
+      },
+      "id": "ground",
+      "kind": "mesh",
+      "material": {
+        "color": "0x0A0E16",
+        "kind": "standard",
+        "metalness": 0.1,
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          -1.5707963,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 64,
+      "distribution": {
+        "height_var": 14,
+        "hx": 25.6,
+        "hz": 25.6,
+        "scale_jitter": 0.0,
+        "shape": "box",
+        "y": 7.0
+      },
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 1,
+          "h": 1,
+          "w": 1
+        }
+      },
+      "id": "towers",
+      "kind": "instanced",
+      "material": {
+        "color": "0x1B2740",
+        "emissive": "0xFFC873",
+        "emissiveIntensity": 0.55,
+        "kind": "standard",
+        "metalness": 0.3,
+        "roughness": 0.6
+      },
+      "printable": false,
+      "receive_shadow": false,
+      "required": true,
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "CylinderGeometry",
+        "params": {
+          "h": 3.4,
+          "rb": 0.09,
+          "rt": 0.07,
+          "seg": 20
+        }
+      },
+      "id": "lamp_post_pole",
+      "kind": "mesh",
+      "material": {
+        "color": "0x22262E",
+        "kind": "standard"
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": false,
+      "transform": {
+        "position": [
+          0,
+          1.7,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.08,
+          "h": 0.08,
+          "w": 0.9
+        }
+      },
+      "id": "lamp_post_arm",
+      "kind": "mesh",
+      "material": {
+        "color": "0x22262E",
+        "kind": "standard"
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": false,
+      "transform": {
+        "position": [
+          0.4,
+          3.3,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.2,
+          "h": 0.16,
+          "w": 0.34
+        }
+      },
+      "id": "lamp_post_head",
+      "kind": "mesh",
+      "material": {
+        "color": "0xFFD9A0",
+        "kind": "basic"
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": false,
+      "transform": {
+        "position": [
+          0.8,
+          3.2199999999999998,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    }
+  ],
+  "relations": []
+}

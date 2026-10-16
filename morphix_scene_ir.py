@@ -91,11 +91,15 @@ def procedural(generator, params=None):
     return {"generator": generator, "params": dict(params or {})}
 
 
+VALID_RELATIONS = ("on", "near", "inside", "above")
+
 def node(nid, kind="mesh", geometry=None, material=None, transform=None,
          children=None, count=0, distribution=None, cast_shadow=False,
-         receive_shadow=False, printable=False):
+         receive_shadow=False, printable=False, required=False):
     """One scene-graph node. Groups carry children; instanced/points carry
-    count + distribution; meshes carry geometry + material."""
+    count + distribution; meshes carry geometry + material. ``required``
+    marks elements the completion gate must see rendered (optional decor
+    defaults False)."""
     return {
         "id": nid,
         "kind": kind,
@@ -108,6 +112,7 @@ def node(nid, kind="mesh", geometry=None, material=None, transform=None,
         "cast_shadow": bool(cast_shadow),
         "receive_shadow": bool(receive_shadow),
         "printable": bool(printable),
+        "required": bool(required),
     }
 
 
@@ -125,6 +130,7 @@ def new_scene(name, seed=1, backend="webgl", three_revision="152"):
                    "far": 500, "position": [6, 5, 9], "target": [0, 0, 0]},
         "lights": [],
         "nodes": [],
+        "relations": [],
         "effects": [],
         "animations": [],
         "interactions": [],
@@ -294,6 +300,23 @@ def validate_scene_ir(ir):
             if k == n.get("id"):
                 errs.append(f"node {n.get('id')!r}: self-child cycle")
     light_ids = {L.get("id") for L in lights if isinstance(L, dict)}
+    for i, r in enumerate(ir.get("relations", [])):
+        if not isinstance(r, dict):
+            errs.append(f"relation[{i}] must be an object")
+            continue
+        if r.get("rel") not in VALID_RELATIONS:
+            errs.append(f"relation[{i}]: rel must be one of "
+                        f"{list(VALID_RELATIONS)} (got {r.get('rel')!r})")
+        for side in ("a", "b"):
+            if r.get(side) not in ids:
+                errs.append(f"relation[{i}]: unknown node {side}="
+                            f"{r.get(side)!r}")
+        try:
+            tol = float(r.get("tol", 0.15))
+        except (TypeError, ValueError):
+            tol = float("nan")
+        if not (tol == tol and tol >= 0):
+            errs.append(f"relation[{i}]: tol must be a number >= 0")
     for i, a in enumerate(ir.get("animations", [])):
         if not isinstance(a, dict):
             errs.append(f"animation[{i}] must be an object")
@@ -336,6 +359,9 @@ def summarize(ir):
         "lights": len(ir.get("lights", [])),
         "instances": instance_total(ir),
         "printable": printable_nodes(ir),
+        "required": [n.get("id") for n in ir.get("nodes", [])
+                     if isinstance(n, dict) and n.get("required")],
+        "relations": len(ir.get("relations", [])),
         "animations": len(ir.get("animations", [])),
         "effects": [e.get("kind") for e in ir.get("effects", [])
                     if isinstance(e, dict)],

@@ -764,7 +764,8 @@ def run_path_print(prompt: str, builder: str = "ollama",
                    build_one=None, emit=None, should_stop=None,
                    resume: bool = False, plan_actions: list = None,
                    plan_status: str = None, spec_name: str = None,
-                   plan_source: str = "text", stream_scene: bool = True) -> dict:
+                   plan_source: str = "text", stream_scene: bool = True,
+                   palette: dict = None) -> dict:
     """Point-by-point printer run. The thinker plans footprint primitives
     once; the engine slices them into validated per-layer segments.
     Deterministic (default): the engine commits the sliced script one action
@@ -934,7 +935,7 @@ def run_path_print(prompt: str, builder: str = "ollama",
             ckpt = json.load(f)
         st = PathState.restore(ckpt["state"])
         for rec in ckpt.get("records", []):
-            finals.append(render_deposit(rec))
+            finals.append(render_deposit(rec, palette))
             statuses.append("path/OK")
             blocks.append({"index": len(blocks), "action": rec["action"],
                            "label": rec.get("label", "?"), "guard_errors": [],
@@ -1051,7 +1052,7 @@ def run_path_print(prompt: str, builder: str = "ollama",
             "deposit_segment", "deposit_point") else None
         path_actions.append(act)
         if record.get("action") in ("deposit_segment", "deposit_point"):
-            finals.append(render_deposit(record))
+            finals.append(render_deposit(record, palette))
         statuses.append("path/OK")
         blocks.append({"index": len(blocks), "action": act.get("action"),
                        "label": act.get("label", "?"), "guard_errors": [],

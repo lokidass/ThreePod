@@ -182,6 +182,9 @@ def scifi(seed=55):
     flickering consoles. All self-contained (no external assets)."""
     ir = new_scene("scifi", seed=seed)
     ir["environment"]["background"] = {"kind": "color", "color": "0x05070C"}
+    ir["environment"]["environment_map"] = {
+        "kind": "procedural_equirect", "sky": "0x1E3A5C",
+        "horizon": "0x3A6A9E", "ground": "0x05070C"}
     ir["environment"]["fog"] = {"kind": "exp2", "color": "0x0A1220",
                                 "density": 0.03}
     ir["camera"] = {"kind": "perspective", "fov": 60, "near": 0.1,

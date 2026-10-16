@@ -1,0 +1,227 @@
+{
+  "prompts": [
+    {
+      "id": "forest_mountain",
+      "prompt": "a forested mountain landscape",
+      "expect_templates": [
+        "forest",
+        "mountains"
+      ],
+      "seed": 11,
+      "plan": {
+        "version": 1,
+        "objective": "A forested mountain landscape with realistic materials and lighting, including interactive particles for dynamic effects.",
+        "style": "WebGL",
+        "backend": "webgl",
+        "templates": [
+          "studio"
+        ],
+        "seed": 456789,
+        "animations": true,
+        "substitutions": {}
+      },
+      "retries": 0,
+      "plan_s": 8.17,
+      "summary": {
+        "name": "A forested mountain landscape with realistic materials and lighting, including i",
+        "backend": "webgl",
+        "seed": 456789,
+        "nodes": 3,
+        "lights": 3,
+        "instances": 0,
+        "printable": [
+          "pedestal",
+          "hero"
+        ],
+        "animations": 1,
+        "effects": []
+      },
+      "render": {
+        "ready": true,
+        "scene_error": null,
+        "console_errors": [],
+        "stats": {
+          "frames": 3,
+          "nodes": 7,
+          "drawCalls": 4,
+          "triangles": 988,
+          "instances": 0
+        },
+        "elapsed_s": 0.75
+      },
+      "first_render_s": 0.75,
+      "verdict": {
+        "complete": true,
+        "stage": "complete",
+        "error": ""
+      },
+      "total_s": 10.3
+    },
+    {
+      "id": "city_street",
+      "prompt": "a modern city street at night",
+      "expect_templates": [
+        "city"
+      ],
+      "seed": 11,
+      "plan": {
+        "version": 1,
+        "objective": "A modern city street at night with smooth camera movement and dynamic lighting effects.",
+        "style": "global_illumination",
+        "backend": "webgl",
+        "templates": [
+          "studio"
+        ],
+        "seed": 45678,
+        "animations": true,
+        "substitutions": {}
+      },
+      "retries": 0,
+      "plan_s": 5.78,
+      "summary": {
+        "name": "A modern city street at night with smooth camera movement and dynamic lighting e",
+        "backend": "webgl",
+        "seed": 45678,
+        "nodes": 3,
+        "lights": 3,
+        "instances": 0,
+        "printable": [
+          "pedestal",
+          "hero"
+        ],
+        "animations": 1,
+        "effects": []
+      },
+      "render": {
+        "ready": true,
+        "scene_error": null,
+        "console_errors": [],
+        "stats": {
+          "frames": 3,
+          "nodes": 7,
+          "drawCalls": 4,
+          "triangles": 988,
+          "instances": 0
+        },
+        "elapsed_s": 0.66
+      },
+      "first_render_s": 0.66,
+      "verdict": {
+        "complete": true,
+        "stage": "complete",
+        "error": ""
+      },
+      "total_s": 7.42
+    },
+    {
+      "id": "scifi_env",
+      "prompt": "a detailed sci-fi environment",
+      "expect_templates": [
+        "scifi"
+      ],
+      "seed": 11,
+      "plan": {
+        "version": 1,
+        "objective": "A detailed sci-fi environment with planets, stars, space stations, and interactive elements",
+        "style": "WebGL",
+        "backend": "webgl",
+        "templates": [
+          "studio"
+        ],
+        "seed": 42,
+        "animations": true,
+        "substitutions": {}
+      },
+      "retries": 0,
+      "plan_s": 6.52,
+      "summary": {
+        "name": "A detailed sci-fi environment with planets, stars, space stations, and interacti",
+        "backend": "webgl",
+        "seed": 42,
+        "nodes": 3,
+        "lights": 3,
+        "instances": 0,
+        "printable": [
+          "pedestal",
+          "hero"
+        ],
+        "animations": 1,
+        "effects": []
+      },
+      "render": {
+        "ready": true,
+        "scene_error": null,
+        "console_errors": [],
+        "stats": {
+          "frames": 3,
+          "nodes": 7,
+          "drawCalls": 4,
+          "triangles": 988,
+          "instances": 0
+        },
+        "elapsed_s": 0.66
+      },
+      "first_render_s": 0.66,
+      "verdict": {
+        "complete": true,
+        "stage": "complete",
+        "error": ""
+      },
+      "total_s": 8.16
+    },
+    {
+      "id": "lighthouse",
+      "prompt": "a lighthouse on a cliff at dusk",
+      "expect_templates": [],
+      "seed": 11,
+      "plan": {
+        "version": 1,
+        "objective": "A Three.js scene showing a rotating beacon (lighthouse) at dusk over a dark ground plane and a point cloud of clouds in the background.",
+        "style": "basic",
+        "backend": "webgl",
+        "templates": [
+          "studio"
+        ],
+        "seed": 45678,
+        "animations": true,
+        "substitutions": {}
+      },
+      "retries": 0,
+      "plan_s": 14.95,
+      "summary": {
+        "name": "A Three.js scene showing a rotating beacon (lighthouse) at dusk over a dark grou",
+        "backend": "webgl",
+        "seed": 45678,
+        "nodes": 3,
+        "lights": 3,
+        "instances": 0,
+        "printable": [
+          "pedestal",
+          "hero"
+        ],
+        "animations": 1,
+        "effects": []
+      },
+      "render": {
+        "ready": true,
+        "scene_error": null,
+        "console_errors": [],
+        "stats": {
+          "frames": 3,
+          "nodes": 7,
+          "drawCalls": 4,
+          "triangles": 988,
+          "instances": 0
+        },
+        "elapsed_s": 0.69
+      },
+      "first_render_s": 0.69,
+      "verdict": {
+        "complete": true,
+        "stage": "complete",
+        "error": ""
+      },
+      "total_s": 16.58
+    }
+  ]
+}

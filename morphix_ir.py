@@ -27,9 +27,10 @@ from morphix_path import MAX_LINEAR, MATERIAL_COLORS, BOUND_XZ, MAX_Y
 from morphix_specs import _box_of, _cyl_of, _sphere_of, _role_of
 
 IR_VERSION = 1
-VALID_PRIMITIVES = ("box", "cylinder", "sphere")
+VALID_PRIMITIVES = ("box", "cylinder", "sphere", "profile", "lathe",
+                    "inflate")
 VALID_SOURCES = ("text", "object-template", "image-vision", "image-manual",
-                 "image-demo")
+                 "image-demo", "image-silhouette")
 
 DEFAULT_COLORS = {"body": "0xFFAA33", "accent": "0x44CCFF",
                   "blue": "0x2A6FDB", "support": "0x888888",
@@ -117,6 +118,33 @@ def _valid_id(cid) -> bool:
     return all(ch in _ID_CHARS for ch in cid)
 
 
+def _section_errors(tag: str, c: dict) -> list:
+    """Schema of profile / lathe components: a local [[u, y], ...]
+    cross-section centred on the component position, plus extrusion depth
+    (profile) — the exact fields the printer slicer consumes."""
+    errs = []
+    prof = c.get("profile")
+    need = 3 if c.get("primitive") == "profile" else 2
+    if not (isinstance(prof, list) and len(prof) >= need
+            and all(isinstance(p, list) and len(p) == 2
+                    and all(_is_num(v) for v in p) for p in prof)):
+        return [f"{tag}: profile must be a list of >= {need} [u, y] numbers"]
+    ys = [p[1] for p in prof]
+    if abs(max(ys) + min(ys)) > 1e-3:
+        errs.append(f"{tag}: profile y must be centred on the position")
+    if c.get("primitive") == "lathe":
+        if min(p[0] for p in prof) < 0:
+            errs.append(f"{tag}: lathe radii must be >= 0")
+        return errs
+    for key in ("depth",) + (("depth_top",) if "depth_top" in c else ()):
+        v = c.get(key)
+        if not (_is_num(v) and 0 < v <= MAX_LINEAR):
+            errs.append(f"{tag}: {key} must be a positive number (got {v!r})")
+    if c.get("axis", "z") not in ("z", "x"):
+        errs.append(f"{tag}: axis must be 'z' or 'x'")
+    return errs
+
+
 def validate_ir(ir: dict) -> list:
     """Strict schema + geometric sanity. Returns a list of error strings
     ([] means the IR may be sliced). Never mutates and never guesses."""
@@ -181,6 +209,19 @@ def validate_ir(ir: dict) -> list:
                     errs.append(f"{tag}: taper must be [radiusTop, "
                                 f"radiusBottom] positive numbers "
                                 f"(got {taper!r})")
+            if prim in ("profile", "lathe"):
+                errs.extend(_section_errors(tag, c))
+            if prim == "inflate":
+                g = c.get("grid") or {}
+                try:
+                    good = (len(g["half"]) == int(g["rows"]) and all(
+                        len(r) == int(g["cols"]) for r in g["half"])
+                        and float(g["cell"]) > 0)
+                except (KeyError, TypeError, ValueError):
+                    good = False
+                if not good:
+                    errs.append(f"{tag}: inflate grid must be "
+                                f"{{rows, cols, cell, half[rows][cols]}}")
             if prim == "sphere" and not (
                     abs(dims[0] - dims[1]) <= 1e-3
                     and abs(dims[1] - dims[2]) <= 1e-3):
@@ -225,9 +266,13 @@ def validate_ir(ir: dict) -> list:
 def ir_to_actions(ir: dict) -> list:
     """Freeze the IR into printer primitives (add_box/add_cylinder/
     add_sphere). This is the ONLY translation step; the slicer never sees the
-    IR again."""
+    IR again. Components marked ``deposit: False`` (display-only context
+    such as a showcase stand) are NEVER translated: visual context must
+    not become deposition geometry."""
     out = []
     for c in ir["components"]:
+        if c.get("deposit") is False:
+            continue
         act = {"label": c["id"], "position": list(c["position"]),
                "material": c["material"],
                "color": c.get("color")
@@ -236,6 +281,20 @@ def ir_to_actions(ir: dict) -> list:
         if c["primitive"] == "box":
             act.update({"action": "add_box", "width": w, "height": h,
                         "depth": d})
+        elif c["primitive"] == "profile":
+            act.update({"action": "add_profile",
+                        "profile": [list(p) for p in c["profile"]],
+                        "depth": c["depth"], "axis": c.get("axis", "z")})
+            if "depth_top" in c:
+                act["depth_top"] = c["depth_top"]
+        elif c["primitive"] == "lathe":
+            act.update({"action": "add_lathe",
+                        "profile": [list(p) for p in c["profile"]]})
+        elif c["primitive"] == "inflate":
+            g = c["grid"]
+            act.update({"action": "add_inflate",
+                        "grid": {k: g[k] for k in ("rows", "cols", "cell",
+                                                   "half")}})
         elif c["primitive"] == "sphere":
             act.update({"action": "add_sphere", "radius": round(w / 2.0, 4)})
         else:
@@ -291,10 +350,48 @@ def actions_to_ir(actions: list, category: str, source: str = "text",
             comps.append(_comp(label, "sphere", [2 * r, 2 * r, 2 * r],
                                [_cx, _cy, _cz], a.get("material", "body"),
                                a.get("color"), parent=a.get("on_top_of")))
+        elif a.get("action") in ("add_profile", "add_lathe"):
+            comp = _section_comp(a)
+            if comp is None:
+                notes.append(f"{label!r}: malformed {a.get('action')} "
+                             f"omitted from IR")
+            else:
+                comps.append(comp)
         else:
             notes.append(f"{label!r}: unsliceable primitive omitted from IR")
     return _wrap(category, source, comps, assumptions=notes,
                  confidence=confidence)
+
+
+def _section_comp(a: dict):
+    """IR component for an add_profile / add_lathe action (bbox dims from
+    the cross-section), or None when the action is malformed."""
+    try:
+        pts = [[float(p[0]), float(p[1])] for p in a["profile"]]
+        pos = [float(v) for v in a["position"]]
+    except (KeyError, TypeError, ValueError, IndexError):
+        return None
+    us = [p[0] for p in pts]
+    ys = [p[1] for p in pts]
+    h = max(ys) - min(ys)
+    if a["action"] == "add_lathe":
+        r = max(us)
+        comp = _comp(a.get("label", ""), "lathe", [2 * r, h, 2 * r], pos,
+                     a.get("material", "body"), a.get("color"))
+    else:
+        dep = max(float(a.get("depth", 0)), float(a.get("depth_top",
+                                                        a.get("depth", 0))))
+        axis = a.get("axis", "z")
+        dims = ([max(us) - min(us), h, dep] if axis == "z"
+                else [dep, h, max(us) - min(us)])
+        comp = _comp(a.get("label", ""), "profile", dims, pos,
+                     a.get("material", "body"), a.get("color"))
+        comp["depth"] = float(a.get("depth", 0))
+        if "depth_top" in a:
+            comp["depth_top"] = float(a["depth_top"])
+        comp["axis"] = axis
+    comp["profile"] = pts
+    return comp
 
 
 # ---------------------------------------------------------------- templates
@@ -738,7 +835,10 @@ def component_hierarchy(ir: dict) -> list:
 # How far the reconstructed silhouette aspect may differ from the measured
 # photo aspect (recon/photo) before the fit is rejected. The vision category
 # gate imports this band so "accepted by vision" and "passes fidelity" agree.
-SILHOUETTE_ASPECT_BAND = (0.5, 2.0)
+# Calibrated so a tall narrow template on a wide photo conflicts (urn 0.75
+# on a 1.44-aspect table photo reads x0.52 -> conflict) while genuine fits
+# pass (urn 0.75 on a 0.53-aspect urn photo reads x1.43).
+SILHOUETTE_ASPECT_BAND = (0.6, 1.67)
 
 
 def _add_shape_checks(tkey: str, comps: list, bbox: list, check) -> None:
@@ -989,6 +1089,25 @@ def _add_shape_checks(tkey: str, comps: list, bbox: list, check) -> None:
                   abs(pos(shields[0])[0] - cabin_front) <= 0.2,
                   f"windshield x={pos(shields[0])[0]:.2f} vs cabin front "
                   f"{cabin_front:.2f}")
+        # Front/rear structure: headlights mark the front (+x) face. A car
+        # without any front light reads as an unfinished slab, not a
+        # recognizable vehicle — the template always carries two.
+        lights = [c for c in comps if str(c.get("role")) == "light"]
+        check("car_front_structure", len(lights) >= 1,
+              f"{len(lights)} headlight component(s) at the front")
+        if lights and bodies:
+            front = bx + bw / 2
+            check("car_lights_at_front",
+                  any(abs(pos(c)[0] - front) <= 0.4 for c in lights),
+                  f"front x={front:.2f} vs lights "
+                  f"{[round(pos(c)[0], 2) for c in lights]}")
+        # Recognizable proportions: long low body (length >> height), cabin
+        # shorter than the body and seated on top — not merely objects named
+        # `body` and `wheel`.
+        if bodies:
+            check("car_proportions",
+                  bw >= 2.0 * bh and bw > bd * 0.8,
+                  f"body {bw:.2f}x{bh:.2f}x{bd:.2f} (long, low vehicle)")
 
 
 def image_fidelity(ir: dict, stats: dict, observed_parts=None) -> dict:
@@ -1004,7 +1123,10 @@ def image_fidelity(ir: dict, stats: dict, observed_parts=None) -> dict:
 
     check("category_present", bool(ir.get("category")),
           f"category={ir.get('category')!r}")
-    comps = ir.get("components", [])
+    # Display-only context (deposit: False, e.g. a showcase stand) is
+    # measured nowhere: it is scenery, not reconstruction geometry.
+    comps = [c for c in ir.get("components", [])
+             if isinstance(c, dict) and c.get("deposit", True) is not False]
     check("component_count", len(comps) >= 2,
           f"{len(comps)} components")
     check("not_a_voxel_grid",
@@ -1033,13 +1155,15 @@ def image_fidelity(ir: dict, stats: dict, observed_parts=None) -> dict:
               f"{hit}/{len(observed_parts)} visible parts mapped "
               f"({observed_parts})")
 
-    # The category must select a real deterministic template (a generic
-    # "object" template is an honest fallback for the no-vision demo path but
-    # never counts as a verified semantic reconstruction of a photographed
-    # object).
+    # The category must select a real deterministic template. A generic
+    # "object" template is NEVER a verified semantic reconstruction of a
+    # photographed object — not for image-vision and not for the no-vision
+    # demo path either (the demo is explicitly marked as a demonstration,
+    # and its quality verdict must stay rejected so a stacked block can
+    # never be celebrated as a faithful car/house/animal).
     tkey = template_key(ir.get("category"))
     src = str(ir.get("source", ""))
-    check("category_template", tkey != "object" or src != "image-vision",
+    check("category_template", tkey != "object",
           f"category={ir.get('category')!r} -> template={tkey!r} "
           f"(source={src!r})")
 

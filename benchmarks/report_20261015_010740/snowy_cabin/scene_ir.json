@@ -1,0 +1,387 @@
+{
+  "animations": [],
+  "budgets": {
+    "max_instances": 200000,
+    "max_lights": 8,
+    "max_nodes": 512,
+    "max_particles": 60000
+  },
+  "camera": {
+    "far": 400,
+    "fov": 55,
+    "kind": "perspective",
+    "near": 0.1,
+    "position": [
+      10,
+      5,
+      12
+    ],
+    "target": [
+      0,
+      1.5,
+      0
+    ]
+  },
+  "effects": [],
+  "environment": {
+    "background": {
+      "bottom": "0x1C2634",
+      "kind": "gradient",
+      "mid": "0xA8BECF",
+      "top": "0x2C4258"
+    },
+    "environment_map": null,
+    "fog": {
+      "color": "0x8FA9C4",
+      "density": 0.02,
+      "kind": "exp2"
+    }
+  },
+  "interactions": [],
+  "ir_version": 1,
+  "kind": "scene",
+  "lights": [
+    {
+      "color": "0xFFF2E0",
+      "id": "sun",
+      "intensity": 1.6,
+      "kind": "directional",
+      "position": [
+        6,
+        10,
+        7
+      ],
+      "shadow": {
+        "bottom": -30,
+        "left": -30,
+        "map": 1024,
+        "right": 30,
+        "top": 30
+      }
+    },
+    {
+      "color": "0xBDD7F2",
+      "ground": "0x334455",
+      "id": "sky",
+      "intensity": 0.7,
+      "kind": "hemisphere"
+    }
+  ],
+  "meta": {
+    "backend": "webgl",
+    "mode": "scene",
+    "name": "forest",
+    "seed": 11,
+    "three_revision": "152"
+  },
+  "nodes": [
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "CircleGeometry",
+        "params": {
+          "r": 32,
+          "seg": 48
+        }
+      },
+      "id": "ground",
+      "kind": "mesh",
+      "material": {
+        "color": "0x3D4A33",
+        "kind": "standard",
+        "metalness": 0.0,
+        "roughness": 1.0
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          -1.5707963,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 2000,
+      "distribution": {
+        "clearing": 4.0,
+        "radius": 26,
+        "scale_jitter": 0.35,
+        "shape": "disc",
+        "y": 0.8
+      },
+      "geometry": {
+        "ctor": "CylinderGeometry",
+        "params": {
+          "h": 1.6,
+          "rb": 0.14,
+          "rt": 0.09,
+          "seg": 7
+        }
+      },
+      "id": "trunks",
+      "kind": "instanced",
+      "material": {
+        "color": "0x6B4A2F",
+        "kind": "standard",
+        "metalness": 0.0,
+        "roughness": 0.95
+      },
+      "printable": false,
+      "receive_shadow": false,
+      "required": true,
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 2000,
+      "distribution": {
+        "clearing": 4.0,
+        "radius": 26,
+        "scale_jitter": 0.35,
+        "shape": "disc",
+        "y": 2.6
+      },
+      "geometry": {
+        "ctor": "ConeGeometry",
+        "params": {
+          "h": 2.6,
+          "r": 1.0,
+          "seg": 8
+        }
+      },
+      "id": "canopies",
+      "kind": "instanced",
+      "material": {
+        "color": "0x2F5B2F",
+        "kind": "standard",
+        "metalness": 0.0,
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": false,
+      "required": true,
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 2.8,
+          "h": 1.8,
+          "w": 3.4
+        }
+      },
+      "id": "cabin_walls",
+      "kind": "mesh",
+      "material": {
+        "color": "0x7A5A38",
+        "kind": "standard",
+        "roughness": 0.85
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          0,
+          0.9,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.1,
+          "h": 1.3,
+          "w": 0.7
+        }
+      },
+      "id": "cabin_door",
+      "kind": "mesh",
+      "material": {
+        "color": "0x4A3320",
+        "kind": "standard"
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          0,
+          0.65,
+          1.43
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.1,
+          "h": 0.6,
+          "w": 0.8
+        }
+      },
+      "id": "cabin_window",
+      "kind": "mesh",
+      "material": {
+        "color": "0xFFC873",
+        "kind": "basic"
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          -0.9,
+          1.1,
+          1.43
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "ConeGeometry",
+        "params": {
+          "h": 1.2,
+          "r": 2.448,
+          "seg": 4
+        }
+      },
+      "id": "cabin_roof",
+      "kind": "mesh",
+      "material": {
+        "color": "0x4E463C",
+        "kind": "standard",
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": false,
+      "required": true,
+      "transform": {
+        "position": [
+          0,
+          2.4,
+          0
+        ],
+        "rotation": [
+          0,
+          0.7853982,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    }
+  ],
+  "relations": [
+    {
+      "a": "cabin_roof",
+      "b": "cabin_walls",
+      "rel": "on",
+      "tol": 0.1
+    }
+  ]
+}

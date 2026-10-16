@@ -1,0 +1,739 @@
+{
+  "animations": [],
+  "budgets": {
+    "max_instances": 200000,
+    "max_lights": 8,
+    "max_nodes": 512,
+    "max_particles": 60000
+  },
+  "camera": {
+    "far": 600,
+    "fov": 55,
+    "kind": "perspective",
+    "near": 0.1,
+    "position": [
+      16,
+      6,
+      22
+    ],
+    "target": [
+      0,
+      0,
+      0
+    ]
+  },
+  "effects": [],
+  "environment": {
+    "background": {
+      "bottom": "0x1A2030",
+      "kind": "gradient",
+      "mid": "0xCF9A5A",
+      "top": "0x2C4A6E"
+    },
+    "environment_map": {
+      "ground": "0x1A2030",
+      "horizon": "0xCF9A5A",
+      "kind": "procedural_equirect",
+      "sky": "0x2C4A6E"
+    },
+    "fog": {
+      "color": "0xCF9A5A",
+      "density": 0.008,
+      "kind": "exp2"
+    }
+  },
+  "interactions": [],
+  "ir_version": 1,
+  "kind": "scene",
+  "lights": [
+    {
+      "color": "0xFFD9A0",
+      "id": "sun",
+      "intensity": 1.8,
+      "kind": "directional",
+      "position": [
+        -14,
+        7,
+        -18
+      ]
+    },
+    {
+      "color": "0xCF9A5A",
+      "ground": "0x1A2030",
+      "id": "sky",
+      "intensity": 0.5,
+      "kind": "hemisphere"
+    }
+  ],
+  "meta": {
+    "backend": "webgl",
+    "mode": "scene",
+    "name": "water",
+    "seed": 11,
+    "three_revision": "152"
+  },
+  "nodes": [
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "PlaneGeometry",
+        "params": {
+          "h": 60,
+          "hs": 1,
+          "w": 60,
+          "ws": 1
+        }
+      },
+      "id": "lake",
+      "kind": "mesh",
+      "material": {
+        "color": "0x1E3A55",
+        "envMapIntensity": 1.2,
+        "kind": "standard",
+        "metalness": 0.9,
+        "roughness": 0.08
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          -1.5707963,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 800,
+      "distribution": {
+        "hx": 28,
+        "hz": 28,
+        "shape": "box"
+      },
+      "geometry": {
+        "generator": "particles",
+        "params": {
+          "count": 800
+        }
+      },
+      "id": "mist",
+      "kind": "points",
+      "material": {
+        "color": "0xE8D9C0",
+        "kind": "points",
+        "size": 0.5
+      },
+      "printable": false,
+      "receive_shadow": false,
+      "required": false,
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 1.2,
+          "h": 0.7,
+          "w": 3.2
+        }
+      },
+      "id": "boat_hull",
+      "kind": "mesh",
+      "material": {
+        "color": "0x6E4A2F",
+        "kind": "standard",
+        "roughness": 0.7
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          0,
+          0.35,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.1,
+          "h": 0.12,
+          "w": 3.2
+        }
+      },
+      "id": "boat_gunwale_l",
+      "kind": "mesh",
+      "material": {
+        "color": "0x4A3320",
+        "kind": "standard"
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          0,
+          0.76,
+          0.6
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.1,
+          "h": 0.12,
+          "w": 3.2
+        }
+      },
+      "id": "boat_gunwale_r",
+      "kind": "mesh",
+      "material": {
+        "color": "0x4A3320",
+        "kind": "standard"
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          0,
+          0.76,
+          -0.6
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "CylinderGeometry",
+        "params": {
+          "h": 2.6,
+          "rb": 0.07,
+          "rt": 0.06,
+          "seg": 20
+        }
+      },
+      "id": "boat_mast",
+      "kind": "mesh",
+      "material": {
+        "color": "0x5A4632",
+        "kind": "standard"
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          0.3,
+          2.0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "PlaneGeometry",
+        "params": {
+          "h": 1.9,
+          "hs": 1,
+          "w": 1.5,
+          "ws": 1
+        }
+      },
+      "id": "boat_sail",
+      "kind": "mesh",
+      "material": {
+        "color": "0xEDE6DA",
+        "kind": "standard",
+        "roughness": 0.85,
+        "side": "DoubleSide"
+      },
+      "printable": false,
+      "receive_shadow": false,
+      "required": true,
+      "transform": {
+        "position": [
+          -0.45,
+          2.2,
+          0
+        ],
+        "rotation": [
+          0,
+          1.5707963,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 1.6,
+          "h": 0.14,
+          "w": 8.0
+        }
+      },
+      "id": "pier_deck",
+      "kind": "mesh",
+      "material": {
+        "color": "0x7A6248",
+        "kind": "standard",
+        "roughness": 0.85
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          0,
+          0.5,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "CylinderGeometry",
+        "params": {
+          "h": 1.4,
+          "rb": 0.09,
+          "rt": 0.09,
+          "seg": 20
+        }
+      },
+      "id": "pier_pile_0",
+      "kind": "mesh",
+      "material": {
+        "color": "0x4E3B28",
+        "kind": "standard"
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          -3.5,
+          -0.1,
+          -0.65
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "CylinderGeometry",
+        "params": {
+          "h": 1.4,
+          "rb": 0.09,
+          "rt": 0.09,
+          "seg": 20
+        }
+      },
+      "id": "pier_pile_1",
+      "kind": "mesh",
+      "material": {
+        "color": "0x4E3B28",
+        "kind": "standard"
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          -3.5,
+          -0.1,
+          0.65
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "CylinderGeometry",
+        "params": {
+          "h": 1.4,
+          "rb": 0.09,
+          "rt": 0.09,
+          "seg": 20
+        }
+      },
+      "id": "pier_pile_2",
+      "kind": "mesh",
+      "material": {
+        "color": "0x4E3B28",
+        "kind": "standard"
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          -1.5,
+          -0.1,
+          -0.65
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "CylinderGeometry",
+        "params": {
+          "h": 1.4,
+          "rb": 0.09,
+          "rt": 0.09,
+          "seg": 20
+        }
+      },
+      "id": "pier_pile_3",
+      "kind": "mesh",
+      "material": {
+        "color": "0x4E3B28",
+        "kind": "standard"
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          -1.5,
+          -0.1,
+          0.65
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "CylinderGeometry",
+        "params": {
+          "h": 1.4,
+          "rb": 0.09,
+          "rt": 0.09,
+          "seg": 20
+        }
+      },
+      "id": "pier_pile_4",
+      "kind": "mesh",
+      "material": {
+        "color": "0x4E3B28",
+        "kind": "standard"
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          0.5,
+          -0.1,
+          -0.65
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "CylinderGeometry",
+        "params": {
+          "h": 1.4,
+          "rb": 0.09,
+          "rt": 0.09,
+          "seg": 20
+        }
+      },
+      "id": "pier_pile_5",
+      "kind": "mesh",
+      "material": {
+        "color": "0x4E3B28",
+        "kind": "standard"
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          0.5,
+          -0.1,
+          0.65
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "CylinderGeometry",
+        "params": {
+          "h": 1.4,
+          "rb": 0.09,
+          "rt": 0.09,
+          "seg": 20
+        }
+      },
+      "id": "pier_pile_6",
+      "kind": "mesh",
+      "material": {
+        "color": "0x4E3B28",
+        "kind": "standard"
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          2.5,
+          -0.1,
+          -0.65
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "CylinderGeometry",
+        "params": {
+          "h": 1.4,
+          "rb": 0.09,
+          "rt": 0.09,
+          "seg": 20
+        }
+      },
+      "id": "pier_pile_7",
+      "kind": "mesh",
+      "material": {
+        "color": "0x4E3B28",
+        "kind": "standard"
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          2.5,
+          -0.1,
+          0.65
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    }
+  ],
+  "relations": []
+}

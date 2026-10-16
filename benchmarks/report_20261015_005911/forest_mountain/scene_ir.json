@@ -1,0 +1,326 @@
+{
+  "animations": [],
+  "budgets": {
+    "max_instances": 200000,
+    "max_lights": 8,
+    "max_nodes": 512,
+    "max_particles": 60000
+  },
+  "camera": {
+    "far": 400,
+    "fov": 55,
+    "kind": "perspective",
+    "near": 0.1,
+    "position": [
+      14,
+      7,
+      18
+    ],
+    "target": [
+      0,
+      2,
+      0
+    ]
+  },
+  "effects": [],
+  "environment": {
+    "background": {
+      "bottom": "0x141C28",
+      "kind": "gradient",
+      "mid": "0x8FA9C4",
+      "top": "0x2E4A68"
+    },
+    "environment_map": null,
+    "fog": {
+      "color": "0x8FA9C4",
+      "density": 0.02,
+      "kind": "exp2"
+    }
+  },
+  "interactions": [],
+  "ir_version": 1,
+  "kind": "scene",
+  "lights": [
+    {
+      "color": "0xFFF2E0",
+      "id": "sun",
+      "intensity": 1.6,
+      "kind": "directional",
+      "position": [
+        6,
+        10,
+        7
+      ],
+      "shadow": {
+        "bottom": -30,
+        "left": -30,
+        "map": 1024,
+        "right": 30,
+        "top": 30
+      }
+    },
+    {
+      "color": "0xBDD7F2",
+      "ground": "0x334455",
+      "id": "sky",
+      "intensity": 0.7,
+      "kind": "hemisphere"
+    },
+    {
+      "color": "0xFFF2E0",
+      "id": "mountains_sun",
+      "intensity": 1.6,
+      "kind": "directional",
+      "position": [
+        6,
+        10,
+        7
+      ],
+      "shadow": {
+        "bottom": -45,
+        "left": -45,
+        "map": 1024,
+        "right": 45,
+        "top": 45
+      }
+    },
+    {
+      "color": "0xBDD7F2",
+      "ground": "0x334455",
+      "id": "mountains_sky",
+      "intensity": 0.7,
+      "kind": "hemisphere"
+    }
+  ],
+  "meta": {
+    "backend": "webgl",
+    "mode": "scene",
+    "name": "forest",
+    "seed": 11,
+    "three_revision": "152"
+  },
+  "nodes": [
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "CircleGeometry",
+        "params": {
+          "r": 32,
+          "seg": 48
+        }
+      },
+      "id": "ground",
+      "kind": "mesh",
+      "material": {
+        "color": "0x3D4A33",
+        "kind": "standard",
+        "metalness": 0.0,
+        "roughness": 1.0
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          -1.5707963,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 2000,
+      "distribution": {
+        "clearing": 4.0,
+        "radius": 26,
+        "scale_jitter": 0.35,
+        "shape": "disc",
+        "y": 0.8
+      },
+      "geometry": {
+        "ctor": "CylinderGeometry",
+        "params": {
+          "h": 1.6,
+          "rb": 0.14,
+          "rt": 0.09,
+          "seg": 7
+        }
+      },
+      "id": "trunks",
+      "kind": "instanced",
+      "material": {
+        "color": "0x6B4A2F",
+        "kind": "standard",
+        "metalness": 0.0,
+        "roughness": 0.95
+      },
+      "printable": false,
+      "receive_shadow": false,
+      "required": true,
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 2000,
+      "distribution": {
+        "clearing": 4.0,
+        "radius": 26,
+        "scale_jitter": 0.35,
+        "shape": "disc",
+        "y": 2.6
+      },
+      "geometry": {
+        "ctor": "ConeGeometry",
+        "params": {
+          "h": 2.6,
+          "r": 1.0,
+          "seg": 8
+        }
+      },
+      "id": "canopies",
+      "kind": "instanced",
+      "material": {
+        "color": "0x2F5B2F",
+        "kind": "standard",
+        "metalness": 0.0,
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": false,
+      "required": true,
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "generator": "terrain",
+        "params": {
+          "height": 9,
+          "segments": 96,
+          "size": 90
+        }
+      },
+      "id": "mountains_terrain",
+      "kind": "mesh",
+      "material": {
+        "color": "0x5A6B4A",
+        "kind": "standard",
+        "metalness": 0.0,
+        "roughness": 0.95
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": false,
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "generator": "gradient_sky",
+        "params": {
+          "bot": "0x1A2433",
+          "mid": "0x9DB8D6",
+          "top": "0x27435F"
+        }
+      },
+      "id": "mountains_sky",
+      "kind": "mesh",
+      "material": {
+        "color": "0xFFFFFF",
+        "fog": false,
+        "kind": "basic"
+      },
+      "printable": false,
+      "receive_shadow": false,
+      "required": false,
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    }
+  ],
+  "relations": []
+}

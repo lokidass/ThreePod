@@ -35,6 +35,22 @@ Model pulls in the compose service are one-shot; rerun
 
 ## Local development
 
+### Web UI (React)
+
+The UI lives in `web/` (React + JavaScript/JSX + Vite). Build it once and the
+Flask server serves it at `/` (the previous static UI stays at `/classic/`):
+
+```bash
+cd web && npm install && npm run build
+```
+
+For UI development with hot reload, run the API (`python server.py --port 5000`)
+and `npm run dev` in `web/` (http://localhost:5173, proxies `/api` and `/runs`).
+The Docker image builds the UI in a separate Node stage.
+
+### Server
+
+
 ```bash
 python server.py --port 5000      # then open http://localhost:5000
 ```

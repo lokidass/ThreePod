@@ -36,8 +36,26 @@ from morphix_thinker import think
 from morphix_pipeline import run_pipeline, run_incremental
 from morphix_jobs import RUNS_DIR, create_job, get_job, event_stream
 
-app = Flask(__name__, static_folder="frontend", static_url_path="")
+# UI: the React app (web/, built to web/dist) when it has been built,
+# otherwise the classic static frontend. The classic UI stays reachable at
+# /classic/ either way.
+_HERE = os.path.dirname(os.path.abspath(__file__))
+CLASSIC_DIR = os.path.join(_HERE, "frontend")
+WEB_DIST = os.path.join(_HERE, "web", "dist")
+UI_DIR = (WEB_DIST if os.path.isfile(os.path.join(WEB_DIST, "index.html"))
+          else CLASSIC_DIR)
+
+app = Flask(__name__, static_folder=UI_DIR, static_url_path="")
 os.makedirs(RUNS_DIR, exist_ok=True)
+
+
+@app.after_request
+def _run_assets_cors(resp):
+    # Run pages render inside a sandboxed iframe (opaque origin); their
+    # textures (trace/texture.png) and module assets need CORS to load.
+    if request.path.startswith("/runs/"):
+        resp.headers["Access-Control-Allow-Origin"] = "*"
+    return resp
 
 
 # ------------------------------------------------------------------ health
@@ -236,9 +254,81 @@ def api_run(run_id):
 @app.get("/runs/<run_id>/<fname>")
 def run_file(run_id, fname):
     if fname not in ("scene.html", "scene.js", "actions.json", "report.json",
-                     "scene_ir.json"):
+                     "scene_ir.json", "model.html", "object.json"):
         return jsonify({"error": "not found"}), 404
     return send_from_directory(os.path.join(RUNS_DIR, run_id), fname)
+
+
+@app.post("/api/text3d")
+def api_text3d():
+    # Text -> realistic object via the shape-first family builders.
+    from morphix_config import PipelineError
+    from morphix_text3d import run as text_run
+    body = request.get_json(force=True) or {}
+    prompt = (body.get("prompt") or "").strip()
+    if not prompt:
+        return jsonify({"error": "describe an object"}), 400
+    try:
+        report = text_run(prompt, RUNS_DIR)
+    except PipelineError as e:
+        return jsonify({"error": str(e), "stage": "understand"}), 422
+    except Exception as e:
+        return jsonify({"error": f"text to 3D failed: {e}", "stage": "build"}), 500
+    run_id = report.pop("run_id")
+    with open(os.path.join(RUNS_DIR, run_id, "scene.js"), encoding="utf-8") as f:
+        scene_js = f.read()
+    return jsonify({"run_id": run_id, "report": report, "scene_js": scene_js,
+                    "actions": []})
+
+
+@app.post("/api/runs/<run_id>/edit")
+def api_run_edit(run_id):
+    # Edit an object with a prompt -> a NEW run (the original is untouched).
+    from morphix_config import PipelineError
+    from morphix_edit import edit_run
+    body = request.get_json(force=True) or {}
+    prompt = (body.get("prompt") or "").strip()
+    if not prompt:
+        return jsonify({"error": "describe the change, e.g. 'make it red'"}), 400
+    if not os.path.isdir(os.path.join(RUNS_DIR, run_id)):
+        return jsonify({"error": "unknown run"}), 404
+    try:
+        report = edit_run(RUNS_DIR, run_id, prompt)
+    except PipelineError as e:
+        return jsonify({"error": str(e), "stage": "edit"}), 422
+    except Exception as e:
+        return jsonify({"error": f"edit failed: {e}", "stage": "edit"}), 500
+    new_id = report.pop("run_id")
+    with open(os.path.join(RUNS_DIR, new_id, "scene.js"), encoding="utf-8") as f:
+        scene_js = f.read()
+    return jsonify({"run_id": new_id, "report": report, "scene_js": scene_js,
+                    "actions": []})
+
+
+@app.get("/api/runs/<run_id>/parts")
+def api_run_parts(run_id):
+    # Editable parts of a run's object (drives the edit suggestions).
+    p = os.path.join(RUNS_DIR, run_id, "object.json")
+    if not os.path.isfile(p):
+        return jsonify({"editable": False, "roles": []})
+    from morphix_edit import targets_of
+    with open(p, encoding="utf-8") as f:
+        ir = json.load(f)
+    t = targets_of(ir)
+    return jsonify({"editable": True, "roles": t["roles"],
+                    "counts": t["counts"],
+                    "materials": t["materials"],
+                    "category": ir.get("category")})
+
+
+@app.get("/runs/<run_id>/trace/<fname>")
+def run_trace_file(run_id, fname):
+    # image -> 3D evidence: reference, mask, renders, comparison, JSON trace
+    from werkzeug.utils import secure_filename
+    if secure_filename(fname) != fname or not fname.endswith(
+            (".png", ".jpg", ".jpeg", ".json")):
+        return jsonify({"error": "not found"}), 404
+    return send_from_directory(os.path.join(RUNS_DIR, run_id, "trace"), fname)
 
 
 # ------------------------------------------------------------------- image
@@ -261,20 +351,27 @@ def api_image():
     out_dir = os.path.join(RUNS_DIR, stamp)
 
     if mode == "reconstruct":
-        # Semantic image -> 3D object (canonical IR -> printer paths).
-        from morphix_reconstruct import VisionError, run_reconstruction
+        # Open-ended image -> 3D (any subject): family builders where they
+        # exist, the subject's measured silhouette otherwise, measured
+        # visual verification. Vision problems are reported in the result,
+        # never answered with "pick one of N categories".
+        from morphix_image3d import ReconstructionError
+        from morphix_reconstruct import run_reconstruction
         category = (request.form.get("category") or "").strip() or None
         vision_model = (request.form.get("vision_model") or "").strip()
+        environment = request.form.get("environment", "object-only")
+        if environment not in ("object-only", "preserve"):
+            return jsonify({"error": "environment must be object-only | "
+                                     "preserve"}), 400
         try:
             report = run_reconstruction(src, out_dir, category=category,
-                                        vision_model=vision_model)
-        except VisionError as e:
-            # The vision answer was not trustworthy enough to build geometry.
-            # Ask the client to have the user pick the category explicitly
-            # instead of silently substituting a different one.
-            return jsonify({"error": str(e), **e.info}), 422
+                                        vision_model=vision_model,
+                                        environment=environment)
+        except ReconstructionError as e:
+            return jsonify({"error": str(e), "stage": e.stage}), 422
         except Exception as e:
-            return jsonify({"error": f"semantic reconstruction failed: {e}"}), 500
+            return jsonify({"error": f"reconstruction failed: {e}",
+                            "stage": "internal"}), 500
         actions = json.load(open(os.path.join(out_dir, "actions.json"),
                                  encoding="utf-8"))
         scene_js = open(os.path.join(out_dir, "scene.js"),
@@ -283,6 +380,9 @@ def api_image():
                         "actions": actions, "scene_js": scene_js,
                         "report": report,
                         "ir": report.get("ir"),
+                        "status": report.get("reconstruction_status"),
+                        "success": report.get("success"),
+                        "trace": f"/runs/{stamp}/trace/",
                         "warnings": report.get("warnings", [])})
 
     from morphix_image import run_image
@@ -357,18 +457,20 @@ def api_scenes():
         errs = validate_scene_ir(ir)
         if errs:
             return jsonify({"error": "scene IR invalid: " + "; ".join(errs),
-                            "plan": plan}), 422
+                            "stage": "ir_validation", "plan": plan}), 422
         scene_js = compile_scene_ir(ir)
         js_errs = validate_scene_js(scene_js)
         if js_errs:
             return jsonify({"error": "scene JS invalid: " + "; ".join(js_errs),
-                            "plan": plan}), 422
+                            "stage": "compile", "plan": plan}), 422
     except PipelineError as e:
-        return jsonify({"error": str(e)}), 422
+        # plan_scene failures land here (planner validation exhausted)
+        return jsonify({"error": str(e), "stage": "planning"}), 422
     except (ValueError, KeyError) as e:
-        return jsonify({"error": str(e)}), 422
+        return jsonify({"error": str(e), "stage": "compile"}), 422
     except Exception as e:
-        return jsonify({"error": f"scene generation failed: {e}"}), 500
+        return jsonify({"error": f"scene generation failed: {e}",
+                        "stage": "render"}), 500
     stamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     out_dir = os.path.join(RUNS_DIR, stamp)
     os.makedirs(out_dir, exist_ok=True)
@@ -398,7 +500,13 @@ def api_scenes():
 
 @app.get("/")
 def index():
-    return send_from_directory("frontend", "index.html")
+    return send_from_directory(UI_DIR, "index.html")
+
+
+@app.get("/classic/")
+@app.get("/classic/<path:fname>")
+def classic(fname="index.html"):
+    return send_from_directory(CLASSIC_DIR, fname)
 
 
 def main():

@@ -108,12 +108,17 @@ def render_scenes(pages):
                         "window.__scene_error || null")
                     stats = page.evaluate(
                         "window.__scene_stats || null")
+                    try:
+                        graph = collect_graph(page)
+                    except Exception:
+                        graph = {}
                     page.screenshot(path=out_png)
                     results[name] = {
                         "png": out_png, "ready": ready,
                         "scene_error": scene_error,
                         "console_errors": list(console_errors),
                         "stats": stats or {},
+                        "graph": graph,
                         "elapsed_s": round(time.monotonic() - t0, 2)}
             finally:
                 browser.close()
@@ -130,3 +135,10 @@ def ssim(a_path, b_path):
                                    "visual_geometry"))
     from render import ssim_score
     return ssim_score(a_path, b_path)
+
+
+def collect_graph(page):
+    """Live scene introspection: {ir_id: {present, bbox, visible, ...}}
+    with world-space bboxes from rendered geometry. Calls the compiled
+    module's own __introspectScene hook (THREE stays module-scoped)."""
+    return page.evaluate("window.__introspectScene()")

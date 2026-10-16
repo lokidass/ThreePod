@@ -39,7 +39,7 @@ def demo_report(car_image, tmp_path_factory):
     R.VISION_MODEL = ""
     try:
         out = str(tmp_path_factory.mktemp("demo"))
-        rep = R.run_reconstruction(car_image, out_dir=out)
+        rep = R.run_reconstruction_legacy(car_image, out_dir=out)
     finally:
         R.available_vision_model, R.VISION_MODEL, R.ollama_generate = old
     rep["_out_dir"] = out
@@ -61,7 +61,7 @@ def vision_report(car_image, tmp_path_factory):
     R.ollama_generate = fake
     try:
         out = tmp_path_factory.mktemp("vision")
-        rep = R.run_reconstruction(car_image, out_dir=str(out))
+        rep = R.run_reconstruction_legacy(car_image, out_dir=str(out))
         rep["_out_dir"] = str(out)
         return rep
     finally:
@@ -138,7 +138,7 @@ def test_relief_and_semantic_use_different_pipelines(car_image, tmp_path):
     old = (R.available_vision_model, R.VISION_MODEL)
     R.available_vision_model, R.VISION_MODEL = (lambda: "", "")
     try:
-        sem = R.run_reconstruction(car_image,
+        sem = R.run_reconstruction_legacy(car_image,
                                    out_dir=os.path.join(str(tmp_path), "sem"))
     finally:
         R.available_vision_model, R.VISION_MODEL = old

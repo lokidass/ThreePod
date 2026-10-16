@@ -295,6 +295,8 @@ def check_plan(spec: dict, actions: list) -> tuple:
             errs.append(f"car needs exactly {spec['wheel']['count']} wheels "
                         f"(got {len(wheels)})")
         pts = []
+        heights = []
+        radii = []
         for a, c in wheels:
             if len(c) == 6:
                 warn(f"wheel {a.get('label')!r} is a box, not a "
@@ -305,7 +307,18 @@ def check_plan(spec: dict, actions: list) -> tuple:
             if not (lo_r <= r <= hi_r):
                 warn(f"wheel {a.get('label')!r} radius {r:.2f} "
                      f"outside {lo_r}-{hi_r}")
+            # Cross-wheel coherence (NOT absolute height == diameter: uniform
+            # sets of any sane proportion are the thinker's design freedom
+            # and print fine — only a mismatched set prints lopsided).
+            heights.append(h)
+            radii.append(r)
             pts.append((_cx, _cz))
+        if len(heights) >= 2 and max(heights) - min(heights) > 0.1:
+            warn(f"wheels have inconsistent heights "
+                 f"{sorted(round(h, 2) for h in heights)} (prints lopsided)")
+        if len(radii) >= 2 and max(radii) - min(radii) > 0.1:
+            warn(f"wheels have inconsistent radii "
+                 f"{sorted(round(r, 2) for r in radii)} (prints lopsided)")
         if len(pts) >= 2:
             xs = sorted({round(x, 1) for x, _z in pts})
             if len(xs) < 2 or max(xs) - min(xs) < spec["wheel"]["spread_x"]:
@@ -813,6 +826,15 @@ def verify_solids(actions: list, committed: list) -> list:
                 pts.append(r["at"])
         return pts
 
+    def pts_by_layer(recs):
+        out = []
+        for r in recs:
+            pts = ([r["from"], r["to"]]
+                   if r.get("action") == "deposit_segment" else [r["at"]])
+            for p in pts:
+                out.append((r.get("layer"), p))
+        return out
+
     for label, a in by_label.items():
         name = a.get("action")
         recs = recs_by.get(label, [])
@@ -875,6 +897,34 @@ def verify_solids(actions: list, committed: list) -> list:
             ck(label, "sphere_round", ok, f"max radius error {worst:.3f}")
             ck(label, "sphere_layers", len(layer_res) >= 3,
                f"{len(layer_res)} sliced layers")
+        elif name in ("add_profile", "add_lathe", "add_inflate"):
+            # Every committed layer must reproduce the TRUE cross-section
+            # of the solid at that height (scanline / revolved radius),
+            # not a bounding box: a car profile prints its hood lower than
+            # its roof, a horizontal wheel prints a circle's chords.
+            from morphix_path import (_dims, _profile_sample_y,
+                                      section_extent)
+            dims = _dims(a)
+            lo, hi = py - dims["half"], py + dims["half"]
+            axis_i = 2 if (name == "add_profile"
+                           and dims.get("axis") == "x") else 0
+            by_layer = {}
+            for p in pts_by_layer(recs):
+                by_layer.setdefault(p[0], []).append(p[1][axis_i])
+            worst, ok = 0.0, True
+            for k, us in sorted(by_layer.items()):
+                want = section_extent(a, _profile_sample_y(k, lo, hi))
+                if want is None:
+                    ok = False
+                    worst = max(worst, 9.99)
+                    continue
+                err = max(abs(min(us) - want[0]), abs(max(us) - want[1]))
+                worst = max(worst, err)
+                if err > TOL_DIM:
+                    ok = False
+            ck(label, "section_match", ok,
+               f"{len(by_layer)} layers, max cross-section error "
+               f"{worst:.3f}")
 
     # -- contact: every sphere must rest on the box beneath it
     boxes = {l: _box_of(a) for l, a in by_label.items()
@@ -919,7 +969,56 @@ def expected_of(act: dict) -> dict:
         _cx, _cy, _cz, r = s
         return {"expect_bbox": (2 * r, 2 * r, 2 * r),
                 "expect_center": (_cx, _cy, _cz)}
+    sec = _section_bbox(act)
+    if sec:
+        return sec
     return {}
+
+
+def _section_bbox(act: dict):
+    """Expected bbox + center of an add_profile / add_lathe action, measured
+    over the layers the slicer actually prints (the beads' footprint), or
+    None for other actions / malformed geometry."""
+    if not isinstance(act, dict) or act.get("action") not in (
+            "add_profile", "add_lathe", "add_inflate"):
+        return None
+    from morphix_path import _dims, _profile_sample_y, section_extent
+    try:
+        dims = _dims(act)
+        cx, cy, cz = (float(v) for v in act["position"])
+    except (ValueError, KeyError, TypeError):
+        return None
+    lo, hi = cy - dims["half"], cy + dims["half"]
+    k0 = max(0, int(math.floor((lo + 1e-9) / LAYER_HEIGHT)))
+    k1 = max(k0, int(math.ceil((hi - 1e-9) / LAYER_HEIGHT)) - 1)
+    ext, ys = [], []
+    for k in range(k0, k1 + 1):
+        e = section_extent(act, _profile_sample_y(k, lo, hi))
+        if e:
+            ext.append(e)
+            ys.append(k * LAYER_HEIGHT)
+    if not ext:
+        return None
+    u0, u1 = min(e[0] for e in ext), max(e[1] for e in ext)
+    if act["action"] == "add_inflate":
+        from morphix_path import _inflate_columns
+        tmax = 0.0
+        for k in range(k0, k1 + 1):
+            for _u, t in _inflate_columns(
+                    dims, _profile_sample_y(k, lo, hi) - cy):
+                tmax = max(tmax, round(t, 3))
+        w, d, ccx, ccz = u1 - u0, 2 * tmax, (u0 + u1) / 2, cz
+    elif act["action"] == "add_lathe":
+        w = d = u1 - u0
+        ccx, ccz = (u0 + u1) / 2, cz
+    else:
+        dmax = max(dims["d"], dims["dt"])
+        if dims["axis"] == "z":
+            w, d, ccx, ccz = u1 - u0, dmax, (u0 + u1) / 2, cz
+        else:
+            w, d, ccx, ccz = dmax, u1 - u0, cx, (u0 + u1) / 2
+    return {"expect_bbox": (w, (max(ys) - min(ys)) + LAYER_HEIGHT, d),
+            "expect_center": (ccx, (min(ys) + max(ys)) / 2, ccz)}
 
 
 # ------------------------------------------------ car plan repair

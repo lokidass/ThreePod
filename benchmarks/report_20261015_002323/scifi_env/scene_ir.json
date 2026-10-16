@@ -1,0 +1,463 @@
+{
+  "animations": [
+    {
+      "amplitude": 0.25,
+      "frequency": 0.9,
+      "kind": "bob",
+      "target": "core"
+    },
+    {
+      "amplitude": 0.5,
+      "base": 1.2,
+      "frequency": 6.0,
+      "kind": "flicker",
+      "target": "strip_light_1"
+    }
+  ],
+  "budgets": {
+    "max_instances": 200000,
+    "max_lights": 8,
+    "max_nodes": 512,
+    "max_particles": 60000
+  },
+  "camera": {
+    "far": 300,
+    "fov": 60,
+    "kind": "perspective",
+    "near": 0.1,
+    "position": [
+      0,
+      2.2,
+      12
+    ],
+    "target": [
+      0,
+      2.2,
+      0
+    ]
+  },
+  "effects": [],
+  "environment": {
+    "background": {
+      "color": "0x05070C",
+      "kind": "color"
+    },
+    "environment_map": null,
+    "fog": {
+      "color": "0x0A1220",
+      "density": 0.03,
+      "kind": "exp2"
+    }
+  },
+  "interactions": [],
+  "ir_version": 1,
+  "kind": "scene",
+  "lights": [
+    {
+      "color": "0x3A5A8C",
+      "ground": "0x05070C",
+      "id": "sky",
+      "intensity": 0.5,
+      "kind": "hemisphere"
+    },
+    {
+      "angle": 0.6,
+      "color": "0xBFD9FF",
+      "distance": 40,
+      "id": "key",
+      "intensity": 4.0,
+      "kind": "spot",
+      "penumbra": 0.5,
+      "position": [
+        0,
+        9,
+        4
+      ]
+    },
+    {
+      "color": "0x33E0FF",
+      "decay": 2,
+      "distance": 14,
+      "id": "strip_light_0",
+      "intensity": 1.2,
+      "kind": "point",
+      "position": [
+        -5.5,
+        3.4,
+        -8
+      ]
+    },
+    {
+      "color": "0x33E0FF",
+      "decay": 2,
+      "distance": 14,
+      "id": "strip_light_1",
+      "intensity": 1.2,
+      "kind": "point",
+      "position": [
+        -5.5,
+        3.4,
+        0
+      ]
+    },
+    {
+      "color": "0x33E0FF",
+      "decay": 2,
+      "distance": 14,
+      "id": "strip_light_2",
+      "intensity": 1.2,
+      "kind": "point",
+      "position": [
+        -5.5,
+        3.4,
+        8
+      ]
+    }
+  ],
+  "meta": {
+    "backend": "webgl",
+    "mode": "scene",
+    "name": "scifi",
+    "seed": 11,
+    "three_revision": "152"
+  },
+  "nodes": [
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "PlaneGeometry",
+        "params": {
+          "h": 40,
+          "hs": 1,
+          "w": 16,
+          "ws": 1
+        }
+      },
+      "id": "floor",
+      "kind": "mesh",
+      "material": {
+        "color": "0x0C1119",
+        "kind": "standard",
+        "metalness": 0.8,
+        "roughness": 0.25
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          -1.5707963,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "TorusGeometry",
+        "params": {
+          "r": 5.2,
+          "rs": 12,
+          "t": 0.35,
+          "ts": 40
+        }
+      },
+      "id": "arch_0",
+      "kind": "mesh",
+      "material": {
+        "color": "0x1A2433",
+        "kind": "standard",
+        "metalness": 0.7,
+        "roughness": 0.5
+      },
+      "printable": false,
+      "receive_shadow": false,
+      "required": true,
+      "transform": {
+        "position": [
+          0,
+          0.4,
+          -8
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 6.0,
+          "h": 0.18,
+          "w": 0.18
+        }
+      },
+      "id": "strip_0",
+      "kind": "mesh",
+      "material": {
+        "color": "0x33E0FF",
+        "kind": "basic"
+      },
+      "printable": false,
+      "receive_shadow": false,
+      "required": true,
+      "transform": {
+        "position": [
+          -5.4,
+          3.4,
+          -8
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "TorusGeometry",
+        "params": {
+          "r": 5.2,
+          "rs": 12,
+          "t": 0.35,
+          "ts": 40
+        }
+      },
+      "id": "arch_1",
+      "kind": "mesh",
+      "material": {
+        "color": "0x1A2433",
+        "kind": "standard",
+        "metalness": 0.7,
+        "roughness": 0.5
+      },
+      "printable": false,
+      "receive_shadow": false,
+      "required": true,
+      "transform": {
+        "position": [
+          0,
+          0.4,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 6.0,
+          "h": 0.18,
+          "w": 0.18
+        }
+      },
+      "id": "strip_1",
+      "kind": "mesh",
+      "material": {
+        "color": "0x33E0FF",
+        "kind": "basic"
+      },
+      "printable": false,
+      "receive_shadow": false,
+      "required": true,
+      "transform": {
+        "position": [
+          -5.4,
+          3.4,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "TorusGeometry",
+        "params": {
+          "r": 5.2,
+          "rs": 12,
+          "t": 0.35,
+          "ts": 40
+        }
+      },
+      "id": "arch_2",
+      "kind": "mesh",
+      "material": {
+        "color": "0x1A2433",
+        "kind": "standard",
+        "metalness": 0.7,
+        "roughness": 0.5
+      },
+      "printable": false,
+      "receive_shadow": false,
+      "required": true,
+      "transform": {
+        "position": [
+          0,
+          0.4,
+          8
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 6.0,
+          "h": 0.18,
+          "w": 0.18
+        }
+      },
+      "id": "strip_2",
+      "kind": "mesh",
+      "material": {
+        "color": "0x33E0FF",
+        "kind": "basic"
+      },
+      "printable": false,
+      "receive_shadow": false,
+      "required": true,
+      "transform": {
+        "position": [
+          -5.4,
+          3.4,
+          8
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "SphereGeometry",
+        "params": {
+          "hs": 32,
+          "r": 1.1,
+          "ws": 32
+        }
+      },
+      "id": "core",
+      "kind": "mesh",
+      "material": {
+        "color": "0x66D9FF",
+        "emissive": "0x1A5A77",
+        "emissiveIntensity": 1.2,
+        "kind": "standard",
+        "metalness": 0.1,
+        "roughness": 0.2
+      },
+      "printable": false,
+      "receive_shadow": false,
+      "required": true,
+      "transform": {
+        "position": [
+          0,
+          2.4,
+          -12
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    }
+  ],
+  "relations": []
+}

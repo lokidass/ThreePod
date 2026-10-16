@@ -1,0 +1,3118 @@
+{
+  "prompts": [
+    {
+      "id": "table_room",
+      "prompt": "a wooden table in a room",
+      "expect_templates": [
+        "table",
+        "room"
+      ],
+      "seed": 11,
+      "state_report": {
+        "state": "COMPLETE",
+        "ok": true,
+        "prompt": "a wooden table in a room",
+        "ir": {
+          "name": "freestyle",
+          "backend": "webgl",
+          "seed": 11,
+          "nodes": 10,
+          "lights": 2,
+          "instances": 0,
+          "printable": [],
+          "required": [
+            "table_set_top",
+            "table_set_leg_front_left",
+            "table_set_leg_front_right",
+            "table_set_leg_rear_left",
+            "table_set_leg_rear_right",
+            "room_shell_floor",
+            "room_shell_wall_back",
+            "room_shell_wall_side",
+            "room_shell_window_frame",
+            "room_shell_window_glass"
+          ],
+          "relations": 6,
+          "animations": 0,
+          "effects": []
+        },
+        "required_ids": [
+          "table_set_top",
+          "table_set_leg_front_left",
+          "table_set_leg_front_right",
+          "table_set_leg_rear_left",
+          "table_set_leg_rear_right",
+          "room_shell_floor",
+          "room_shell_wall_back",
+          "room_shell_wall_side",
+          "room_shell_window_frame",
+          "room_shell_window_glass"
+        ],
+        "resolutions": [
+          "part table_set (box assembly: thin top slab + 4 corner legs)",
+          "part room_shell (room shell: floor + 2 walls + framed glass pane)",
+          "required 'table_set' -> ['part:table_set']",
+          "required 'room_shell' -> ['part:room_shell']"
+        ],
+        "geometry": {
+          "checks": [
+            {
+              "name": "present:table_set_top",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:table_set_leg_front_left",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:table_set_leg_front_right",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:table_set_leg_rear_left",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:table_set_leg_rear_right",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:room_shell_floor",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:room_shell_wall_back",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:room_shell_wall_side",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:room_shell_window_frame",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:room_shell_window_glass",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "finite:table_set_top",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:table_set_top",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:table_set_leg_front_left",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:table_set_leg_front_left",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:table_set_leg_front_right",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:table_set_leg_front_right",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:table_set_leg_rear_left",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:table_set_leg_rear_left",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:table_set_leg_rear_right",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:table_set_leg_rear_right",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:room_shell_floor",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:room_shell_floor",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:room_shell_wall_back",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:room_shell_wall_back",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:room_shell_wall_side",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:room_shell_wall_side",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:room_shell_window_frame",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:room_shell_window_frame",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "grounded:room_shell_window_frame",
+              "ok": true,
+              "detail": "base y=1.15 above ground with no support relation (suspicious floating?)",
+              "severity": "warning"
+            },
+            {
+              "name": "finite:room_shell_window_glass",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:room_shell_window_glass",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "grounded:room_shell_window_glass",
+              "ok": true,
+              "detail": "base y=1.25 above ground with no support relation (suspicious floating?)",
+              "severity": "warning"
+            },
+            {
+              "name": "relation:table_set_top:on:table_set_leg_front_left",
+              "ok": true,
+              "detail": "table_set_top base 0.69 vs table_set_leg_front_left top 0.69",
+              "severity": "error"
+            },
+            {
+              "name": "relation:table_set_top:on:table_set_leg_front_right",
+              "ok": true,
+              "detail": "table_set_top base 0.69 vs table_set_leg_front_right top 0.69",
+              "severity": "error"
+            },
+            {
+              "name": "relation:table_set_top:on:table_set_leg_rear_left",
+              "ok": true,
+              "detail": "table_set_top base 0.69 vs table_set_leg_rear_left top 0.69",
+              "severity": "error"
+            },
+            {
+              "name": "relation:table_set_top:on:table_set_leg_rear_right",
+              "ok": true,
+              "detail": "table_set_top base 0.69 vs table_set_leg_rear_right top 0.69",
+              "severity": "error"
+            },
+            {
+              "name": "relation:room_shell_wall_back:on:room_shell_floor",
+              "ok": true,
+              "detail": "room_shell_wall_back base -0.00 vs room_shell_floor top 0.00",
+              "severity": "error"
+            },
+            {
+              "name": "relation:room_shell_wall_side:on:room_shell_floor",
+              "ok": true,
+              "detail": "room_shell_wall_side base -0.00 vs room_shell_floor top 0.00",
+              "severity": "error"
+            }
+          ],
+          "verified": true
+        },
+        "visual": {
+          "checks": [
+            {
+              "name": "subject_framed",
+              "ok": true,
+              "detail": "subject rect 639x430px",
+              "severity": "error"
+            },
+            {
+              "name": "subject_lit",
+              "ok": true,
+              "detail": "subject brightness 0.606",
+              "severity": "error"
+            }
+          ],
+          "verified": true
+        },
+        "render": {
+          "ready": true,
+          "scene_error": null,
+          "console_errors": [],
+          "stats": {
+            "frames": 3,
+            "nodes": 12,
+            "drawCalls": 10,
+            "triangles": 120,
+            "instances": 0
+          },
+          "elapsed_s": 0.66
+        },
+        "warnings": [],
+        "vision_note": "vision spot-check (advisory): 'urn of a brown color sits on a wooden table in a room.' vs wanted 'a wooden table in a room'",
+        "repairs": [],
+        "attempts": 1,
+        "plan_repairs": [
+          "thinker planning failed (scene planner failed validation: freestyle must be a list); router-only deterministic fallback"
+        ],
+        "transitions": [
+          {
+            "state": "PLANNING",
+            "ok": true,
+            "detail": "",
+            "t": 0.0
+          },
+          {
+            "state": "GENERATING",
+            "ok": true,
+            "detail": "",
+            "t": 18.28
+          },
+          {
+            "state": "COMPILING",
+            "ok": true,
+            "detail": "",
+            "t": 18.28
+          },
+          {
+            "state": "RENDERING",
+            "ok": true,
+            "detail": "attempt 1",
+            "t": 18.39
+          },
+          {
+            "state": "VALIDATING",
+            "ok": true,
+            "detail": "",
+            "t": 20.61
+          },
+          {
+            "state": "COMPLETE",
+            "ok": true,
+            "detail": "10 required elements rendered+valid; 0 warning(s)",
+            "t": 55.75
+          }
+        ],
+        "total_s": 55.75
+      },
+      "semantic": {
+        "required_ids": [
+          "table_set_top",
+          "table_set_leg_front_left",
+          "table_set_leg_front_right",
+          "table_set_leg_rear_left",
+          "table_set_leg_rear_right",
+          "room_shell_floor",
+          "room_shell_wall_back",
+          "room_shell_wall_side",
+          "room_shell_window_frame",
+          "room_shell_window_glass"
+        ],
+        "present": [
+          "present:table_set_top",
+          "present:table_set_leg_front_left",
+          "present:table_set_leg_front_right",
+          "present:table_set_leg_rear_left",
+          "present:table_set_leg_rear_right",
+          "present:room_shell_floor",
+          "present:room_shell_wall_back",
+          "present:room_shell_wall_side",
+          "present:room_shell_window_frame",
+          "present:room_shell_window_glass"
+        ],
+        "missing": []
+      },
+      "verdict": {
+        "complete": true,
+        "stage": "complete",
+        "error": ""
+      },
+      "total_s": 55.75
+    },
+    {
+      "id": "forest_mountain",
+      "prompt": "a forested mountain landscape",
+      "expect_templates": [
+        "forest",
+        "mountains"
+      ],
+      "seed": 11,
+      "state_report": {
+        "state": "COMPLETE",
+        "ok": true,
+        "prompt": "a forested mountain landscape",
+        "ir": {
+          "name": "forest",
+          "backend": "webgl",
+          "seed": 11,
+          "nodes": 5,
+          "lights": 4,
+          "instances": 4000,
+          "printable": [],
+          "required": [
+            "ground",
+            "trunks",
+            "canopies"
+          ],
+          "relations": 0,
+          "animations": 0,
+          "effects": []
+        },
+        "required_ids": [
+          "ground",
+          "trunks",
+          "canopies"
+        ],
+        "resolutions": [
+          "system template mountains",
+          "required 'forest' -> ['forest']",
+          "required 'mountains' -> ['mountains']"
+        ],
+        "geometry": {
+          "checks": [
+            {
+              "name": "present:ground",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:trunks",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:canopies",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "finite:sky",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:sky",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:ground",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:ground",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:trunks",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:trunks",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:canopies",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:canopies",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:mountains_terrain",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:mountains_terrain",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:mountains_sky",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:mountains_sky",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            }
+          ],
+          "verified": true
+        },
+        "visual": {
+          "checks": [
+            {
+              "name": "subject_framed",
+              "ok": true,
+              "detail": "subject rect 639x160px",
+              "severity": "error"
+            },
+            {
+              "name": "subject_lit",
+              "ok": true,
+              "detail": "subject brightness 0.549",
+              "severity": "error"
+            },
+            {
+              "name": "fog_visible",
+              "ok": true,
+              "detail": "0.382 of pixels near fog color",
+              "severity": "error"
+            }
+          ],
+          "verified": true
+        },
+        "render": {
+          "ready": true,
+          "scene_error": null,
+          "console_errors": [],
+          "stats": {
+            "frames": 3,
+            "nodes": 10,
+            "drawCalls": 6,
+            "triangles": 123920,
+            "instances": 4000
+          },
+          "elapsed_s": 1.27
+        },
+        "warnings": [],
+        "vision_note": "vision spot-check (advisory): 'ents of a forest with green trees and a clear blue sky.' vs wanted 'a forested mountain landscape'",
+        "repairs": [],
+        "attempts": 1,
+        "plan_repairs": [
+          "thinker planning failed (scene planner failed validation: reply was not valid JSON); router-only deterministic fallback"
+        ],
+        "transitions": [
+          {
+            "state": "PLANNING",
+            "ok": true,
+            "detail": "",
+            "t": 0.0
+          },
+          {
+            "state": "GENERATING",
+            "ok": true,
+            "detail": "",
+            "t": 15.69
+          },
+          {
+            "state": "COMPILING",
+            "ok": true,
+            "detail": "",
+            "t": 15.72
+          },
+          {
+            "state": "RENDERING",
+            "ok": true,
+            "detail": "attempt 1",
+            "t": 15.8
+          },
+          {
+            "state": "VALIDATING",
+            "ok": true,
+            "detail": "",
+            "t": 18.01
+          },
+          {
+            "state": "COMPLETE",
+            "ok": true,
+            "detail": "3 required elements rendered+valid; 0 warning(s)",
+            "t": 20.42
+          }
+        ],
+        "total_s": 20.42
+      },
+      "semantic": {
+        "required_ids": [
+          "ground",
+          "trunks",
+          "canopies"
+        ],
+        "present": [
+          "present:ground",
+          "present:trunks",
+          "present:canopies"
+        ],
+        "missing": []
+      },
+      "verdict": {
+        "complete": true,
+        "stage": "complete",
+        "error": ""
+      },
+      "total_s": 20.42
+    },
+    {
+      "id": "city_street",
+      "prompt": "a modern city street at night",
+      "expect_templates": [
+        "city"
+      ],
+      "seed": 11,
+      "state_report": {
+        "state": "COMPLETE",
+        "ok": true,
+        "prompt": "a modern city street at night",
+        "ir": {
+          "name": "city",
+          "backend": "webgl",
+          "seed": 11,
+          "nodes": 5,
+          "lights": 2,
+          "instances": 64,
+          "printable": [],
+          "required": [
+            "ground",
+            "towers"
+          ],
+          "relations": 0,
+          "animations": 0,
+          "effects": []
+        },
+        "required_ids": [
+          "ground",
+          "towers"
+        ],
+        "resolutions": [
+          "part lamp_post (dark pole + emissive head (no light))",
+          "required 'city' -> ['city']"
+        ],
+        "geometry": {
+          "checks": [
+            {
+              "name": "present:ground",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:towers",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "finite:sky",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:sky",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:ground",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:ground",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:towers",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:towers",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:lamp_post_pole",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:lamp_post_pole",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:lamp_post_arm",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:lamp_post_arm",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:lamp_post_head",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:lamp_post_head",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            }
+          ],
+          "verified": true
+        },
+        "visual": {
+          "checks": [
+            {
+              "name": "subject_framed",
+              "ok": true,
+              "detail": "subject rect 639x336px",
+              "severity": "error"
+            },
+            {
+              "name": "subject_lit",
+              "ok": true,
+              "detail": "subject brightness 0.257",
+              "severity": "error"
+            },
+            {
+              "name": "fog_visible",
+              "ok": true,
+              "detail": "0.456 of pixels near fog color",
+              "severity": "error"
+            }
+          ],
+          "verified": true
+        },
+        "render": {
+          "ready": true,
+          "scene_error": null,
+          "console_errors": [],
+          "stats": {
+            "frames": 3,
+            "nodes": 8,
+            "drawCalls": 6,
+            "triangles": 1594,
+            "instances": 64
+          },
+          "elapsed_s": 0.75
+        },
+        "warnings": [
+          {
+            "check": "vision:subject",
+            "ok": true,
+            "detail": "vision spot-check (advisory): 'urns of different sizes are scattered throughout the image.' vs wanted 'a modern city street at night' (advisory only, never fails the run)",
+            "severity": "warning"
+          }
+        ],
+        "vision_note": "vision spot-check (advisory): 'urns of different sizes are scattered throughout the image.' vs wanted 'a modern city street at night'",
+        "repairs": [],
+        "attempts": 1,
+        "plan_repairs": [
+          "thinker planning failed (scene planner failed validation: unknown template 'street' (available: studio, mountains, forest, sky_fog, scifi, city, water, particles, product, fog_benchmark, fog_landscape); unknown template 'night sky' (available: studio, mountains, forest, sky_fog, scifi, city, water, particles, product, fog_benchmark, fog_landscape); seed must be an integer); router-only deterministic fallback"
+        ],
+        "transitions": [
+          {
+            "state": "PLANNING",
+            "ok": true,
+            "detail": "",
+            "t": 0.0
+          },
+          {
+            "state": "GENERATING",
+            "ok": true,
+            "detail": "",
+            "t": 12.92
+          },
+          {
+            "state": "COMPILING",
+            "ok": true,
+            "detail": "",
+            "t": 12.92
+          },
+          {
+            "state": "RENDERING",
+            "ok": true,
+            "detail": "attempt 1",
+            "t": 13.02
+          },
+          {
+            "state": "VALIDATING",
+            "ok": true,
+            "detail": "",
+            "t": 14.7
+          },
+          {
+            "state": "COMPLETE",
+            "ok": true,
+            "detail": "2 required elements rendered+valid; 1 warning(s)",
+            "t": 17.24
+          }
+        ],
+        "total_s": 17.24
+      },
+      "semantic": {
+        "required_ids": [
+          "ground",
+          "towers"
+        ],
+        "present": [
+          "present:ground",
+          "present:towers"
+        ],
+        "missing": []
+      },
+      "verdict": {
+        "complete": true,
+        "stage": "complete",
+        "error": ""
+      },
+      "total_s": 17.24
+    },
+    {
+      "id": "scifi_env",
+      "prompt": "a detailed sci-fi environment",
+      "expect_templates": [
+        "scifi"
+      ],
+      "seed": 11,
+      "state_report": {
+        "state": "FAILED",
+        "ok": false,
+        "prompt": "a detailed sci-fi environment",
+        "stage": "repairing",
+        "error": "no repair for: visual:subject_lit: subject brightness 0.041",
+        "transitions": [
+          {
+            "state": "PLANNING",
+            "ok": true,
+            "detail": "",
+            "t": 0.0
+          },
+          {
+            "state": "GENERATING",
+            "ok": true,
+            "detail": "",
+            "t": 17.41
+          },
+          {
+            "state": "COMPILING",
+            "ok": true,
+            "detail": "",
+            "t": 17.42
+          },
+          {
+            "state": "RENDERING",
+            "ok": true,
+            "detail": "attempt 1",
+            "t": 17.5
+          },
+          {
+            "state": "VALIDATING",
+            "ok": true,
+            "detail": "",
+            "t": 19.2
+          },
+          {
+            "state": "REPAIRING",
+            "ok": true,
+            "detail": "",
+            "t": 19.25
+          },
+          {
+            "state": "RENDERING",
+            "ok": true,
+            "detail": "attempt 2",
+            "t": 19.25
+          },
+          {
+            "state": "VALIDATING",
+            "ok": true,
+            "detail": "",
+            "t": 20.97
+          },
+          {
+            "state": "REPAIRING",
+            "ok": true,
+            "detail": "",
+            "t": 21.01
+          },
+          {
+            "state": "FAILED",
+            "ok": false,
+            "detail": "repairing: no repair for: visual:subject_lit: subject brightness 0.041",
+            "t": 21.01
+          }
+        ],
+        "total_s": 21.01,
+        "findings": [
+          {
+            "check": "visual:subject_lit",
+            "ok": false,
+            "detail": "subject brightness 0.041",
+            "severity": "error"
+          }
+        ],
+        "repairs": [
+          "key light boosted x1.6"
+        ],
+        "attempts": 2
+      },
+      "semantic": {
+        "required_ids": [],
+        "present": [],
+        "missing": []
+      },
+      "verdict": {
+        "complete": false,
+        "stage": "failed",
+        "error": "no repair for: visual:subject_lit: subject brightness 0.041"
+      },
+      "total_s": 21.01
+    },
+    {
+      "id": "lighthouse",
+      "prompt": "a lighthouse on a cliff at dusk",
+      "expect_templates": [],
+      "seed": 11,
+      "state_report": {
+        "state": "FAILED",
+        "ok": false,
+        "prompt": "a lighthouse on a cliff at dusk",
+        "stage": "generating",
+        "error": "ValueError: required element 'ship' resolved to no scene system (systems: ['mountains', 'part:lighthouse_tower']); cannot complete",
+        "transitions": [
+          {
+            "state": "PLANNING",
+            "ok": true,
+            "detail": "",
+            "t": 0.0
+          },
+          {
+            "state": "GENERATING",
+            "ok": true,
+            "detail": "",
+            "t": 14.17
+          },
+          {
+            "state": "FAILED",
+            "ok": false,
+            "detail": "generating: ValueError: required element 'ship' resolved to no scene system (systems: ['mountains', 'part:lighthouse_tower']); cannot complete",
+            "t": 14.17
+          }
+        ],
+        "total_s": 14.17,
+        "routed": {
+          "templates": [
+            "mountains"
+          ],
+          "parts": [
+            "lighthouse_tower"
+          ],
+          "required": [
+            "lighthouse_tower",
+            "mountains"
+          ],
+          "environment": {
+            "background": {
+              "kind": "gradient",
+              "top": "0x2C4258",
+              "mid": "0xD89A5A",
+              "bottom": "0x1C2634"
+            }
+          },
+          "camera": {
+            "kind": "perspective",
+            "fov": 55,
+            "near": 0.1,
+            "far": 600,
+            "position": [
+              16,
+              9,
+              22
+            ],
+            "target": [
+              0,
+              3,
+              0
+            ]
+          },
+          "hits": [
+            [
+              "lighthouse"
+            ],
+            [
+              "cliff"
+            ]
+          ]
+        }
+      },
+      "semantic": {
+        "required_ids": [],
+        "present": [],
+        "missing": []
+      },
+      "verdict": {
+        "complete": false,
+        "stage": "failed",
+        "error": "ValueError: required element 'ship' resolved to no scene system (systems: ['mountains', 'part:lighthouse_tower']); cannot complete"
+      },
+      "total_s": 14.17
+    },
+    {
+      "id": "desert_caravan",
+      "prompt": "a desert caravan at noon",
+      "expect_templates": [],
+      "seed": 11,
+      "state_report": {
+        "state": "COMPLETE",
+        "ok": true,
+        "prompt": "a desert caravan at noon",
+        "ir": {
+          "name": "freestyle",
+          "backend": "webgl",
+          "seed": 11,
+          "nodes": 3,
+          "lights": 2,
+          "instances": 0,
+          "printable": [],
+          "required": [
+            "tent_shell",
+            "tent_pole"
+          ],
+          "relations": 0,
+          "animations": 0,
+          "effects": []
+        },
+        "required_ids": [
+          "tent_shell",
+          "tent_pole"
+        ],
+        "resolutions": [
+          "part tent (canvas cone shell + center pole)",
+          "part dunes (seeded fBm dune field (procedural, live-verified))",
+          "required 'tent' -> ['part:tent']",
+          "required 'dunes' -> ['part:dunes']"
+        ],
+        "geometry": {
+          "checks": [
+            {
+              "name": "present:tent_shell",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:tent_pole",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "finite:sky",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:sky",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:tent_shell",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:tent_shell",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:tent_pole",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:tent_pole",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:dunes_field",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:dunes_field",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            }
+          ],
+          "verified": true
+        },
+        "visual": {
+          "checks": [
+            {
+              "name": "subject_framed",
+              "ok": true,
+              "detail": "subject rect 131x95px",
+              "severity": "error"
+            },
+            {
+              "name": "subject_lit",
+              "ok": true,
+              "detail": "subject brightness 0.826",
+              "severity": "error"
+            }
+          ],
+          "verified": true
+        },
+        "render": {
+          "ready": true,
+          "scene_error": null,
+          "console_errors": [],
+          "stats": {
+            "frames": 3,
+            "nodes": 6,
+            "drawCalls": 4,
+            "triangles": 13636,
+            "instances": 0
+          },
+          "elapsed_s": 0.73
+        },
+        "warnings": [],
+        "vision_note": "vision spot-check (advisory): 'urn-shaped object in the center of a desert landscape.' vs wanted 'a desert caravan at noon'",
+        "repairs": [],
+        "attempts": 1,
+        "plan_repairs": [
+          "thinker planning failed (scene planner failed validation: reply was not valid JSON); router-only deterministic fallback"
+        ],
+        "transitions": [
+          {
+            "state": "PLANNING",
+            "ok": true,
+            "detail": "",
+            "t": 0.0
+          },
+          {
+            "state": "GENERATING",
+            "ok": true,
+            "detail": "",
+            "t": 13.22
+          },
+          {
+            "state": "COMPILING",
+            "ok": true,
+            "detail": "",
+            "t": 13.22
+          },
+          {
+            "state": "RENDERING",
+            "ok": true,
+            "detail": "attempt 1",
+            "t": 13.31
+          },
+          {
+            "state": "VALIDATING",
+            "ok": true,
+            "detail": "",
+            "t": 15.0
+          },
+          {
+            "state": "COMPLETE",
+            "ok": true,
+            "detail": "2 required elements rendered+valid; 0 warning(s)",
+            "t": 17.59
+          }
+        ],
+        "total_s": 17.59
+      },
+      "semantic": {
+        "required_ids": [
+          "tent_shell",
+          "tent_pole"
+        ],
+        "present": [
+          "present:tent_shell",
+          "present:tent_pole"
+        ],
+        "missing": []
+      },
+      "verdict": {
+        "complete": true,
+        "stage": "complete",
+        "error": ""
+      },
+      "total_s": 17.59
+    },
+    {
+      "id": "snowy_cabin",
+      "prompt": "a snowy cabin in the woods",
+      "expect_templates": [
+        "forest"
+      ],
+      "seed": 11,
+      "state_report": {
+        "state": "COMPLETE",
+        "ok": true,
+        "prompt": "a snowy cabin in the woods",
+        "ir": {
+          "name": "forest",
+          "backend": "webgl",
+          "seed": 11,
+          "nodes": 7,
+          "lights": 2,
+          "instances": 4000,
+          "printable": [],
+          "required": [
+            "ground",
+            "trunks",
+            "canopies",
+            "cabin_walls",
+            "cabin_door",
+            "cabin_window",
+            "cabin_roof"
+          ],
+          "relations": 1,
+          "animations": 0,
+          "effects": []
+        },
+        "required_ids": [
+          "cabin_walls",
+          "cabin_roof",
+          "ground",
+          "trunks",
+          "canopies",
+          "cabin_door",
+          "cabin_window"
+        ],
+        "resolutions": [
+          "part cabin (box walls + pyramid plank roof + lit openings)",
+          "required 'forest' -> ['forest']",
+          "required 'cabin' -> ['part:cabin']"
+        ],
+        "geometry": {
+          "checks": [
+            {
+              "name": "present:ground",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:trunks",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:canopies",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:cabin_walls",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:cabin_door",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:cabin_window",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:cabin_roof",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "finite:sky",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:sky",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:ground",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:ground",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:trunks",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:trunks",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:canopies",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:canopies",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:cabin_walls",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:cabin_walls",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:cabin_door",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:cabin_door",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:cabin_window",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:cabin_window",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "grounded:cabin_window",
+              "ok": true,
+              "detail": "base y=0.80 above ground with no support relation (suspicious floating?)",
+              "severity": "warning"
+            },
+            {
+              "name": "finite:cabin_roof",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:cabin_roof",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "relation:cabin_roof:on:cabin_walls",
+              "ok": true,
+              "detail": "cabin_roof base 1.80 vs cabin_walls top 1.80",
+              "severity": "error"
+            }
+          ],
+          "verified": true
+        },
+        "visual": {
+          "checks": [
+            {
+              "name": "subject_framed",
+              "ok": true,
+              "detail": "subject rect 639x186px",
+              "severity": "error"
+            },
+            {
+              "name": "subject_lit",
+              "ok": true,
+              "detail": "subject brightness 0.340",
+              "severity": "error"
+            },
+            {
+              "name": "fog_visible",
+              "ok": true,
+              "detail": "0.278 of pixels near fog color",
+              "severity": "error"
+            }
+          ],
+          "verified": true
+        },
+        "render": {
+          "ready": true,
+          "scene_error": null,
+          "console_errors": [],
+          "stats": {
+            "frames": 3,
+            "nodes": 10,
+            "drawCalls": 8,
+            "triangles": 104816,
+            "instances": 4000
+          },
+          "elapsed_s": 1.19
+        },
+        "warnings": [],
+        "vision_note": "vision spot-check (advisory): 'urns of green trees are scattered across a field of tall trees.' vs wanted 'a snowy cabin in the woods'",
+        "repairs": [],
+        "attempts": 1,
+        "plan_repairs": [
+          "thinker planning failed (scene planner failed validation: seed must be an integer); router-only deterministic fallback"
+        ],
+        "transitions": [
+          {
+            "state": "PLANNING",
+            "ok": true,
+            "detail": "",
+            "t": 0.0
+          },
+          {
+            "state": "GENERATING",
+            "ok": true,
+            "detail": "",
+            "t": 12.3
+          },
+          {
+            "state": "COMPILING",
+            "ok": true,
+            "detail": "",
+            "t": 12.3
+          },
+          {
+            "state": "RENDERING",
+            "ok": true,
+            "detail": "attempt 1",
+            "t": 12.39
+          },
+          {
+            "state": "VALIDATING",
+            "ok": true,
+            "detail": "",
+            "t": 14.62
+          },
+          {
+            "state": "COMPLETE",
+            "ok": true,
+            "detail": "7 required elements rendered+valid; 0 warning(s)",
+            "t": 17.2
+          }
+        ],
+        "total_s": 17.2
+      },
+      "semantic": {
+        "required_ids": [
+          "cabin_walls",
+          "cabin_roof",
+          "ground",
+          "trunks",
+          "canopies",
+          "cabin_door",
+          "cabin_window"
+        ],
+        "present": [
+          "present:ground",
+          "present:trunks",
+          "present:canopies",
+          "present:cabin_walls",
+          "present:cabin_door",
+          "present:cabin_window",
+          "present:cabin_roof"
+        ],
+        "missing": []
+      },
+      "verdict": {
+        "complete": true,
+        "stage": "complete",
+        "error": ""
+      },
+      "total_s": 17.2
+    },
+    {
+      "id": "harbor",
+      "prompt": "a harbor with boats at sunrise",
+      "expect_templates": [
+        "water"
+      ],
+      "seed": 11,
+      "state_report": {
+        "state": "FAILED",
+        "ok": false,
+        "prompt": "a harbor with boats at sunrise",
+        "stage": "generating",
+        "error": "ValueError: required element 'harbor_walls' resolved to no scene system (systems: ['part:boat', 'part:pier', 'water']); cannot complete",
+        "transitions": [
+          {
+            "state": "PLANNING",
+            "ok": true,
+            "detail": "",
+            "t": 0.0
+          },
+          {
+            "state": "GENERATING",
+            "ok": true,
+            "detail": "",
+            "t": 7.22
+          },
+          {
+            "state": "FAILED",
+            "ok": false,
+            "detail": "generating: ValueError: required element 'harbor_walls' resolved to no scene system (systems: ['part:boat', 'part:pier', 'water']); cannot complete",
+            "t": 7.22
+          }
+        ],
+        "total_s": 7.22,
+        "routed": {
+          "templates": [
+            "water"
+          ],
+          "parts": [
+            "boat",
+            "pier"
+          ],
+          "required": [
+            "water",
+            "boat",
+            "pier"
+          ],
+          "environment": {},
+          "camera": {},
+          "hits": [
+            [
+              "boat",
+              "boats",
+              "harbor"
+            ]
+          ]
+        }
+      },
+      "semantic": {
+        "required_ids": [],
+        "present": [],
+        "missing": []
+      },
+      "verdict": {
+        "complete": false,
+        "stage": "failed",
+        "error": "ValueError: required element 'harbor_walls' resolved to no scene system (systems: ['part:boat', 'part:pier', 'water']); cannot complete"
+      },
+      "total_s": 7.22
+    },
+    {
+      "id": "castle",
+      "prompt": "a castle on a hill",
+      "expect_templates": [
+        "mountains"
+      ],
+      "seed": 11,
+      "state_report": {
+        "state": "COMPLETE",
+        "ok": true,
+        "prompt": "a castle on a hill",
+        "ir": {
+          "name": "mountains",
+          "backend": "webgl",
+          "seed": 11,
+          "nodes": 42,
+          "lights": 2,
+          "instances": 0,
+          "printable": [],
+          "required": [
+            "castle_keep_wall_n",
+            "castle_keep_merlon_0_0",
+            "castle_keep_merlon_0_1",
+            "castle_keep_merlon_0_2",
+            "castle_keep_merlon_0_3",
+            "castle_keep_merlon_0_4",
+            "castle_keep_merlon_0_5",
+            "castle_keep_merlon_0_6",
+            "castle_keep_wall_s",
+            "castle_keep_merlon_1_0",
+            "castle_keep_merlon_1_1",
+            "castle_keep_merlon_1_2",
+            "castle_keep_merlon_1_3",
+            "castle_keep_merlon_1_4",
+            "castle_keep_merlon_1_5",
+            "castle_keep_merlon_1_6",
+            "castle_keep_wall_e",
+            "castle_keep_merlon_2_0",
+            "castle_keep_merlon_2_1",
+            "castle_keep_merlon_2_2",
+            "castle_keep_merlon_2_3",
+            "castle_keep_merlon_2_4",
+            "castle_keep_merlon_2_5",
+            "castle_keep_merlon_2_6",
+            "castle_keep_wall_w",
+            "castle_keep_merlon_3_0",
+            "castle_keep_merlon_3_1",
+            "castle_keep_merlon_3_2",
+            "castle_keep_merlon_3_3",
+            "castle_keep_merlon_3_4",
+            "castle_keep_merlon_3_5",
+            "castle_keep_merlon_3_6",
+            "castle_keep_turret_ne",
+            "castle_keep_cap_ne",
+            "castle_keep_turret_se",
+            "castle_keep_cap_se",
+            "castle_keep_turret_nw",
+            "castle_keep_cap_nw",
+            "castle_keep_turret_sw",
+            "castle_keep_cap_sw"
+          ],
+          "relations": 0,
+          "animations": 0,
+          "effects": []
+        },
+        "required_ids": [
+          "castle_keep_wall_n",
+          "castle_keep_wall_s",
+          "castle_keep_wall_e",
+          "castle_keep_wall_w",
+          "castle_keep_turret_ne",
+          "castle_keep_turret_se",
+          "castle_keep_turret_nw",
+          "castle_keep_turret_sw",
+          "castle_keep_merlon_0_0",
+          "castle_keep_merlon_0_1",
+          "castle_keep_merlon_0_2",
+          "castle_keep_merlon_0_3",
+          "castle_keep_merlon_0_4",
+          "castle_keep_merlon_0_5",
+          "castle_keep_merlon_0_6",
+          "castle_keep_merlon_1_0",
+          "castle_keep_merlon_1_1",
+          "castle_keep_merlon_1_2",
+          "castle_keep_merlon_1_3",
+          "castle_keep_merlon_1_4",
+          "castle_keep_merlon_1_5",
+          "castle_keep_merlon_1_6",
+          "castle_keep_merlon_2_0",
+          "castle_keep_merlon_2_1",
+          "castle_keep_merlon_2_2",
+          "castle_keep_merlon_2_3",
+          "castle_keep_merlon_2_4",
+          "castle_keep_merlon_2_5",
+          "castle_keep_merlon_2_6",
+          "castle_keep_merlon_3_0",
+          "castle_keep_merlon_3_1",
+          "castle_keep_merlon_3_2",
+          "castle_keep_merlon_3_3",
+          "castle_keep_merlon_3_4",
+          "castle_keep_merlon_3_5",
+          "castle_keep_merlon_3_6",
+          "castle_keep_cap_ne",
+          "castle_keep_cap_se",
+          "castle_keep_cap_nw",
+          "castle_keep_cap_sw"
+        ],
+        "resolutions": [
+          "part castle_keep (curtain walls + merlons + turrets with cone caps)",
+          "required 'mountains' -> ['mountains']",
+          "required 'castle_keep' -> ['part:castle_keep']"
+        ],
+        "geometry": {
+          "checks": [
+            {
+              "name": "present:castle_keep_wall_n",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:castle_keep_merlon_0_0",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:castle_keep_merlon_0_1",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:castle_keep_merlon_0_2",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:castle_keep_merlon_0_3",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:castle_keep_merlon_0_4",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:castle_keep_merlon_0_5",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:castle_keep_merlon_0_6",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:castle_keep_wall_s",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:castle_keep_merlon_1_0",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:castle_keep_merlon_1_1",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:castle_keep_merlon_1_2",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:castle_keep_merlon_1_3",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:castle_keep_merlon_1_4",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:castle_keep_merlon_1_5",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:castle_keep_merlon_1_6",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:castle_keep_wall_e",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:castle_keep_merlon_2_0",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:castle_keep_merlon_2_1",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:castle_keep_merlon_2_2",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:castle_keep_merlon_2_3",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:castle_keep_merlon_2_4",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:castle_keep_merlon_2_5",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:castle_keep_merlon_2_6",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:castle_keep_wall_w",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:castle_keep_merlon_3_0",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:castle_keep_merlon_3_1",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:castle_keep_merlon_3_2",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:castle_keep_merlon_3_3",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:castle_keep_merlon_3_4",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:castle_keep_merlon_3_5",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:castle_keep_merlon_3_6",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:castle_keep_turret_ne",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:castle_keep_cap_ne",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:castle_keep_turret_se",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:castle_keep_cap_se",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:castle_keep_turret_nw",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:castle_keep_cap_nw",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:castle_keep_turret_sw",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:castle_keep_cap_sw",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "finite:sky",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:sky",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:terrain",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:terrain",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:castle_keep_wall_n",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:castle_keep_wall_n",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:castle_keep_merlon_0_0",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:castle_keep_merlon_0_0",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "grounded:castle_keep_merlon_0_0",
+              "ok": true,
+              "detail": "base y=3.00 above ground with no support relation (suspicious floating?)",
+              "severity": "warning"
+            },
+            {
+              "name": "finite:castle_keep_merlon_0_1",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:castle_keep_merlon_0_1",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "grounded:castle_keep_merlon_0_1",
+              "ok": true,
+              "detail": "base y=3.00 above ground with no support relation (suspicious floating?)",
+              "severity": "warning"
+            },
+            {
+              "name": "finite:castle_keep_merlon_0_2",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:castle_keep_merlon_0_2",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "grounded:castle_keep_merlon_0_2",
+              "ok": true,
+              "detail": "base y=3.00 above ground with no support relation (suspicious floating?)",
+              "severity": "warning"
+            },
+            {
+              "name": "finite:castle_keep_merlon_0_3",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:castle_keep_merlon_0_3",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "grounded:castle_keep_merlon_0_3",
+              "ok": true,
+              "detail": "base y=3.00 above ground with no support relation (suspicious floating?)",
+              "severity": "warning"
+            },
+            {
+              "name": "finite:castle_keep_merlon_0_4",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:castle_keep_merlon_0_4",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "grounded:castle_keep_merlon_0_4",
+              "ok": true,
+              "detail": "base y=3.00 above ground with no support relation (suspicious floating?)",
+              "severity": "warning"
+            },
+            {
+              "name": "finite:castle_keep_merlon_0_5",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:castle_keep_merlon_0_5",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "grounded:castle_keep_merlon_0_5",
+              "ok": true,
+              "detail": "base y=3.00 above ground with no support relation (suspicious floating?)",
+              "severity": "warning"
+            },
+            {
+              "name": "finite:castle_keep_merlon_0_6",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:castle_keep_merlon_0_6",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "grounded:castle_keep_merlon_0_6",
+              "ok": true,
+              "detail": "base y=3.00 above ground with no support relation (suspicious floating?)",
+              "severity": "warning"
+            },
+            {
+              "name": "finite:castle_keep_wall_s",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:castle_keep_wall_s",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:castle_keep_merlon_1_0",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:castle_keep_merlon_1_0",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "grounded:castle_keep_merlon_1_0",
+              "ok": true,
+              "detail": "base y=3.00 above ground with no support relation (suspicious floating?)",
+              "severity": "warning"
+            },
+            {
+              "name": "finite:castle_keep_merlon_1_1",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:castle_keep_merlon_1_1",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "grounded:castle_keep_merlon_1_1",
+              "ok": true,
+              "detail": "base y=3.00 above ground with no support relation (suspicious floating?)",
+              "severity": "warning"
+            },
+            {
+              "name": "finite:castle_keep_merlon_1_2",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:castle_keep_merlon_1_2",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "grounded:castle_keep_merlon_1_2",
+              "ok": true,
+              "detail": "base y=3.00 above ground with no support relation (suspicious floating?)",
+              "severity": "warning"
+            },
+            {
+              "name": "finite:castle_keep_merlon_1_3",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:castle_keep_merlon_1_3",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "grounded:castle_keep_merlon_1_3",
+              "ok": true,
+              "detail": "base y=3.00 above ground with no support relation (suspicious floating?)",
+              "severity": "warning"
+            },
+            {
+              "name": "finite:castle_keep_merlon_1_4",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:castle_keep_merlon_1_4",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "grounded:castle_keep_merlon_1_4",
+              "ok": true,
+              "detail": "base y=3.00 above ground with no support relation (suspicious floating?)",
+              "severity": "warning"
+            },
+            {
+              "name": "finite:castle_keep_merlon_1_5",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:castle_keep_merlon_1_5",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "grounded:castle_keep_merlon_1_5",
+              "ok": true,
+              "detail": "base y=3.00 above ground with no support relation (suspicious floating?)",
+              "severity": "warning"
+            },
+            {
+              "name": "finite:castle_keep_merlon_1_6",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:castle_keep_merlon_1_6",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "grounded:castle_keep_merlon_1_6",
+              "ok": true,
+              "detail": "base y=3.00 above ground with no support relation (suspicious floating?)",
+              "severity": "warning"
+            },
+            {
+              "name": "finite:castle_keep_wall_e",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:castle_keep_wall_e",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:castle_keep_merlon_2_0",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:castle_keep_merlon_2_0",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "grounded:castle_keep_merlon_2_0",
+              "ok": true,
+              "detail": "base y=3.00 above ground with no support relation (suspicious floating?)",
+              "severity": "warning"
+            },
+            {
+              "name": "finite:castle_keep_merlon_2_1",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:castle_keep_merlon_2_1",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "grounded:castle_keep_merlon_2_1",
+              "ok": true,
+              "detail": "base y=3.00 above ground with no support relation (suspicious floating?)",
+              "severity": "warning"
+            },
+            {
+              "name": "finite:castle_keep_merlon_2_2",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:castle_keep_merlon_2_2",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "grounded:castle_keep_merlon_2_2",
+              "ok": true,
+              "detail": "base y=3.00 above ground with no support relation (suspicious floating?)",
+              "severity": "warning"
+            },
+            {
+              "name": "finite:castle_keep_merlon_2_3",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:castle_keep_merlon_2_3",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "grounded:castle_keep_merlon_2_3",
+              "ok": true,
+              "detail": "base y=3.00 above ground with no support relation (suspicious floating?)",
+              "severity": "warning"
+            },
+            {
+              "name": "finite:castle_keep_merlon_2_4",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:castle_keep_merlon_2_4",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "grounded:castle_keep_merlon_2_4",
+              "ok": true,
+              "detail": "base y=3.00 above ground with no support relation (suspicious floating?)",
+              "severity": "warning"
+            },
+            {
+              "name": "finite:castle_keep_merlon_2_5",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:castle_keep_merlon_2_5",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "grounded:castle_keep_merlon_2_5",
+              "ok": true,
+              "detail": "base y=3.00 above ground with no support relation (suspicious floating?)",
+              "severity": "warning"
+            },
+            {
+              "name": "finite:castle_keep_merlon_2_6",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:castle_keep_merlon_2_6",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "grounded:castle_keep_merlon_2_6",
+              "ok": true,
+              "detail": "base y=3.00 above ground with no support relation (suspicious floating?)",
+              "severity": "warning"
+            },
+            {
+              "name": "finite:castle_keep_wall_w",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:castle_keep_wall_w",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:castle_keep_merlon_3_0",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:castle_keep_merlon_3_0",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "grounded:castle_keep_merlon_3_0",
+              "ok": true,
+              "detail": "base y=3.00 above ground with no support relation (suspicious floating?)",
+              "severity": "warning"
+            },
+            {
+              "name": "finite:castle_keep_merlon_3_1",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:castle_keep_merlon_3_1",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "grounded:castle_keep_merlon_3_1",
+              "ok": true,
+              "detail": "base y=3.00 above ground with no support relation (suspicious floating?)",
+              "severity": "warning"
+            },
+            {
+              "name": "finite:castle_keep_merlon_3_2",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:castle_keep_merlon_3_2",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "grounded:castle_keep_merlon_3_2",
+              "ok": true,
+              "detail": "base y=3.00 above ground with no support relation (suspicious floating?)",
+              "severity": "warning"
+            },
+            {
+              "name": "finite:castle_keep_merlon_3_3",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:castle_keep_merlon_3_3",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "grounded:castle_keep_merlon_3_3",
+              "ok": true,
+              "detail": "base y=3.00 above ground with no support relation (suspicious floating?)",
+              "severity": "warning"
+            },
+            {
+              "name": "finite:castle_keep_merlon_3_4",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:castle_keep_merlon_3_4",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "grounded:castle_keep_merlon_3_4",
+              "ok": true,
+              "detail": "base y=3.00 above ground with no support relation (suspicious floating?)",
+              "severity": "warning"
+            },
+            {
+              "name": "finite:castle_keep_merlon_3_5",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:castle_keep_merlon_3_5",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "grounded:castle_keep_merlon_3_5",
+              "ok": true,
+              "detail": "base y=3.00 above ground with no support relation (suspicious floating?)",
+              "severity": "warning"
+            },
+            {
+              "name": "finite:castle_keep_merlon_3_6",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:castle_keep_merlon_3_6",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "grounded:castle_keep_merlon_3_6",
+              "ok": true,
+              "detail": "base y=3.00 above ground with no support relation (suspicious floating?)",
+              "severity": "warning"
+            },
+            {
+              "name": "finite:castle_keep_turret_ne",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:castle_keep_turret_ne",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:castle_keep_cap_ne",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:castle_keep_cap_ne",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "grounded:castle_keep_cap_ne",
+              "ok": true,
+              "detail": "base y=4.20 above ground with no support relation (suspicious floating?)",
+              "severity": "warning"
+            },
+            {
+              "name": "finite:castle_keep_turret_se",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:castle_keep_turret_se",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:castle_keep_cap_se",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:castle_keep_cap_se",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "grounded:castle_keep_cap_se",
+              "ok": true,
+              "detail": "base y=4.20 above ground with no support relation (suspicious floating?)",
+              "severity": "warning"
+            },
+            {
+              "name": "finite:castle_keep_turret_nw",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:castle_keep_turret_nw",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:castle_keep_cap_nw",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:castle_keep_cap_nw",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "grounded:castle_keep_cap_nw",
+              "ok": true,
+              "detail": "base y=4.20 above ground with no support relation (suspicious floating?)",
+              "severity": "warning"
+            },
+            {
+              "name": "finite:castle_keep_turret_sw",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:castle_keep_turret_sw",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:castle_keep_cap_sw",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:castle_keep_cap_sw",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "grounded:castle_keep_cap_sw",
+              "ok": true,
+              "detail": "base y=4.20 above ground with no support relation (suspicious floating?)",
+              "severity": "warning"
+            }
+          ],
+          "verified": true
+        },
+        "visual": {
+          "checks": [
+            {
+              "name": "subject_framed",
+              "ok": true,
+              "detail": "subject rect 174x133px",
+              "severity": "error"
+            },
+            {
+              "name": "subject_lit",
+              "ok": true,
+              "detail": "subject brightness 0.534",
+              "severity": "error"
+            },
+            {
+              "name": "fog_visible",
+              "ok": true,
+              "detail": "0.363 of pixels near fog color",
+              "severity": "error"
+            }
+          ],
+          "verified": true
+        },
+        "render": {
+          "ready": true,
+          "scene_error": null,
+          "console_errors": [],
+          "stats": {
+            "frames": 3,
+            "nodes": 45,
+            "drawCalls": 43,
+            "triangles": 20720,
+            "instances": 0
+          },
+          "elapsed_s": 0.78
+        },
+        "warnings": [],
+        "vision_note": "vision spot-check (advisory): 'urns of water are on the ground in front of a castle.' vs wanted 'a castle on a hill'",
+        "repairs": [],
+        "attempts": 1,
+        "plan_repairs": [
+          "thinker planning failed (Ollama model 'deepseek-r1:1.5b' unreachable at http://localhost:11434: timed out); router-only deterministic fallback"
+        ],
+        "transitions": [
+          {
+            "state": "PLANNING",
+            "ok": true,
+            "detail": "",
+            "t": 0.0
+          },
+          {
+            "state": "GENERATING",
+            "ok": true,
+            "detail": "",
+            "t": 182.08
+          },
+          {
+            "state": "COMPILING",
+            "ok": true,
+            "detail": "",
+            "t": 182.08
+          },
+          {
+            "state": "RENDERING",
+            "ok": true,
+            "detail": "attempt 1",
+            "t": 182.17
+          },
+          {
+            "state": "VALIDATING",
+            "ok": true,
+            "detail": "",
+            "t": 183.94
+          },
+          {
+            "state": "COMPLETE",
+            "ok": true,
+            "detail": "40 required elements rendered+valid; 0 warning(s)",
+            "t": 186.55
+          }
+        ],
+        "total_s": 186.55
+      },
+      "semantic": {
+        "required_ids": [
+          "castle_keep_wall_n",
+          "castle_keep_wall_s",
+          "castle_keep_wall_e",
+          "castle_keep_wall_w",
+          "castle_keep_turret_ne",
+          "castle_keep_turret_se",
+          "castle_keep_turret_nw",
+          "castle_keep_turret_sw",
+          "castle_keep_merlon_0_0",
+          "castle_keep_merlon_0_1",
+          "castle_keep_merlon_0_2",
+          "castle_keep_merlon_0_3",
+          "castle_keep_merlon_0_4",
+          "castle_keep_merlon_0_5",
+          "castle_keep_merlon_0_6",
+          "castle_keep_merlon_1_0",
+          "castle_keep_merlon_1_1",
+          "castle_keep_merlon_1_2",
+          "castle_keep_merlon_1_3",
+          "castle_keep_merlon_1_4",
+          "castle_keep_merlon_1_5",
+          "castle_keep_merlon_1_6",
+          "castle_keep_merlon_2_0",
+          "castle_keep_merlon_2_1",
+          "castle_keep_merlon_2_2",
+          "castle_keep_merlon_2_3",
+          "castle_keep_merlon_2_4",
+          "castle_keep_merlon_2_5",
+          "castle_keep_merlon_2_6",
+          "castle_keep_merlon_3_0",
+          "castle_keep_merlon_3_1",
+          "castle_keep_merlon_3_2",
+          "castle_keep_merlon_3_3",
+          "castle_keep_merlon_3_4",
+          "castle_keep_merlon_3_5",
+          "castle_keep_merlon_3_6",
+          "castle_keep_cap_ne",
+          "castle_keep_cap_se",
+          "castle_keep_cap_nw",
+          "castle_keep_cap_sw"
+        ],
+        "present": [
+          "present:castle_keep_wall_n",
+          "present:castle_keep_merlon_0_0",
+          "present:castle_keep_merlon_0_1",
+          "present:castle_keep_merlon_0_2",
+          "present:castle_keep_merlon_0_3",
+          "present:castle_keep_merlon_0_4",
+          "present:castle_keep_merlon_0_5",
+          "present:castle_keep_merlon_0_6",
+          "present:castle_keep_wall_s",
+          "present:castle_keep_merlon_1_0",
+          "present:castle_keep_merlon_1_1",
+          "present:castle_keep_merlon_1_2",
+          "present:castle_keep_merlon_1_3",
+          "present:castle_keep_merlon_1_4",
+          "present:castle_keep_merlon_1_5",
+          "present:castle_keep_merlon_1_6",
+          "present:castle_keep_wall_e",
+          "present:castle_keep_merlon_2_0",
+          "present:castle_keep_merlon_2_1",
+          "present:castle_keep_merlon_2_2",
+          "present:castle_keep_merlon_2_3",
+          "present:castle_keep_merlon_2_4",
+          "present:castle_keep_merlon_2_5",
+          "present:castle_keep_merlon_2_6",
+          "present:castle_keep_wall_w",
+          "present:castle_keep_merlon_3_0",
+          "present:castle_keep_merlon_3_1",
+          "present:castle_keep_merlon_3_2",
+          "present:castle_keep_merlon_3_3",
+          "present:castle_keep_merlon_3_4",
+          "present:castle_keep_merlon_3_5",
+          "present:castle_keep_merlon_3_6",
+          "present:castle_keep_turret_ne",
+          "present:castle_keep_cap_ne",
+          "present:castle_keep_turret_se",
+          "present:castle_keep_cap_se",
+          "present:castle_keep_turret_nw",
+          "present:castle_keep_cap_nw",
+          "present:castle_keep_turret_sw",
+          "present:castle_keep_cap_sw"
+        ],
+        "missing": []
+      },
+      "verdict": {
+        "complete": true,
+        "stage": "complete",
+        "error": ""
+      },
+      "total_s": 186.55
+    },
+    {
+      "id": "coral_reef",
+      "prompt": "a coral reef underwater",
+      "expect_templates": [
+        "particles",
+        "water"
+      ],
+      "seed": 11,
+      "state_report": {
+        "state": "COMPLETE",
+        "ok": true,
+        "prompt": "a coral reef underwater",
+        "ir": {
+          "name": "water",
+          "backend": "webgl",
+          "seed": 11,
+          "nodes": 6,
+          "lights": 3,
+          "instances": 6890,
+          "printable": [],
+          "required": [
+            "lake",
+            "coral_bed_cones",
+            "coral_bed_bulbs"
+          ],
+          "relations": 0,
+          "animations": 2,
+          "effects": []
+        },
+        "required_ids": [
+          "coral_bed_cones",
+          "coral_bed_bulbs",
+          "lake"
+        ],
+        "resolutions": [
+          "system template particles",
+          "part coral_bed (instanced coral cones + bulbs)",
+          "required 'water' -> ['water']",
+          "required 'coral_bed' -> ['part:coral_bed']"
+        ],
+        "geometry": {
+          "checks": [
+            {
+              "name": "present:lake",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:coral_bed_cones",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "present:coral_bed_bulbs",
+              "ok": true,
+              "detail": "rendered in scene",
+              "severity": "error"
+            },
+            {
+              "name": "finite:sky",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:sky",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:lake",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:lake",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:mist",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:mist",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:particles_embers",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:particles_embers",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:particles_stars",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:particles_stars",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:coral_bed_cones",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:coral_bed_cones",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            },
+            {
+              "name": "finite:coral_bed_bulbs",
+              "ok": true,
+              "detail": "bbox finite",
+              "severity": "error"
+            },
+            {
+              "name": "solid:coral_bed_bulbs",
+              "ok": true,
+              "detail": "non-degenerate",
+              "severity": "error"
+            }
+          ],
+          "verified": true
+        },
+        "visual": {
+          "checks": [
+            {
+              "name": "subject_framed",
+              "ok": true,
+              "detail": "subject rect 639x266px",
+              "severity": "error"
+            },
+            {
+              "name": "subject_lit",
+              "ok": true,
+              "detail": "subject brightness 0.290",
+              "severity": "error"
+            },
+            {
+              "name": "fog_visible",
+              "ok": true,
+              "detail": "0.378 of pixels near fog color",
+              "severity": "error"
+            }
+          ],
+          "verified": true
+        },
+        "render": {
+          "ready": true,
+          "scene_error": null,
+          "console_errors": [],
+          "stats": {
+            "frames": 3,
+            "nodes": 10,
+            "drawCalls": 7,
+            "triangles": 6182,
+            "instances": 6890
+          },
+          "elapsed_s": 1.0
+        },
+        "warnings": [],
+        "vision_note": "vision spot-check (advisory): 'urns of red and white spheres are scattered across a black background.' vs wanted 'a coral reef underwater'",
+        "repairs": [],
+        "attempts": 1,
+        "plan_repairs": [
+          "thinker planning failed (scene planner failed validation: at most 3 template systems per scene); router-only deterministic fallback"
+        ],
+        "transitions": [
+          {
+            "state": "PLANNING",
+            "ok": true,
+            "detail": "",
+            "t": 0.0
+          },
+          {
+            "state": "GENERATING",
+            "ok": true,
+            "detail": "",
+            "t": 14.69
+          },
+          {
+            "state": "COMPILING",
+            "ok": true,
+            "detail": "",
+            "t": 14.7
+          },
+          {
+            "state": "RENDERING",
+            "ok": true,
+            "detail": "attempt 1",
+            "t": 14.8
+          },
+          {
+            "state": "VALIDATING",
+            "ok": true,
+            "detail": "",
+            "t": 17.12
+          },
+          {
+            "state": "COMPLETE",
+            "ok": true,
+            "detail": "3 required elements rendered+valid; 0 warning(s)",
+            "t": 19.83
+          }
+        ],
+        "total_s": 19.83
+      },
+      "semantic": {
+        "required_ids": [
+          "coral_bed_cones",
+          "coral_bed_bulbs",
+          "lake"
+        ],
+        "present": [
+          "present:lake",
+          "present:coral_bed_cones",
+          "present:coral_bed_bulbs"
+        ],
+        "missing": []
+      },
+      "verdict": {
+        "complete": true,
+        "stage": "complete",
+        "error": ""
+      },
+      "total_s": 19.83
+    }
+  ]
+}

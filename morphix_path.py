@@ -69,7 +69,20 @@ MATERIAL_COLORS = {"body": 0xFFAA33, "accent": 0x44CCFF,
 
 # Primitives the slicer understands. Anything else fails loudly: path mode
 # prints real sliced footprints, never a substituted mystery shape.
-SLICEABLE = {"add_box", "add_cylinder", "add_sphere"}
+#   add_profile  a closed 2D cross-section extruded along z (or x): each
+#                layer prints the polygon's real scanline intervals, so a
+#                car side profile, a horizontal-axis wheel or a gable roof
+#                slices into its true silhouette instead of a stacked box.
+#                Optional depth_top tapers the extrusion linearly in y.
+#   add_lathe    a half-silhouette [[r, y], ...] revolved about the
+#                vertical axis (vases, bottles, unfamiliar round objects).
+#   add_inflate  a measured silhouette inflated into a rounded solid: a
+#                grid of half-thicknesses over the x-y plane (z symmetric).
+#                Each layer prints one bead per BEAD_WIDTH column across
+#                the local thickness (unfamiliar organic subjects: skulls,
+#                animals, sculptures).
+SLICEABLE = {"add_box", "add_cylinder", "add_sphere", "add_profile",
+             "add_lathe", "add_inflate"}
 
 
 def _vec(v) -> bool:
@@ -569,8 +582,120 @@ def _dims(act: dict) -> dict:
             raise ValueError(f"{name} {lab!r}: missing radius")
         r = num("radius", 1e-6)
         return {"r": r, "half": r}
+    if name == "add_inflate":
+        g = act.get("grid")
+        try:
+            rows, cols, cell = int(g["rows"]), int(g["cols"]), float(g["cell"])
+            half = g["half"]
+            ok = (rows >= 2 and cols >= 2 and cell > 0 and len(half) == rows
+                  and all(len(r) == cols for r in half)
+                  and all(isinstance(v, (int, float)) and v >= 0
+                          and math.isfinite(v) for r in half for v in r))
+        except (TypeError, KeyError, ValueError):
+            ok = False
+        if not ok:
+            raise ValueError(f"{name} {lab!r}: grid must be {{rows, cols, "
+                             f"cell, half[rows][cols] >= 0}}")
+        w, h = cols * cell, rows * cell
+        tmax = max(max(r) for r in half)
+        if tmax <= 0:
+            raise ValueError(f"{name} {lab!r}: grid has no thickness")
+        if max(w, h, 2 * tmax) > MAX_LINEAR:
+            raise ValueError(f"{name} {lab!r}: exceeds the scene limit")
+        return {"half_grid": half, "rows": rows, "cols": cols, "cell": cell,
+                "w": w, "tmax": tmax, "half": h / 2.0}
+    if name in ("add_profile", "add_lathe"):
+        pts = _profile_points(act)
+        us = [p[0] for p in pts]
+        ys = [p[1] for p in pts]
+        if max(ys) - min(ys) <= 1e-6:
+            raise ValueError(f"{name} {lab!r}: profile has zero height")
+        if abs(max(ys) + min(ys)) > 1e-3:
+            raise ValueError(
+                f"{name} {lab!r}: profile y must be centred on position "
+                f"(local y spans {min(ys):.3f}..{max(ys):.3f})")
+        if name == "add_lathe":
+            if min(us) < -1e-9:
+                raise ValueError(f"{name} {lab!r}: lathe radii must be >= 0")
+            rmax = max(us)
+            if rmax > MAX_LINEAR / 2:
+                raise ValueError(f"{name} {lab!r}: radius {rmax} exceeds the "
+                                 f"scene limit")
+            return {"pts": pts, "rmax": rmax, "half": max(ys)}
+        if max(us) - min(us) <= 1e-6:
+            raise ValueError(f"{name} {lab!r}: profile has zero length")
+        if max(us) - min(us) > MAX_LINEAR:
+            raise ValueError(f"{name} {lab!r}: profile length exceeds the "
+                             f"{MAX_LINEAR} scene limit")
+        d = num("depth", 1e-6)
+        dt = num("depth_top", 1e-6) if "depth_top" in act else d
+        axis = act.get("axis", "z")
+        if axis not in ("z", "x"):
+            raise ValueError(f"{name} {lab!r}: axis must be 'z' or 'x' "
+                             f"(got {axis!r})")
+        return {"pts": pts, "d": d, "dt": dt, "axis": axis,
+                "umin": min(us), "umax": max(us), "half": max(ys)}
     raise ValueError(f"path mode cannot slice {name!r} (label {lab!r}); "
                      f"supported footprints: {sorted(SLICEABLE)}")
+
+
+def _profile_points(act: dict) -> list:
+    """Validated [[u, y], ...] polygon of an add_profile/add_lathe action
+    (local coordinates relative to the action's position). Raises
+    ValueError naming the component on any malformed vertex."""
+    name = act.get("action", "?")
+    lab = act.get("label", "?")
+    raw = act.get("profile")
+    if not isinstance(raw, list) or len(raw) < (2 if name == "add_lathe"
+                                                 else 3):
+        raise ValueError(f"{name} {lab!r}: profile must be a list of "
+                         f"[u, y] points (>= 3 for a polygon)")
+    pts = []
+    for p in raw:
+        if not (isinstance(p, (list, tuple)) and len(p) == 2
+                and all(isinstance(v, (int, float))
+                        and not isinstance(v, bool) and math.isfinite(v)
+                        for v in p)):
+            raise ValueError(f"{name} {lab!r}: bad profile point {p!r}")
+        pts.append((float(p[0]), float(p[1])))
+    return pts
+
+
+def profile_intervals(pts: list, y: float) -> list:
+    """Scanline of a closed polygon at height y: sorted [(u0, u1), ...]
+    inside-intervals (even-odd rule, half-open edges so a vertex exactly on
+    the line is counted once). This IS the layer cross-section of an
+    extruded profile — no bounding-box shortcut."""
+    xs = []
+    n = len(pts)
+    for i in range(n):
+        (u1, y1), (u2, y2) = pts[i], pts[(i + 1) % n]
+        if (y1 <= y < y2) or (y2 <= y < y1):
+            t = (y - y1) / (y2 - y1)
+            xs.append(u1 + (u2 - u1) * t)
+    xs.sort()
+    return [(xs[i], xs[i + 1]) for i in range(0, len(xs) - 1, 2)
+            if xs[i + 1] - xs[i] > 1e-9]
+
+
+def lathe_radius(pts: list, y: float) -> float:
+    """Outer radius of a revolved half-silhouette at height y (linear
+    between profile samples; 0 outside the profile's y range)."""
+    best = 0.0
+    for (r1, y1), (r2, y2) in zip(pts, pts[1:]):
+        lo, hi = min(y1, y2), max(y1, y2)
+        if lo - 1e-9 <= y <= hi + 1e-9:
+            t = 0.0 if hi - lo < 1e-12 else (y - y1) / (y2 - y1)
+            best = max(best, r1 + (r2 - r1) * t)
+    return best
+
+
+def _profile_sample_y(k: int, lo: float, hi: float) -> float:
+    """Height at which layer k samples a profile: the course plane, kept a
+    quarter bead inside the solid so the base and top courses slice the
+    real (non-empty) cross-section instead of an edge."""
+    q = BEAD_HEIGHT * 0.25
+    return min(max(layer_y(k), lo + q), hi - q)
 
 
 def _radius_at(dims: dict, name: str, y: float, min_y: float,
@@ -627,6 +752,112 @@ def _support_height(foot: tuple, min_y: float, occupancy: dict) -> float:
     return best
 
 
+MIN_SECTION = BEAD_WIDTH * 0.5  # narrower slices cannot hold a bead
+
+
+def _section_layer(name: str, dims: dict, k: int, cx: float, cy: float,
+                   cz: float, mat: str, lab: str) -> list:
+    """Layer k of an add_profile / add_lathe solid: its real cross-section
+    at the layer's sample height, perimeter + solid infill per interval.
+    Returns [] when the section is empty or too thin to print there."""
+    lo, hi = cy - dims["half"], cy + dims["half"]
+    ys = _profile_sample_y(k, lo, hi)
+    yl = ys - cy
+    if name == "add_inflate":
+        cols = _inflate_columns(dims, yl)
+        acts, flip = [], False
+        for j, (u, t) in enumerate(cols):
+            x = round(cx + u, 3)
+            z0, z1 = round(cz - t, 3), round(cz + t, 3)
+            if flip:
+                z0, z1 = z1, z0
+            flip = not flip
+            acts.append({"action": "move_to", "position": [x, layer_y(k), z0],
+                         "layer": k, "label": f"{lab}_fill_mv{j:03d}"})
+            acts.append({"action": "deposit_segment",
+                         "from": [x, layer_y(k), z0],
+                         "to": [x, layer_y(k), z1],
+                         **_BEAD, "material": mat, "layer": k,
+                         "label": f"{lab}_fill_{j:03d}"})
+        if acts:
+            acts.append({"action": "complete_path", "layer": k,
+                         "label": f"{lab}_fill_done"})
+        return acts
+    if name == "add_lathe":
+        r = lathe_radius(dims["pts"], yl)
+        if r < MIN_SECTION:
+            return []
+        if r < BEAD_WIDTH:
+            return trace_cap(k, cx, cz, max(2 * r, BEAD_WIDTH),
+                             label=lab, material=mat)
+        acts = trace_ngon(k, cx, cz, r, label=lab, material=mat)
+        if r >= BEAD_WIDTH * 1.5:
+            acts += zigzag_disc(k, cx, cz, r, label=f"{lab}_fill",
+                                material=mat)
+        return acts
+    t = (yl + dims["half"]) / (2 * dims["half"])
+    depth = dims["d"] + (dims["dt"] - dims["d"]) * min(1.0, max(0.0, t))
+    if depth < MIN_SECTION:
+        return []
+    acts = []
+    for j, (u0, u1) in enumerate(profile_intervals(dims["pts"], yl)):
+        w = u1 - u0
+        if w < MIN_SECTION:
+            continue
+        mid = (u0 + u1) / 2
+        if dims["axis"] == "z":
+            px, pz, sx, sz = cx + mid, cz, w, depth
+        else:
+            px, pz, sx, sz = cx, cz + mid, depth, w
+        acts += trace_rect(k, px, pz, sx, sz, label=f"{lab}_s{j}",
+                           material=mat)
+        acts += zigzag_infill(k, px, pz, sx, sz, label=f"{lab}_s{j}_fill",
+                              material=mat)
+    return acts
+
+
+def _inflate_columns(dims: dict, yl: float) -> list:
+    """[(local x, half-thickness)] bead columns of an inflated solid at local
+    height yl: one column per BEAD_WIDTH, thickness sampled from the grid
+    (row 0 = bottom). Columns too thin to hold a bead are skipped."""
+    rows, cols, cell = dims["rows"], dims["cols"], dims["cell"]
+    j = int(round((yl + dims["half"]) / cell - 0.5))
+    j = min(rows - 1, max(0, j))
+    row = dims["half_grid"][j]
+    out = []
+    n = max(1, int(math.floor(dims["w"] / BEAD_WIDTH)))
+    for i in range(n):
+        u = -dims["w"] / 2 + (i + 0.5) * (dims["w"] / n)
+        ci = min(cols - 1, max(0, int((u + dims["w"] / 2) / cell)))
+        t = row[ci]
+        if 2 * t >= MIN_SECTION:
+            out.append((u, t))
+    return out
+
+
+def section_extent(act: dict, y: float):
+    """(min, max) world extent along the profile axis of an add_profile /
+    add_lathe action at world height y, or None if the section is empty.
+    Used by verification to compare committed beads with the true slice."""
+    dims = _dims(act)
+    pos = act.get("position", [0, 0, 0])
+    cx, cy, cz = float(pos[0]), float(pos[1]), float(pos[2])
+    yl = y - cy
+    if act.get("action") == "add_inflate":
+        cols = _inflate_columns(dims, yl)
+        return ((round(cx + cols[0][0], 3), round(cx + cols[-1][0], 3))
+                if cols else None)
+    if act.get("action") == "add_lathe":
+        r = lathe_radius(dims["pts"], yl)
+        return (cx - r, cx + r) if r >= MIN_SECTION else None
+    ivs = [iv for iv in profile_intervals(dims["pts"], yl)
+           if iv[1] - iv[0] >= MIN_SECTION]
+    if not ivs:
+        return None
+    base = cx if dims["axis"] == "z" else cz
+    return (base + ivs[0][0], base + ivs[-1][1])
+
+
 def compile_component(act: dict, occupancy: dict,
                       prefix: str = "p", allow_seating: bool = True) -> tuple:
     """Compile ONE primitive into (groups, footprint, (min_y, max_y),
@@ -658,6 +889,29 @@ def compile_component(act: dict, occupancy: dict,
         def trace(layer, lab, yy=None):
             return trace_rect(layer, cx, cz, w, d, label=lab,
                               material=mat)
+    elif name == "add_profile":
+        dmax = max(dims["d"], dims["dt"])
+        if dims["axis"] == "z":
+            foot = (cx + dims["umin"], cx + dims["umax"],
+                    cz - dmax / 2, cz + dmax / 2)
+        else:
+            foot = (cx - dmax / 2, cx + dmax / 2,
+                    cz + dims["umin"], cz + dims["umax"])
+
+        def trace(layer, lab, yy=None):
+            return []
+    elif name == "add_lathe":
+        R = dims["rmax"]
+        foot = (cx - R, cx + R, cz - R, cz + R)
+
+        def trace(layer, lab, yy=None):
+            return []
+    elif name == "add_inflate":
+        foot = (cx - dims["w"] / 2, cx + dims["w"] / 2,
+                cz - dims["tmax"], cz + dims["tmax"])
+
+        def trace(layer, lab, yy=None):
+            return []
     elif name == "add_sphere":
         R = dims["r"]
         foot = (cx - R, cx + R, cz - R, cz + R)
@@ -723,6 +977,12 @@ def compile_component(act: dict, occupancy: dict,
             # would lay a phantom slab inside/below the supporting geometry
             # (observed: backrest course embedded in the seat courses).
             # The first course is the one whose bead reaches the base.
+            continue
+        if name in ("add_profile", "add_lathe", "add_inflate"):
+            per = _section_layer(name, dims, k, cx, cy, cz, mat,
+                                 f"{prefix}_l{k}")
+            if per:
+                groups[k] = [dict(a, component=comp) for a in per]
             continue
         per = trace(k, f"{prefix}_l{k}")
         if name == "add_box":
@@ -1228,13 +1488,26 @@ def optimize_toolpath(script: list,
 # Engine-side Three.js for a VALIDATED segment/point. The model proposes the
 # action; the engine draws exactly it, in the validated material color.
 
-def render_deposit(rec: dict) -> str:
+def render_deposit(rec: dict, palette: dict = None) -> str:
     """Three.js snippet for one committed deposition record: direction from
     A to B, length-derived box oriented along the segment at its midpoint
     (lookAt handles vertical and diagonal segments), point beads as spheres.
-    Exactly one local segment per call — never a whole primitive."""
+    Exactly one local segment per call — never a whole primitive.
+
+    ``palette`` optionally maps a validated material slot to the filament
+    color loaded for this run (e.g. image reconstruction loads the measured
+    paint into the ``body`` slot). Materials stay the validated slots; only
+    their displayed filament color changes, and only for listed slots."""
     color = MATERIAL_COLORS.get(rec.get("material", "body"),
                                 MATERIAL_COLORS["body"])
+    override = (palette or {}).get(rec.get("material", "body"))
+    if isinstance(override, str) and override.startswith("0x"):
+        try:
+            color = int(override, 16)
+        except ValueError:
+            pass
+    elif isinstance(override, int):
+        color = override
     hexcolor = f"0x{color:06X}"
     lab = rec.get("label", f"seg_{rec.get('seq', 0):04d}")
     mat = (f"new THREE.MeshStandardMaterial({{color:{hexcolor},"

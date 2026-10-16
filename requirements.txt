@@ -3,3 +3,10 @@
 flask>=3.0
 pillow>=10.0
 gunicorn>=21.0
+# image -> 3D: segmentation (GrabCut), silhouette fitting, measured checks
+numpy>=1.24
+scipy>=1.10
+opencv-python-headless>=4.8
+# image -> 3D verification renders the result in headless Chromium
+# (after install: `python -m playwright install --with-deps chromium`)
+playwright>=1.40

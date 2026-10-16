@@ -10,7 +10,16 @@ async function api(path, body) {
     body: body ? JSON.stringify(body) : undefined,
   });
   const data = await r.json().catch(() => ({}));
-  if (!r.ok) throw new Error(data.error || `HTTP ${r.status}`);
+  if (!r.ok) {
+    const err = new Error(data.error || `HTTP ${r.status}`);
+    // preserve machine-readable failure context (vision/scene states)
+    for (const k of ["stage", "needs_category", "unavailable",
+                     "detected_category", "candidates", "attempts"]) {
+      if (data[k] !== undefined) err[k] = data[k];
+    }
+    err.status = r.status;
+    throw err;
+  }
   return data;
 }
 
@@ -119,17 +128,96 @@ function showSceneRun(d) {
   $("scene").src = `/runs/${d.run_id}/scene.html?rev=${Date.now()}`;
   $("open").href = `/runs/${d.run_id}/scene.html`;
   $("code").textContent = d.scene_js || "";
+  const subs = rep.plan && rep.plan.substitutions
+    ? ` <span class="dim">(near-miss names mapped: ${esc(JSON.stringify(rep.plan.substitutions))})</span>` : "";
   $("tab-report").innerHTML =
     `<div>mode: <b>scene</b> (rich environment — not printer deposition)</div>
      <div>backend: <b>${esc(rep.backend || "?")}</b> · three r${esc(rep.three_revision || "?")}</div>
      <div>plan: <b>${esc((rep.plan && (rep.plan.templates || []).join(" + ")) || "")}</b> ` +
-    `<span class="dim">via ${esc((rep.plan && rep.plan.source) || "?")}</span></div>
+    `<span class="dim">via ${esc((rep.plan && rep.plan.source) || "?")}</span>${subs}</div>
      <div>🧩 nodes <b>${ir.nodes || 0}</b> · lights <b>${ir.lights || 0}</b> · ` +
     `instances <b>${ir.instances || 0}</b> · animations <b>${ir.animations || 0}</b></div>
      <div>printable solids: <b>${esc((ir.printable || []).join(", ") || "—")}</b> ` +
     `<span class="dim">(effects excluded by construction)</span></div>
-     <div>validation: <span class="ok"><b>IR + JS clean</b></span></div>`;
+     <div>validation: <span class="ok"><b>IR + JS clean</b></span></div>
+     <div class="dim" id="scenelive">waiting for browser render…</div>`;
+  pollSceneFrame(d.run_id, 0);
 }
+
+function pollSceneFrame(runId, n) {
+  // Same-origin iframe: read the module's own readiness/error signals and
+  // surface them (browser rendering failure vs success, with stats).
+  if (n > 20) {
+    const el = $("scenelive");
+    if (el) el.textContent = "browser did not signal ready in time — open the scene link and check the overlay";
+    return;
+  }
+  setTimeout(() => {
+    let msg = null;
+    try {
+      const w = $("scene").contentWindow;
+      if (w && w.__scene_error) {
+        msg = `✖ browser rendering failed — ${w.__scene_error} (open the scene link for the overlay)`;
+      } else if (w && w.__scene_ready) {
+        const s = w.__scene_stats || {};
+        msg = `✔ browser render ok — ${s.drawCalls || "?"} draw calls · ${s.triangles || "?"} tris`;
+      }
+    } catch { msg = null; }
+    const el = $("scenelive");
+    if (msg) { if (el) el.textContent = msg; }
+    else pollSceneFrame(runId, n + 1);
+  }, 500);
+}
+
+const SCENE_STAGE_HELP = {
+  planning: "the planner could not form a valid plan — try a template from the catalogue or simpler words",
+  ir_validation: "the scene plan failed validation — pick a catalogue template",
+  compile: "an unsupported Three.js capability was requested — see the error; templates stay within r152 core",
+  render: "the server hit an unexpected error — retry, then report with the run ID",
+};
+
+$("genscene").onclick = async () => {
+  const btn = $("genscene");
+  btn.disabled = true;
+  $("tab-steps").innerHTML = "";
+  $("verdict").className = "verdict live";
+  $("verdict").textContent = "composing scene from tested templates…";
+  $("status").textContent = "generating WebGL environment…";
+  try {
+    const body = { seed: parseInt($("sceneseed").value || "11", 10) };
+    if ($("sceneprompt").value.trim()) body.prompt = $("sceneprompt").value.trim();
+    else if ($("scenetemplate").value) body.template = $("scenetemplate").value;
+    else throw new Error("pick a template or describe a scene");
+    let d;
+    try {
+      d = await api("/api/scenes", body);
+    } catch (e) {
+      throw e;
+    }
+    showSceneRun(d);
+    $("scenecap").textContent =
+      `scene ${d.run_id} OK — ${(d.ir.nodes || 0)} nodes, ${(d.ir.instances || 0)} instances`;
+    $("status").textContent = `environment ready: ${d.run_id}`;
+    refreshHistory($("history"));
+    $("history").value = d.run_id;
+  } catch (e) {
+    // Distinguish planning / validation / compile / render failures with
+    // actionable recovery instead of a generic error. Panels never blank.
+    const stage = e.stage || (/planner|plan/i.test(e.message) ? "planning"
+      : /three|webgpu|tsl|capability|support/i.test(e.message) ? "compile" : "");
+    const help = SCENE_STAGE_HELP[stage] ? ` — ${SCENE_STAGE_HELP[stage]}` : "";
+    $("status").textContent = `error: ${e.message}`;
+    $("verdict").className = "verdict bad";
+    $("verdict").textContent = `✖ scene failed (${stage || "request"}) — ${e.message}`;
+    $("tab-report").innerHTML =
+      `<div>mode: <b>scene</b></div>
+       <div class="bad">✖ ${esc(e.message)}</div>
+       ${stage ? `<div class="dim">stage: <b>${esc(stage)}</b>${esc(help)}</div>` : ""}
+       <div class="dim">recovery: pick a catalogue template and retry; telecom-free deterministic path needs no model</div>`;
+  } finally {
+    btn.disabled = false;
+  }
+};
 
 $("genscene").onclick = async () => {
   const btn = $("genscene");
@@ -346,8 +434,30 @@ function showRun(runId, actions, sceneJs, report, committedCount, rejectedCount)
   v.textContent = report.ok
     ? `✔ validator: OK — ${verb}, node --check clean (${report.think_status || report.mode || ""})`
     : `✖ validator: FAIL — ${bad}/${n} bad blocks (see Report)`;
-  if (sceneJs) { $("scene").src = `/runs/${runId}/scene.html?rev=${Date.now()}`; }
-  $("open").href = `/runs/${runId}/scene.html`;
+  if (report.mode === "image-reconstruct") {
+    // the headline is the MEASURED verdict against the photo, not the
+    // printer's syntax/validation status
+    const st = report.reconstruction_status;
+    const sub = (report.image || {}).subject || {};
+    const m = (report.visual_verification || {}).metrics || {};
+    const name = sub.identified ? (sub.label || sub.category) : "unidentified object";
+    v.className = "verdict " + (st === "failed" ? "bad" : "ok");
+    v.textContent = (st === "reconstructed" ? `✔ reconstructed ${name}`
+      : st === "approximation" ? `≈ silhouette approximation of ${name}`
+      : `✖ reconstruction failed verification (${name})`)
+      + (m.iou !== undefined ? ` — silhouette IoU ${m.iou}, aspect ×${m.aspect_ratio}` : "");
+  }
+  // Image reconstructions open on the realistic model (same validated IR,
+  // smooth geometry + physical materials); the printed result is one click
+  // away. Every other mode shows the printed/generated scene as before.
+  const isImage = report.mode === "image-reconstruct";
+  $("viewtoggle").hidden = !isImage;
+  const view = isImage ? "model" : "scene";
+  document.querySelectorAll("#viewtoggle button").forEach((b) =>
+    b.classList.toggle("active", b.dataset.view === view));
+  $("viewtoggle").dataset.run = runId;
+  if (sceneJs || isImage) { $("scene").src = `/runs/${runId}/${view}.html?rev=${Date.now()}`; }
+  $("open").href = `/runs/${runId}/${view}.html`;
   $("code").textContent = sceneJs;
   if (!document.querySelector(`[data-key="final"]`)) {
     append("final", chip(report.ok ? "ok" : "info",
@@ -547,41 +657,52 @@ $("reconstruct").onclick = async () => {
   const btn = $("reconstruct");
   btn.disabled = true;
   $("tab-steps").innerHTML = "";
-  $("status").textContent = "analysing the photo as an object…";
+  $("imgverify").innerHTML = "";
+  $("status").textContent = "segmenting, identifying, fitting, printing, verifying…";
   $("verdict").className = "verdict live";
-  $("verdict").textContent = "semantic reconstruction: identify → IR → print";
+  $("verdict").textContent = "image → 3D: segment → identify → shape → print → render → compare";
   try {
     const fd = new FormData();
     fd.append("image", f);
     fd.append("mode", "reconstruct");
+    fd.append("environment", $("imgenv").value);
     if ($("imgcategory").value.trim()) fd.append("category", $("imgcategory").value.trim());
     if ($("visionmodel").value.trim()) fd.append("vision_model", $("visionmodel").value.trim());
     const r = await fetch("/api/image", { method: "POST", body: fd });
     const d = await r.json();
     if (!r.ok) {
-      if (r.status === 422 && d.needs_category) {
-        const seen = d.detected_category ? ` (saw “${d.detected_category}”)` : "";
-        const cands = (d.candidates || []).join(", ");
-        $("status").textContent = "needs a category — type it below and retry";
-        $("imgcap").textContent =
-          `could not classify confidently${seen} — choose a category` +
-          (cands ? `: ${cands}` : "");
-        $("verdict").className = "verdict bad";
-        $("verdict").textContent = `✖ needs a category — ${d.error}`;
-        return;
-      }
-      throw new Error(d.error || `HTTP ${r.status}`);
+      $("status").textContent = `reconstruction failed at ${d.stage || "?"}`;
+      $("verdict").className = "verdict bad";
+      $("verdict").textContent = `✖ ${d.error || ("HTTP " + r.status)}`;
+      $("tab-report").innerHTML =
+        `<div>mode: <b>image → 3D</b></div>
+         <div class="bad">✖ failed at stage: ${esc(d.stage || "?")}</div>
+         <div class="dim">${esc(d.error || "")}</div>`;
+      return;
     }
     const rep = d.report || {};
-    if (rep.image && rep.image.source === "image-demo") {
-      $("imgcap").textContent = "no vision model — used a demonstration template (see Report)";
-    } else if (rep.image) {
-      $("imgcap").textContent = `analysed as ${rep.image.category} (${rep.image.source})`;
-    }
+    const img = rep.image || {};
+    const sub = img.subject || {};
+    const ver = rep.visual_verification || {};
     showRun(d.run_id, d.actions, d.scene_js, rep);
-    $("status").textContent = rep.ok
-      ? `reconstructed ${rep.image ? rep.image.category : "object"}: ${d.run_id} OK`
-      : "reconstruction had errors (see Report)";
+    const name = sub.identified ? `${sub.category}${sub.label && sub.label !== sub.category ? ` (“${sub.label}”)` : ""}` : "unidentified object";
+    const st = d.status || rep.reconstruction_status;
+    const good = d.success && st !== "failed";
+    $("verdict").className = "verdict " + (good ? "ok" : "bad");
+    $("verdict").textContent = st === "reconstructed"
+      ? `✔ reconstructed ${name} — matches the photo by measurement`
+      : st === "approximation"
+        ? `≈ silhouette approximation of ${name} — shape matches, depth/identity assumed`
+        : `✖ reconstruction failed verification — ${name}`;
+    $("status").textContent = `${st}: ${d.run_id}` + (ver.metrics ? ` (IoU ${ver.metrics.iou}, aspect ×${ver.metrics.aspect_ratio})` : "");
+    $("imgcap").textContent = `subject: ${name} · builder: ${(img.builder || {}).method}/${(img.builder || {}).kind} · vision: ${(img.vision || {}).status}`;
+    const rows = (ver.checks || []).map((c) =>
+      `<div class="${c.ok ? "ok" : (c.severity === "critical" ? "bad" : "dim")}">${c.ok ? "✔" : "✖"} ${esc(c.name)} <span class="dim">${esc(c.detail || "")}</span></div>`).join("");
+    const t = d.trace || `/runs/${d.run_id}/trace/`;
+    $("imgverify").innerHTML =
+      `<img src="${t}compare.png" alt="reference | mask | print | preview | overview" style="max-width:100%">
+       <div class="dim">reference · subject mask · printed result · smooth preview · overview</div>${rows}
+       ${(rep.warnings || []).map((w) => `<div class="dim">⚠ ${esc(w)}</div>`).join("")}`;
     refreshHistory($("history"));
     $("history").value = d.run_id;
   } catch (e) {
@@ -614,3 +735,13 @@ applyGenMode();
 refreshHealth();
 refreshHistory($("history"));
 refreshSceneTemplates();
+document.querySelectorAll("#viewtoggle button").forEach((b) => {
+  b.onclick = () => {
+    const run = $("viewtoggle").dataset.run;
+    if (!run) return;
+    document.querySelectorAll("#viewtoggle button").forEach((x) =>
+      x.classList.toggle("active", x === b));
+    $("scene").src = `/runs/${run}/${b.dataset.view}.html?rev=${Date.now()}`;
+    $("open").href = `/runs/${run}/${b.dataset.view}.html`;
+  };
+});

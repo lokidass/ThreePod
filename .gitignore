@@ -35,3 +35,10 @@ qwen7b_qlora_morphix/
 Thumbs.db
 .vscode/
 .idea/
+# image -> 3D regression evidence (renders, traces) and scratch
+tests/image3d/.artifacts/
+repro/
+
+# React UI build + deps
+web/node_modules/
+web/dist/

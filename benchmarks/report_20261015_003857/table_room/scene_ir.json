@@ -1,0 +1,515 @@
+{
+  "animations": [],
+  "budgets": {
+    "max_instances": 200000,
+    "max_lights": 8,
+    "max_nodes": 512,
+    "max_particles": 60000
+  },
+  "camera": {
+    "far": 200,
+    "fov": 50,
+    "kind": "perspective",
+    "near": 0.1,
+    "position": [
+      4.2,
+      2.8,
+      5.2
+    ],
+    "target": [
+      0,
+      0.8,
+      0
+    ]
+  },
+  "effects": [],
+  "environment": {
+    "background": {
+      "color": "0x2A2620",
+      "kind": "color"
+    },
+    "environment_map": null,
+    "fog": {
+      "kind": "none"
+    }
+  },
+  "interactions": [],
+  "ir_version": 1,
+  "kind": "scene",
+  "lights": [
+    {
+      "color": "0xBDD7F2",
+      "ground": "0x334455",
+      "id": "fill",
+      "intensity": 0.7,
+      "kind": "hemisphere"
+    },
+    {
+      "color": "0xFFF2E0",
+      "id": "key",
+      "intensity": 1.4,
+      "kind": "directional",
+      "position": [
+        6,
+        10,
+        7
+      ]
+    }
+  ],
+  "meta": {
+    "backend": "webgl",
+    "mode": "scene",
+    "name": "freestyle",
+    "seed": 11,
+    "three_revision": "152"
+  },
+  "nodes": [
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 1.3,
+          "h": 0.09,
+          "w": 2.2
+        }
+      },
+      "id": "table_set_top",
+      "kind": "mesh",
+      "material": {
+        "color": "0x9C6B3F",
+        "kind": "standard",
+        "roughness": 0.6
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          0,
+          0.735,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.12,
+          "h": 0.6900000000000001,
+          "w": 0.12
+        }
+      },
+      "id": "table_set_leg_front_left",
+      "kind": "mesh",
+      "material": {
+        "color": "0x9C6B3F",
+        "kind": "standard",
+        "roughness": 0.7
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          0.9400000000000001,
+          0.34500000000000003,
+          0.49
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.12,
+          "h": 0.6900000000000001,
+          "w": 0.12
+        }
+      },
+      "id": "table_set_leg_front_right",
+      "kind": "mesh",
+      "material": {
+        "color": "0x9C6B3F",
+        "kind": "standard",
+        "roughness": 0.7
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          0.9400000000000001,
+          0.34500000000000003,
+          -0.49
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.12,
+          "h": 0.6900000000000001,
+          "w": 0.12
+        }
+      },
+      "id": "table_set_leg_rear_left",
+      "kind": "mesh",
+      "material": {
+        "color": "0x9C6B3F",
+        "kind": "standard",
+        "roughness": 0.7
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          -0.9400000000000001,
+          0.34500000000000003,
+          0.49
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.12,
+          "h": 0.6900000000000001,
+          "w": 0.12
+        }
+      },
+      "id": "table_set_leg_rear_right",
+      "kind": "mesh",
+      "material": {
+        "color": "0x9C6B3F",
+        "kind": "standard",
+        "roughness": 0.7
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          -0.9400000000000001,
+          0.34500000000000003,
+          -0.49
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 8,
+          "h": 0.18,
+          "w": 9
+        }
+      },
+      "id": "room_shell_floor",
+      "kind": "mesh",
+      "material": {
+        "color": "0x8A6F4D",
+        "kind": "standard",
+        "roughness": 0.8
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          0,
+          -0.09,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.18,
+          "h": 3.2,
+          "w": 9
+        }
+      },
+      "id": "room_shell_wall_back",
+      "kind": "mesh",
+      "material": {
+        "color": "0xC9BFAE",
+        "kind": "standard",
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          0,
+          1.6,
+          -4.0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 8,
+          "h": 3.2,
+          "w": 0.18
+        }
+      },
+      "id": "room_shell_wall_side",
+      "kind": "mesh",
+      "material": {
+        "color": "0xC9BFAE",
+        "kind": "standard",
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          -4.5,
+          1.6,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.1,
+          "h": 1.3,
+          "w": 1.7
+        }
+      },
+      "id": "room_shell_window_frame",
+      "kind": "mesh",
+      "material": {
+        "color": "0x5A4632",
+        "kind": "standard",
+        "roughness": 0.6
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          1.2,
+          1.8,
+          -3.94
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.06,
+          "h": 1.1,
+          "w": 1.5
+        }
+      },
+      "id": "room_shell_window_glass",
+      "kind": "mesh",
+      "material": {
+        "color": "0x9DB8D6",
+        "kind": "basic"
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          1.2,
+          1.8,
+          -3.93
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    }
+  ],
+  "relations": [
+    {
+      "a": "table_set_top",
+      "b": "table_set_leg_front_left",
+      "rel": "on",
+      "tol": 0.05
+    },
+    {
+      "a": "table_set_top",
+      "b": "table_set_leg_front_right",
+      "rel": "on",
+      "tol": 0.05
+    },
+    {
+      "a": "table_set_top",
+      "b": "table_set_leg_rear_left",
+      "rel": "on",
+      "tol": 0.05
+    },
+    {
+      "a": "table_set_top",
+      "b": "table_set_leg_rear_right",
+      "rel": "on",
+      "tol": 0.05
+    },
+    {
+      "a": "room_shell_wall_back",
+      "b": "room_shell_floor",
+      "rel": "on",
+      "tol": 0.05
+    },
+    {
+      "a": "room_shell_wall_side",
+      "b": "room_shell_floor",
+      "rel": "on",
+      "tol": 0.05
+    }
+  ]
+}

@@ -147,7 +147,7 @@ def test_table_photo_reconstructs_to_tabletop_and_four_legs(
         "materials": ["wood"], "colors": ["brown"],
         "parts": ["top", "leg"], "hidden": [],
     }])
-    rep = R.run_reconstruction(table_image, out_dir=str(tmp_path),
+    rep = R.run_reconstruction_legacy(table_image, out_dir=str(tmp_path),
                                vision_model="moondream:latest")
     assert rep["image"]["source"] == "image-vision"
     assert rep["image"]["category"] == "table"
@@ -173,7 +173,7 @@ def test_table_photo_is_not_silently_accepted_as_an_urn(monkeypatch, table_image
     _vision(monkeypatch, {"category": "urn", "confidence": 0.95,
                           "parts": ["body"]})
     with pytest.raises(R.VisionError) as ei:
-        R.run_reconstruction(table_image, out_dir=str(table_image) + "_o1",
+        R.run_reconstruction_legacy(table_image, out_dir=str(table_image) + "_o1",
                              vision_model="moondream:latest")
     info = ei.value.info
     assert info.get("needs_category") is True
@@ -188,7 +188,7 @@ def test_conflicting_vision_is_reanalysed_and_recovers(monkeypatch, table_image)
                            "parts": ["body"]},
                           {"category": "table", "confidence": 0.9,
                            "parts": ["top", "leg"]}])
-    rep = R.run_reconstruction(table_image, out_dir=table_image + "_o2",
+    rep = R.run_reconstruction_legacy(table_image, out_dir=table_image + "_o2",
                                vision_model="moondream:latest")
     assert rep["image"]["category"] == "table"
     assert rep["quality_accepted"]
@@ -201,7 +201,7 @@ def test_low_confidence_is_bounded_then_asks_the_user(monkeypatch, table_image):
     _vision(monkeypatch, {"category": "table", "confidence": 0.05,
                           "parts": ["top"]})
     with pytest.raises(R.VisionError) as ei:
-        R.run_reconstruction(table_image, out_dir=table_image + "_o3",
+        R.run_reconstruction_legacy(table_image, out_dir=table_image + "_o3",
                              vision_model="moondream:latest")
     assert ei.value.info.get("needs_category") is True
     assert len(ei.value.info["attempts"]) == R.VISION_MAX_ATTEMPTS
@@ -212,7 +212,7 @@ def test_unparseable_vision_response_is_a_clear_error(monkeypatch, table_image):
 
     _vision(monkeypatch, "I am sorry, I cannot see any photograph.")
     with pytest.raises(R.VisionError):
-        R.run_reconstruction(table_image, out_dir=table_image + "_o4",
+        R.run_reconstruction_legacy(table_image, out_dir=table_image + "_o4",
                              vision_model="moondream:latest")
 
 
@@ -223,7 +223,7 @@ def test_text_only_model_is_refused_for_images(monkeypatch, table_image):
     monkeypatch.setattr(R, "ollama_generate",
                         lambda *a, **k: pytest.fail("must not call the model"))
     with pytest.raises(PipelineError) as ei:
-        R.run_reconstruction(table_image, out_dir=table_image + "_o5",
+        R.run_reconstruction_legacy(table_image, out_dir=table_image + "_o5",
                              vision_model="deepseek-r1:1.5b")
     assert "not a known image-capable model" in str(ei.value)
 
@@ -233,7 +233,7 @@ def test_urn_photo_reconstructs_as_urn_geometry(monkeypatch, urn_image):
 
     _vision(monkeypatch, {"category": "urn", "confidence": 0.9,
                           "parts": ["body", "neck"]})
-    rep = R.run_reconstruction(urn_image, out_dir=urn_image + "_o6",
+    rep = R.run_reconstruction_legacy(urn_image, out_dir=urn_image + "_o6",
                                vision_model="moondream:latest")
     assert rep["image"]["category"] == "urn"
     assert rep["ok"] and rep["complete"] and rep["quality_accepted"]
@@ -245,7 +245,7 @@ def test_urn_photo_reconstructs_as_urn_geometry(monkeypatch, urn_image):
 def test_manual_category_uses_template_without_any_vision(table_image):
     import morphix_reconstruct as R
 
-    rep = R.run_reconstruction(table_image, out_dir=table_image + "_man",
+    rep = R.run_reconstruction_legacy(table_image, out_dir=table_image + "_man",
                                category="table")
     assert rep["image"]["source"] == "image-manual"
     assert rep["image"]["category"] == "table"
@@ -302,6 +302,112 @@ def test_parse_vision_response_schema():
     # prose is never mined for a category
     det3, _ = R.parse_vision_response("the object is maybe a table")
     assert det3 is None
+
+
+def test_bare_word_parses_weak_but_prose_does_not():
+    import morphix_reconstruct as R
+    det, _ = R.parse_vision_response("urn")
+    assert det["category"] == "urn" and det["weak"] is True
+    assert det["confidence"] == pytest.approx(R.VISION_WEAK_CONFIDENCE)
+    det, _ = R.parse_vision_response("urn.")     # trailing punctuation
+    assert det["category"] == "urn" and det["weak"] is True
+    assert R.parse_vision_response("")[0] is None
+    assert R.parse_vision_response("???")[0] is None
+
+
+def test_weak_fitting_answer_accepted_after_retry(monkeypatch, table_image):
+    import morphix_reconstruct as R
+    # strong conflicting JSON, then a weak single word that fits
+    _vision(monkeypatch, [
+        {"category": "urn", "confidence": 0.9, "parts": ["body"]},
+        "table",
+    ])
+    rep = R.run_reconstruction_legacy(table_image, out_dir=table_image + "_weak",
+                               vision_model="moondream:latest")
+    assert rep["image"]["category"] == "table"
+    assert rep["quality_accepted"]
+    attempts = rep["image"]["vision_analysis"]["attempts"]
+    assert len(attempts) == 2
+    assert attempts[-1].get("resolved_weak") is True
+
+
+def test_description_with_parts_resolves_conflicting_label(
+        monkeypatch, table_image):
+    import morphix_reconstruct as R
+    # the real-world transcript shape: confident mislabel, empty retry,
+    # then a description naming the true subject WITH its parts. The
+    # decision uses every reply jointly (votes + part corroboration +
+    # silhouette) — never the word count of one reply alone.
+    _vision(monkeypatch, [
+        {"category": "urn", "confidence": 0.9, "parts": ["body"]},
+        "",
+        "a table of wood with a rectangular top and four legs",
+    ])
+    rep = R.run_reconstruction_legacy(table_image, out_dir=table_image + "_parts",
+                               vision_model="moondream:latest")
+    assert rep["image"]["category"] == "table"
+    assert rep["quality_accepted"]
+    attempts = rep["image"]["vision_analysis"]["attempts"]
+    assert len(attempts) == 3
+    assert attempts[-1].get("via") == "decide"
+    assert "urn" in attempts[-1].get("overrode", [])
+
+
+def test_parts_without_dominance_escalates(monkeypatch, table_image):
+    import morphix_reconstruct as R
+    _vision(monkeypatch, [
+        {"category": "urn", "confidence": 0.9, "parts": ["body"]},
+        "urn",
+        "wood, brown, rectangular, smooth",
+    ])
+    with pytest.raises(R.VisionError) as ei:
+        R.run_reconstruction_legacy(table_image, out_dir=table_image + "_nodom",
+                             vision_model="moondream:latest")
+    assert ei.value.info.get("needs_category") is True
+    assert len(ei.value.info["attempts"]) == R.VISION_MAX_ATTEMPTS
+
+
+def test_unavailable_model_is_a_distinct_error(monkeypatch, table_image):
+    import morphix_reconstruct as R
+    from morphix_config import ModelUnavailableError
+
+    def dead(*a, **k):
+        raise ModelUnavailableError("connection refused")
+    monkeypatch.setattr(R, "ollama_generate", dead)
+    with pytest.raises(R.VisionError) as ei:
+        R.run_reconstruction_legacy(table_image, out_dir=table_image + "_dead",
+                             vision_model="moondream:latest")
+    assert ei.value.info.get("unavailable") is True
+    assert ei.value.info.get("needs_category") is False
+
+
+def test_unknown_category_escalates(monkeypatch, table_image):
+    import morphix_reconstruct as R
+    _vision(monkeypatch, "dragon")
+    with pytest.raises(R.VisionError) as ei:
+        R.run_reconstruction_legacy(table_image, out_dir=table_image + "_dragon",
+                             vision_model="moondream:latest")
+    assert ei.value.info.get("needs_category") is True
+
+
+@pytest.mark.live
+def test_real_wooden_table_classifies_as_table(tmp_path):
+    """Live regression: the actual uploaded table photograph through the
+    real moondream pipeline must resolve to a table (no manual category).
+    Needs a warm, uncontended Ollama; excluded from normal runs."""
+    import morphix_reconstruct as R
+    src = os.path.join(os.path.dirname(os.path.dirname(
+        os.path.abspath(__file__))), "uploads",
+        "20261013_043108_images_4.jpg")
+    assert os.path.isfile(src)
+    rep = R.run_reconstruction_legacy(src, out_dir=str(tmp_path),
+                               vision_model="moondream:latest")
+    assert rep["image"]["source"] == "image-vision"
+    assert rep["image"]["category"] == "table"
+    assert rep["quality_accepted"]
+    labels = [c["component"] for c in rep["components"]]
+    assert "tabletop" in labels
+    assert sum(1 for l in labels if l.startswith("leg_")) == 4
 
 
 def test_rejected_action_does_not_modify_committed_geometry():

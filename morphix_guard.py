@@ -104,6 +104,16 @@ def validate_js(action: dict, code: str) -> list:
     if key and key not in code:
         errs.append(f"label suffix {key!r} not grounded in output")
 
+    # Blocks are fragments assembled into ONE host module that already
+    # provides the single THREE import: a block smuggling its own import/
+    # export/THREE binding would collide at assembly (fatal SyntaxError in
+    # the viewer). Reject them here, at the block level.
+    if re.search(r"^\s*import\b", code, re.M):
+        errs.append("import statement in block (host module owns imports)")
+    if re.search(r"^\s*export\b", code, re.M):
+        errs.append("export statement in block (fragments cannot export)")
+    if re.search(r"\b(const|let|var)\s+THREE\b", code):
+        errs.append("THREE redeclaration in block (host owns the binding)")
     tail_ok = ("scene.add(" in code) or ("morphix_" in code and ".push(" in code)
     if not tail_ok:
         errs.append("no scene.add()/morphix_*.push() terminator")

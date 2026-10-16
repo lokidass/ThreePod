@@ -80,3 +80,32 @@ pixel comparison.
   node/instance/validation panels.
 - `tests/scene_browser.py`, `test_scene_{ir,knowledge,compile,templates,
   plan,isolation,benchmark,api}.py`.
+
+## Phase 4.1 — semantic correctness + completion gates
+
+Reproduction first: all five probe prompts (table room, forest mountain,
+city street, scifi, lighthouse) resolved to the SAME `studio` product
+shot — the thinker picks position-first templates and nothing downstream
+could tell. Fixed structurally, not per-prompt:
+
+- **Keyword router** (`route_systems`, tested on 10 prompts): deterministic
+  prompt -> template/part systems with light stemming; no false hits.
+- **Freestyle parts** (`morphix_scene_parts.py`): table_set, room_shell,
+  lighthouse_tower, cabin, castle_keep, tent, boat, lamp_post, pier,
+  dunes, coral_bed — parameterized assemblies with documented strategies
+  and declared contacts, each independently tested (IR/compile/render).
+- **Coverage gate**: every required element must resolve to a system
+  (alias-aware, compound-safe); unresolvable requirements fail loudly.
+  Thinker sees routed systems before proposing; one bounded re-plan on
+  coverage failure.
+- **Geometric validation** (`morphix_scene_validate.py`): live browser
+  introspection (per-id world bboxes via `userData.morphix_id`) checks
+  presence, finiteness, solidity, bounds, declared relations, and
+  suspicious floating. Intentional overlaps are not errors.
+- **Completion state machine** (`morphix_scene_run.py`): explicit
+  PLANNING -> ... -> COMPLETE | FAILED with evidence at every step;
+  COMPLETE needs required-rendered-valid, no fatal errors, validation
+  pass. Bounded visual repairs (camera reframe, light boost).
+- **Benchmarks** (`benchmarks/run_scene_benchmarks.py`): 10 prompts with
+  full evidence (IR/JS/screenshots/errors/stats/timings/retries);
+  deterministic frozen-plan gate in `test_scene_benchmark.py`.

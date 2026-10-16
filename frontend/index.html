@@ -75,17 +75,26 @@
 
       <div id="img-options-semantic">
         <div class="row">
-          <label>Category (optional override)
+          <label>Subject (optional, any word)
             <input id="imgcategory" placeholder="auto-detect" size="10">
           </label>
           <label>Vision model
             <input id="visionmodel" placeholder="auto" style="width:9em">
           </label>
+          <label>Environment
+            <select id="imgenv">
+              <option value="object-only">object only</option>
+              <option value="preserve">keep platform/floor (display only)</option>
+            </select>
+          </label>
         </div>
         <button id="reconstruct">Reconstruct object → 3D</button>
-        <p class="dim">Semantic: identifies the object and prints named parts
-        (body, wheels…). It is not a heightmap, and it will say so if no vision
-        model is configured.</p>
+        <p class="dim">Any subject: known families (vehicles, furniture,
+        buildings, animals) get a fitted parametric shape; anything else is
+        built from its own measured silhouette. Every result is rendered and
+        measured against the photo — failures are reported, never shown as
+        success.</p>
+        <div id="imgverify"></div>
       </div>
 
       <div id="img-options-relief" hidden>
@@ -116,6 +125,10 @@
   </section>
   <section id="viewer">
     <div id="verdict" class="verdict">no run yet — validator idle</div>
+    <div id="viewtoggle" hidden>
+      <button data-view="model" class="active">Realistic model</button>
+      <button data-view="scene">Printed result</button>
+    </div>
     <iframe id="scene" title="3D scene" sandbox="allow-scripts"></iframe>
   </section>
   <aside id="side">

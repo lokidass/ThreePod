@@ -1,0 +1,1807 @@
+{
+  "animations": [],
+  "budgets": {
+    "max_instances": 200000,
+    "max_lights": 8,
+    "max_nodes": 512,
+    "max_particles": 60000
+  },
+  "camera": {
+    "far": 500,
+    "fov": 55,
+    "kind": "perspective",
+    "near": 0.1,
+    "position": [
+      16,
+      9,
+      20
+    ],
+    "target": [
+      0,
+      2.5,
+      0
+    ]
+  },
+  "effects": [],
+  "environment": {
+    "background": {
+      "bottom": "0x1C2634",
+      "kind": "gradient",
+      "mid": "0xA8BECF",
+      "top": "0x2C4258"
+    },
+    "environment_map": null,
+    "fog": {
+      "color": "0x9DB8D6",
+      "density": 0.012,
+      "kind": "exp2"
+    }
+  },
+  "interactions": [],
+  "ir_version": 1,
+  "kind": "scene",
+  "lights": [
+    {
+      "color": "0xFFF2E0",
+      "id": "sun",
+      "intensity": 1.6,
+      "kind": "directional",
+      "position": [
+        6,
+        10,
+        7
+      ],
+      "shadow": {
+        "bottom": -45,
+        "left": -45,
+        "map": 1024,
+        "right": 45,
+        "top": 45
+      }
+    },
+    {
+      "color": "0xBDD7F2",
+      "ground": "0x334455",
+      "id": "sky",
+      "intensity": 0.7,
+      "kind": "hemisphere"
+    }
+  ],
+  "meta": {
+    "backend": "webgl",
+    "mode": "scene",
+    "name": "mountains",
+    "seed": 11,
+    "three_revision": "152"
+  },
+  "nodes": [
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "generator": "terrain",
+        "params": {
+          "height": 9,
+          "segments": 96,
+          "size": 90
+        }
+      },
+      "id": "terrain",
+      "kind": "mesh",
+      "material": {
+        "color": "0x5A6B4A",
+        "kind": "standard",
+        "metalness": 0.0,
+        "roughness": 0.95
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": false,
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "generator": "gradient_sky",
+        "params": {
+          "bot": "0x1A2433",
+          "mid": "0x9DB8D6",
+          "top": "0x27435F"
+        }
+      },
+      "id": "sky",
+      "kind": "mesh",
+      "material": {
+        "color": "0xFFFFFF",
+        "fog": false,
+        "kind": "basic"
+      },
+      "printable": false,
+      "receive_shadow": false,
+      "required": false,
+      "transform": {
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.5,
+          "h": 3.0,
+          "w": 5.0
+        }
+      },
+      "id": "castle_keep_wall_n",
+      "kind": "mesh",
+      "material": {
+        "color": "0x8D8D94",
+        "kind": "standard",
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          0,
+          1.5,
+          2.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.34,
+          "h": 0.34,
+          "w": 0.34
+        }
+      },
+      "id": "castle_keep_merlon_0_0",
+      "kind": "mesh",
+      "material": {
+        "color": "0x8D8D94",
+        "kind": "standard",
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          -2.15,
+          3.17,
+          2.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.34,
+          "h": 0.34,
+          "w": 0.34
+        }
+      },
+      "id": "castle_keep_merlon_0_1",
+      "kind": "mesh",
+      "material": {
+        "color": "0x8D8D94",
+        "kind": "standard",
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          -1.45,
+          3.17,
+          2.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.34,
+          "h": 0.34,
+          "w": 0.34
+        }
+      },
+      "id": "castle_keep_merlon_0_2",
+      "kind": "mesh",
+      "material": {
+        "color": "0x8D8D94",
+        "kind": "standard",
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          -0.75,
+          3.17,
+          2.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.34,
+          "h": 0.34,
+          "w": 0.34
+        }
+      },
+      "id": "castle_keep_merlon_0_3",
+      "kind": "mesh",
+      "material": {
+        "color": "0x8D8D94",
+        "kind": "standard",
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          -0.050000000000000266,
+          3.17,
+          2.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.34,
+          "h": 0.34,
+          "w": 0.34
+        }
+      },
+      "id": "castle_keep_merlon_0_4",
+      "kind": "mesh",
+      "material": {
+        "color": "0x8D8D94",
+        "kind": "standard",
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          0.6499999999999999,
+          3.17,
+          2.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.34,
+          "h": 0.34,
+          "w": 0.34
+        }
+      },
+      "id": "castle_keep_merlon_0_5",
+      "kind": "mesh",
+      "material": {
+        "color": "0x8D8D94",
+        "kind": "standard",
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          1.35,
+          3.17,
+          2.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.34,
+          "h": 0.34,
+          "w": 0.34
+        }
+      },
+      "id": "castle_keep_merlon_0_6",
+      "kind": "mesh",
+      "material": {
+        "color": "0x8D8D94",
+        "kind": "standard",
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          2.0499999999999994,
+          3.17,
+          2.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.5,
+          "h": 3.0,
+          "w": 5.0
+        }
+      },
+      "id": "castle_keep_wall_s",
+      "kind": "mesh",
+      "material": {
+        "color": "0x8D8D94",
+        "kind": "standard",
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          0,
+          1.5,
+          -2.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.34,
+          "h": 0.34,
+          "w": 0.34
+        }
+      },
+      "id": "castle_keep_merlon_1_0",
+      "kind": "mesh",
+      "material": {
+        "color": "0x8D8D94",
+        "kind": "standard",
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          -2.15,
+          3.17,
+          -2.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.34,
+          "h": 0.34,
+          "w": 0.34
+        }
+      },
+      "id": "castle_keep_merlon_1_1",
+      "kind": "mesh",
+      "material": {
+        "color": "0x8D8D94",
+        "kind": "standard",
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          -1.45,
+          3.17,
+          -2.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.34,
+          "h": 0.34,
+          "w": 0.34
+        }
+      },
+      "id": "castle_keep_merlon_1_2",
+      "kind": "mesh",
+      "material": {
+        "color": "0x8D8D94",
+        "kind": "standard",
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          -0.75,
+          3.17,
+          -2.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.34,
+          "h": 0.34,
+          "w": 0.34
+        }
+      },
+      "id": "castle_keep_merlon_1_3",
+      "kind": "mesh",
+      "material": {
+        "color": "0x8D8D94",
+        "kind": "standard",
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          -0.050000000000000266,
+          3.17,
+          -2.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.34,
+          "h": 0.34,
+          "w": 0.34
+        }
+      },
+      "id": "castle_keep_merlon_1_4",
+      "kind": "mesh",
+      "material": {
+        "color": "0x8D8D94",
+        "kind": "standard",
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          0.6499999999999999,
+          3.17,
+          -2.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.34,
+          "h": 0.34,
+          "w": 0.34
+        }
+      },
+      "id": "castle_keep_merlon_1_5",
+      "kind": "mesh",
+      "material": {
+        "color": "0x8D8D94",
+        "kind": "standard",
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          1.35,
+          3.17,
+          -2.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.34,
+          "h": 0.34,
+          "w": 0.34
+        }
+      },
+      "id": "castle_keep_merlon_1_6",
+      "kind": "mesh",
+      "material": {
+        "color": "0x8D8D94",
+        "kind": "standard",
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          2.0499999999999994,
+          3.17,
+          -2.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 5.0,
+          "h": 3.0,
+          "w": 0.5
+        }
+      },
+      "id": "castle_keep_wall_e",
+      "kind": "mesh",
+      "material": {
+        "color": "0x8D8D94",
+        "kind": "standard",
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          2.5,
+          1.5,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.34,
+          "h": 0.34,
+          "w": 0.34
+        }
+      },
+      "id": "castle_keep_merlon_2_0",
+      "kind": "mesh",
+      "material": {
+        "color": "0x8D8D94",
+        "kind": "standard",
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          2.5,
+          3.17,
+          -2.15
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.34,
+          "h": 0.34,
+          "w": 0.34
+        }
+      },
+      "id": "castle_keep_merlon_2_1",
+      "kind": "mesh",
+      "material": {
+        "color": "0x8D8D94",
+        "kind": "standard",
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          2.5,
+          3.17,
+          -1.45
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.34,
+          "h": 0.34,
+          "w": 0.34
+        }
+      },
+      "id": "castle_keep_merlon_2_2",
+      "kind": "mesh",
+      "material": {
+        "color": "0x8D8D94",
+        "kind": "standard",
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          2.5,
+          3.17,
+          -0.75
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.34,
+          "h": 0.34,
+          "w": 0.34
+        }
+      },
+      "id": "castle_keep_merlon_2_3",
+      "kind": "mesh",
+      "material": {
+        "color": "0x8D8D94",
+        "kind": "standard",
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          2.5,
+          3.17,
+          -0.050000000000000266
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.34,
+          "h": 0.34,
+          "w": 0.34
+        }
+      },
+      "id": "castle_keep_merlon_2_4",
+      "kind": "mesh",
+      "material": {
+        "color": "0x8D8D94",
+        "kind": "standard",
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          2.5,
+          3.17,
+          0.6499999999999999
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.34,
+          "h": 0.34,
+          "w": 0.34
+        }
+      },
+      "id": "castle_keep_merlon_2_5",
+      "kind": "mesh",
+      "material": {
+        "color": "0x8D8D94",
+        "kind": "standard",
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          2.5,
+          3.17,
+          1.35
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.34,
+          "h": 0.34,
+          "w": 0.34
+        }
+      },
+      "id": "castle_keep_merlon_2_6",
+      "kind": "mesh",
+      "material": {
+        "color": "0x8D8D94",
+        "kind": "standard",
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          2.5,
+          3.17,
+          2.0499999999999994
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 5.0,
+          "h": 3.0,
+          "w": 0.5
+        }
+      },
+      "id": "castle_keep_wall_w",
+      "kind": "mesh",
+      "material": {
+        "color": "0x8D8D94",
+        "kind": "standard",
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          -2.5,
+          1.5,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.34,
+          "h": 0.34,
+          "w": 0.34
+        }
+      },
+      "id": "castle_keep_merlon_3_0",
+      "kind": "mesh",
+      "material": {
+        "color": "0x8D8D94",
+        "kind": "standard",
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          -2.5,
+          3.17,
+          -2.15
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.34,
+          "h": 0.34,
+          "w": 0.34
+        }
+      },
+      "id": "castle_keep_merlon_3_1",
+      "kind": "mesh",
+      "material": {
+        "color": "0x8D8D94",
+        "kind": "standard",
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          -2.5,
+          3.17,
+          -1.45
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.34,
+          "h": 0.34,
+          "w": 0.34
+        }
+      },
+      "id": "castle_keep_merlon_3_2",
+      "kind": "mesh",
+      "material": {
+        "color": "0x8D8D94",
+        "kind": "standard",
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          -2.5,
+          3.17,
+          -0.75
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.34,
+          "h": 0.34,
+          "w": 0.34
+        }
+      },
+      "id": "castle_keep_merlon_3_3",
+      "kind": "mesh",
+      "material": {
+        "color": "0x8D8D94",
+        "kind": "standard",
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          -2.5,
+          3.17,
+          -0.050000000000000266
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.34,
+          "h": 0.34,
+          "w": 0.34
+        }
+      },
+      "id": "castle_keep_merlon_3_4",
+      "kind": "mesh",
+      "material": {
+        "color": "0x8D8D94",
+        "kind": "standard",
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          -2.5,
+          3.17,
+          0.6499999999999999
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.34,
+          "h": 0.34,
+          "w": 0.34
+        }
+      },
+      "id": "castle_keep_merlon_3_5",
+      "kind": "mesh",
+      "material": {
+        "color": "0x8D8D94",
+        "kind": "standard",
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          -2.5,
+          3.17,
+          1.35
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": false,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "BoxGeometry",
+        "params": {
+          "d": 0.34,
+          "h": 0.34,
+          "w": 0.34
+        }
+      },
+      "id": "castle_keep_merlon_3_6",
+      "kind": "mesh",
+      "material": {
+        "color": "0x8D8D94",
+        "kind": "standard",
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          -2.5,
+          3.17,
+          2.0499999999999994
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "CylinderGeometry",
+        "params": {
+          "h": 4.2,
+          "rb": 0.85,
+          "rt": 0.75,
+          "seg": 20
+        }
+      },
+      "id": "castle_keep_turret_ne",
+      "kind": "mesh",
+      "material": {
+        "color": "0x7D7D84",
+        "kind": "standard",
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          2.5,
+          2.1,
+          2.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "ConeGeometry",
+        "params": {
+          "h": 1.1,
+          "r": 0.95,
+          "seg": 12
+        }
+      },
+      "id": "castle_keep_cap_ne",
+      "kind": "mesh",
+      "material": {
+        "color": "0x4E463C",
+        "kind": "standard",
+        "roughness": 0.85
+      },
+      "printable": false,
+      "receive_shadow": false,
+      "required": true,
+      "transform": {
+        "position": [
+          2.5,
+          4.75,
+          2.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "CylinderGeometry",
+        "params": {
+          "h": 4.2,
+          "rb": 0.85,
+          "rt": 0.75,
+          "seg": 20
+        }
+      },
+      "id": "castle_keep_turret_se",
+      "kind": "mesh",
+      "material": {
+        "color": "0x7D7D84",
+        "kind": "standard",
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          2.5,
+          2.1,
+          -2.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "ConeGeometry",
+        "params": {
+          "h": 1.1,
+          "r": 0.95,
+          "seg": 12
+        }
+      },
+      "id": "castle_keep_cap_se",
+      "kind": "mesh",
+      "material": {
+        "color": "0x4E463C",
+        "kind": "standard",
+        "roughness": 0.85
+      },
+      "printable": false,
+      "receive_shadow": false,
+      "required": true,
+      "transform": {
+        "position": [
+          2.5,
+          4.75,
+          -2.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "CylinderGeometry",
+        "params": {
+          "h": 4.2,
+          "rb": 0.85,
+          "rt": 0.75,
+          "seg": 20
+        }
+      },
+      "id": "castle_keep_turret_nw",
+      "kind": "mesh",
+      "material": {
+        "color": "0x7D7D84",
+        "kind": "standard",
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          -2.5,
+          2.1,
+          2.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "ConeGeometry",
+        "params": {
+          "h": 1.1,
+          "r": 0.95,
+          "seg": 12
+        }
+      },
+      "id": "castle_keep_cap_nw",
+      "kind": "mesh",
+      "material": {
+        "color": "0x4E463C",
+        "kind": "standard",
+        "roughness": 0.85
+      },
+      "printable": false,
+      "receive_shadow": false,
+      "required": true,
+      "transform": {
+        "position": [
+          -2.5,
+          4.75,
+          2.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "CylinderGeometry",
+        "params": {
+          "h": 4.2,
+          "rb": 0.85,
+          "rt": 0.75,
+          "seg": 20
+        }
+      },
+      "id": "castle_keep_turret_sw",
+      "kind": "mesh",
+      "material": {
+        "color": "0x7D7D84",
+        "kind": "standard",
+        "roughness": 0.9
+      },
+      "printable": false,
+      "receive_shadow": true,
+      "required": true,
+      "transform": {
+        "position": [
+          -2.5,
+          2.1,
+          -2.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    {
+      "cast_shadow": true,
+      "children": [],
+      "count": 0,
+      "distribution": {},
+      "geometry": {
+        "ctor": "ConeGeometry",
+        "params": {
+          "h": 1.1,
+          "r": 0.95,
+          "seg": 12
+        }
+      },
+      "id": "castle_keep_cap_sw",
+      "kind": "mesh",
+      "material": {
+        "color": "0x4E463C",
+        "kind": "standard",
+        "roughness": 0.85
+      },
+      "printable": false,
+      "receive_shadow": false,
+      "required": true,
+      "transform": {
+        "position": [
+          -2.5,
+          4.75,
+          -2.5
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    }
+  ],
+  "relations": []
+}

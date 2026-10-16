@@ -1,6 +1,15 @@
 # Morphix app image. The Ollama server runs as a sibling container
 # (see docker-compose.yml); this image only needs the Python app + Node
 # (node is used for real JS syntax validation of every generated block).
+
+# ---- web UI (React + Vite) -> /web/dist ----------------------------------
+FROM node:20-slim AS web
+WORKDIR /web
+COPY web/package.json web/package-lock.json ./
+RUN npm ci --no-audit --no-fund
+COPY web/ ./
+RUN npm run build
+
 FROM python:3.11-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -12,10 +21,12 @@ WORKDIR /app
 
 # Install Python deps first for better layer caching.
 COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt \
+    && python -m playwright install --with-deps chromium
 
-# Application code + frontend.
+# Application code + classic frontend, then the built React UI.
 COPY . .
+COPY --from=web /web/dist ./web/dist
 
 # The app talks to Ollama over HTTP, never over the host socket.
 ENV OLLAMA_HOST=http://ollama:11434 \

@@ -1,0 +1,61 @@
+{
+  "prompts": [
+    {
+      "id": "table_room",
+      "prompt": "a wooden table in a room",
+      "expect_templates": [
+        "table",
+        "room"
+      ],
+      "seed": 11,
+      "plan": {
+        "version": 1,
+        "objective": "A realistic room scene with a wooden table and ambient lighting.",
+        "style": "studio",
+        "backend": "webgl",
+        "templates": [
+          "studio"
+        ],
+        "seed": 42,
+        "animations": true,
+        "substitutions": {}
+      },
+      "retries": 0,
+      "plan_s": 52.84,
+      "summary": {
+        "name": "A realistic room scene with a wooden table and ambient lighting.",
+        "backend": "webgl",
+        "seed": 42,
+        "nodes": 3,
+        "lights": 3,
+        "instances": 0,
+        "printable": [
+          "pedestal",
+          "hero"
+        ],
+        "animations": 1,
+        "effects": []
+      },
+      "render": {
+        "ready": true,
+        "scene_error": null,
+        "console_errors": [],
+        "stats": {
+          "frames": 3,
+          "nodes": 7,
+          "drawCalls": 4,
+          "triangles": 988,
+          "instances": 0
+        },
+        "elapsed_s": 0.77
+      },
+      "first_render_s": 0.77,
+      "verdict": {
+        "complete": true,
+        "stage": "complete",
+        "error": ""
+      },
+      "total_s": 55.01
+    }
+  ]
+}

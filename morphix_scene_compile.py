@@ -160,6 +160,11 @@ def compile_scene_ir(ir, three_url="three", pixel_ratio=1, antialias=False):
     if fog_kind == "custom":
         L.append(JS_HEIGHT_FOG)
     L.append("const __anims = [];")
+    # Single shared id tagger for live geometric validation: every scene
+    # object carries its IR id in userData so the harness can map rendered
+    # world bboxes back to plan elements (required/optional/relations).
+    L.append("function __tag(o, id) { o.userData.morphix_id = id; "
+             "return o; }")
     L.append("const renderer = new THREE.WebGLRenderer({ antialias: "
              + str(bool(antialias)).lower() + " });")
     L.append(f"renderer.setPixelRatio({pixel_ratio});")
@@ -184,10 +189,10 @@ def compile_scene_ir(ir, three_url="three", pixel_ratio=1, antialias=False):
             L.append(_GRADIENT_HELPER)
             sky_helper_emitted = True
 
-    def sky_call(top, mid, bot):
+    def sky_call(top, mid, bot, nid="sky"):
         need_sky_helper()
         L.append(f"__installGradient(scene, '{_css(top)}', '{_css(mid)}', "
-                 f"'{_css(bot)}');")
+                 f"'{_css(bot)}', {nid!r});")
 
     if bg.get("kind") == "color":
         L.append(f"scene.background = new THREE.Color({bg.get('color', '0x111622')});")
@@ -313,13 +318,47 @@ def compile_scene_ir(ir, three_url="three", pixel_ratio=1, antialias=False):
     L.append("  for (const a of __anims) { a.update(dt, t); }")
     L.append("  renderer.render(scene, camera);")
     L.append("  if (++__frames >= 3) {")
+    L.append("    let __inst = 0;")
+    L.append("    scene.traverse(function (o) {")
+    L.append("      if (o.isInstancedMesh) { __inst += o.count; }")
+    L.append("      else if (o.isPoints && o.geometry && o.geometry.attributes.position) {")
+    L.append("        __inst += o.geometry.attributes.position.count; }")
+    L.append("    });")
     L.append("    window.__scene_stats = { frames: __frames, "
              "nodes: scene.children.length, "
              "drawCalls: renderer.info.render.calls, "
-             "triangles: renderer.info.render.triangles };")
+             "triangles: renderer.info.render.triangles, "
+             "instances: __inst };")
     L.append("    window.__scene_ready = true;")
     L.append("  } else { requestAnimationFrame(__tick); }")
     L.append("}")
+    # Introspection hook for live geometric validation: maps rendered
+    # world bboxes back to IR ids via userData.morphix_id. Runs inside the
+    # module (THREE stays module-scoped); the harness just calls it.
+    L.append("window.__introspectScene = function () {")
+    L.append("  const out = {};")
+    L.append("  const __box = new THREE.Box3();")
+    L.append("  scene.updateMatrixWorld(true);")
+    L.append("  scene.traverse(function (o) {")
+    L.append("    const id = o.userData && o.userData.morphix_id;")
+    L.append("    if (!id) return;")
+    L.append("    if (o.isMesh || o.isInstancedMesh || o.isPoints) {")
+    L.append("      __box.setFromObject(o, true);")
+    L.append("      if (__box.isEmpty()) {")
+    L.append("        out[id] = { present: true, empty: true,"
+               " visible: !!o.visible };")
+    L.append("      } else {")
+    L.append("        out[id] = { present: true, empty: false,"
+               " visible: !!o.visible,")
+    L.append("          bbox: [__box.min.toArray(), __box.max.toArray()] };")
+    L.append("      }")
+    L.append("    } else {")
+    L.append("      out[id] = out[id] || { present: true, empty: true,"
+               " visible: !!o.visible, group: true };")
+    L.append("    }")
+    L.append("  });")
+    L.append("  return out;")
+    L.append("};")
     L.append("__tick();")
     return "\n".join(L) + "\n"
 
@@ -331,7 +370,7 @@ def _css(h):
 
 
 _GRADIENT_HELPER = """
-function __installGradient(scene, top, mid, bot) {
+function __installGradient(scene, top, mid, bot, id) {
   const c = document.createElement('canvas');
   c.width = 4; c.height = 128;
   const g = c.getContext('2d');
@@ -345,7 +384,7 @@ function __installGradient(scene, top, mid, bot) {
   const sky = new THREE.Mesh(
     new THREE.SphereGeometry(220, 24, 16),
     new THREE.MeshBasicMaterial({ map: tex, side: THREE.BackSide, fog: false }));
-  scene.add(sky);
+  scene.add(__tag(sky, id || 'sky'));
 }
 """
 
@@ -362,7 +401,7 @@ def _emit_node(n, by_id, seed, fog_kind, sky_call=None):
         L.append(_emit_transform(v, t))
         for kid in n.get("children", []):
             L.append(f"{v}.add(__n_{kid});")
-        L.append("scene.add(%s);" % v)
+        L.append(f"scene.add(__tag({v}, {nid!r}));")
         return L
     mat = _emit_material(n.get("material") or {"kind": "standard"}, fog_kind)
     if kind == "mesh":
@@ -386,7 +425,7 @@ def _emit_node(n, by_id, seed, fog_kind, sky_call=None):
         if fog_kind == "custom":
             L.append(f"__applyHeightFog({v}.material, __fogColor, "
                      f"__fogDensity, __fogHeightFalloff);")
-        L.append(f"scene.add({v});")
+        L.append(f"scene.add(__tag({v}, {nid!r}));")
         return L
     if kind == "instanced":
         if "generator" in g:
@@ -441,7 +480,7 @@ def _emit_node(n, by_id, seed, fog_kind, sky_call=None):
         if fog_kind == "custom":
             L.append(f"__applyHeightFog({v}.material, __fogColor, "
                      f"__fogDensity, __fogHeightFalloff);")
-        L.append(f"scene.add({v});")
+        L.append(f"scene.add(__tag({v}, {nid!r}));")
         return L
     if kind == "points":
         count = int(n.get("count", 0))
@@ -460,7 +499,7 @@ def _emit_node(n, by_id, seed, fog_kind, sky_call=None):
         L.append(f"  return new THREE.Points(__g, {mat});")
         L.append(f"}})();")
         L.append(_emit_transform(v, t))
-        L.append(f"scene.add({v});")
+        L.append(f"scene.add(__tag({v}, {nid!r}));")
         return L
     raise ValueError(f"node {nid!r}: unknown kind {kind!r}")
 
@@ -521,7 +560,7 @@ def _emit_procedural_mesh(var, n, seed, sky_call=None):
         if sky_call is None:
             raise ValueError("gradient_sky needs the shared sky helper")
         sky_call(p.get("top", "0x27435F"), p.get("mid", "0x9DB8D6"),
-                 p.get("bot", "0x111622"))
+                 p.get("bot", "0x111622"), n["id"])
         return L  # the shared helper installs the dome into the scene
     else:
         raise ValueError(f"unknown procedural generator {gen!r} "
@@ -531,7 +570,7 @@ def _emit_procedural_mesh(var, n, seed, sky_call=None):
     L.append(_emit_transform(var, t))
     if n.get("receive_shadow"):
         L.append(f"{var}.receiveShadow = true;")
-    L.append(f"scene.add({var});")
+    L.append(f"scene.add(__tag({var}, {n['id']!r}));")
     return L
 
 
@@ -583,11 +622,23 @@ def validate_scene_js(code, backend="webgl"):
     return errs
 
 
-# Gradient-background helper is referenced by compile output; keep the
-# template pieces consistent by construction (test asserts presence).
+# Runtime contract (single authoritative THREE binding): a compiled scene
+# module is self-contained and declares `import * as THREE` EXACTLY once,
+# from the host-provided 'three' specifier. Hosts (this wrapper, the test
+# harness) provide the importmap ONLY and must never add their own import,
+# const, or global THREE — a second binding is a fatal module SyntaxError
+# that kills the whole viewer. Fresh scene.html per generation + iframe
+# reload gives every run an independent realm (no leaked renderers,
+# listeners, or animation loops across runs; the module itself stops its
+# rAF loop after signalling ready).
 def scene_html(scene_js, three_url="https://unpkg.com/three@0.152.2/build/three.module.js",
                title="Morphix scene"):
     """Standalone scene.html (UI path): importmap + canvas + error overlay."""
+    import re as _re
+    n = len(_re.findall(r"import\s+\*\s+as\s+THREE\b", scene_js))
+    if n != 1:
+        raise ValueError(f"scene module must declare THREE exactly once "
+                         f"(found {n}); refusing to serve a broken page")
     return f"""<!DOCTYPE html>
 <html><head><meta charset="utf-8"><title>{title}</title>
 <style>html,body{{margin:0;padding:0;background:#111622;overflow:hidden}}canvas{{display:block}}#err{{position:fixed;left:8px;top:8px;color:#f66;font:12px monospace;white-space:pre-wrap}}</style>
@@ -596,7 +647,6 @@ def scene_html(scene_js, three_url="https://unpkg.com/three@0.152.2/build/three.
 <script>window.addEventListener('error', function (e) {{ document.getElementById('err').textContent = String((e && e.message) || e); }});</script>
 <script type="importmap">{{"imports":{{"three":{json.dumps(three_url)}}}}}</script>
 <script type="module">
-import * as THREE from 'three';
 const __W__ = window.innerWidth, __H__ = window.innerHeight;
 {scene_js.replace('__W__', '__W__').replace('__H__', '__H__')}
 </script></body></html>
